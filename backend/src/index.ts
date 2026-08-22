@@ -8,6 +8,7 @@ import { swaggerSpec } from './swagger';
 import contactRouter from './routes/contact';
 import healthRouter from './routes/health';
 import gitesRouter from './routes/gites';
+import reservationsRouter from './routes/reservations';
 import { errorHandler } from './middleware/error';
 
 dotenv.config();
@@ -37,6 +38,7 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Routes
 app.use('/health', healthRouter);
 app.use('/api/gites', gitesRouter);
+app.use('/api/reservations', reservationsRouter);
 app.use('/api/contact', contactRouter);
 
 // 404 handler
