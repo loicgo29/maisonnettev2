@@ -1,0 +1,87 @@
+version: '3.9'
+
+services:
+  postgres-maisonnettev2:
+    image: postgres:16-alpine
+    container_name: postgres-maisonnettev2
+    environment:
+      POSTGRES_USER: ${DB_USER:-maisonnettev2}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-maisonnettev2}
+    volumes:
+      - maisonnettev2_pg_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-maisonnettev2}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - maisonnettev2-net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: maisonnettev2-backend
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: ${PORT:-3001}
+      DATABASE_URL: postgresql://${DB_USER:-maisonnettev2}:${DB_PASSWORD}@postgres-maisonnettev2:5432/${DB_NAME:-maisonnettev2}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
+      TWILIO_WHATSAPP_NUMBER: ${TWILIO_WHATSAPP_NUMBER}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      KEYCLOAK_REALM_URL: ${KEYCLOAK_REALM_URL:-http://localhost:9000/application/o/maisonnettev2/}
+      GOOGLE_SERVICE_ACCOUNT_KEY_PATH: ${GOOGLE_SERVICE_ACCOUNT_KEY_PATH}
+      SENTRY_DSN: ${SENTRY_DSN}
+      SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-development}
+      OWNER_EMAIL: ${OWNER_EMAIL}
+      OWNER_PHONE: ${OWNER_PHONE}
+    ports:
+      - "${PORT:-3001}:3001"
+    depends_on:
+      postgres-maisonnettev2:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - maisonnettev2-net
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3001}
+        VITE_STRIPE_PUBLISHABLE_KEY: ${VITE_STRIPE_PUBLISHABLE_KEY}
+    container_name: maisonnettev2-frontend
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:3001}
+      VITE_STRIPE_PUBLISHABLE_KEY: ${VITE_STRIPE_PUBLISHABLE_KEY}
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - maisonnettev2-net
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  maisonnettev2_pg_data:
+
+networks:
+  maisonnettev2-net:
+    driver: bridge

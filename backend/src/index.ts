@@ -1,39 +1,53 @@
-import express from 'express'
-import cors from 'cors'
-import helmet from 'helmet'
-import dotenv from 'dotenv'
-import contactRouter from './routes/contact'
-import { errorHandler } from './middleware/error'
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import dotenv from 'dotenv';
+import swaggerUi from 'swagger-ui-express';
 
-dotenv.config()
+import { swaggerSpec } from './swagger';
+import contactRouter from './routes/contact';
+import healthRouter from './routes/health';
+import gitesRouter from './routes/gites';
+import { errorHandler } from './middleware/error';
 
-const app = express()
-const PORT = process.env.PORT || 3001
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3001;
 
 // Security middleware
-app.use(helmet())
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? 'https://yourdomain.com' 
-    : 'http://localhost:5173',
-  credentials: true,
-}))
+app.use(helmet());
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? process.env.VITE_API_URL || 'https://maisonnettev2.local'
+        : 'http://localhost:5173',
+    credentials: true,
+  })
+);
 
 // Body parser
-app.use(express.json({ limit: '10mb' }))
-app.use(express.urlencoded({ limit: '10mb', extended: true }))
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+// Swagger documentation
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
-app.use('/api/contact', contactRouter)
+app.use('/health', healthRouter);
+app.use('/api/gites', gitesRouter);
+app.use('/api/contact', contactRouter);
 
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' })
-})
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
 
 // Error handler
-app.use(errorHandler)
+app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`)
-})
+  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`📚 API documentation: http://localhost:${PORT}/api/docs`);
+});
