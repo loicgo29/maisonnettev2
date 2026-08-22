@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Gite {
+  id                String        @id @default(cuid())
+  slug              String        @unique
+  nom               String
+  description       String        @db.Text
+  adresse           String
+  capacite          Int
+  prixNuit          Float
+  googleCalendarId  String?       // Google Calendar ID for availability sync
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  photos       Photo[]
+  reservations Reservation[]
+
+  @@index([slug])
+}
+
+model Photo {
+  id        String   @id @default(cuid())
+  giteId    String
+  gite      Gite     @relation(fields: [giteId], references: [id], onDelete: Cascade)
+  url       String
+  categorie String   // EXTERIEUR | SALON | CUISINE | CHAMBRE | SDB | OUTDOOR
+  ordre     Int      @default(0) // manual sort order within category
+  alt       String?
+  createdAt DateTime @default(now())
+
+  @@index([giteId])
+  @@index([categorie])
+}
+
+model Reservation {
+  id                      String   @id @default(cuid())
+  giteId                  String
+  gite                    Gite     @relation(fields: [giteId], references: [id], onDelete: Cascade)
+  dateDebut               DateTime
+  dateFin                 DateTime
+  statut                  String   @default("PENDING") // PENDING | CONFIRMED | CANCELLED
+  clientNom               String
+  clientEmail             String
+  clientTelephone         String
+  montantTotal            Float
+  stripePaymentIntentId   String?  // Stripe payment tracking
+  googleCalendarEventId   String?  // Google Calendar event link
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@index([giteId])
+  @@index([statut])
+  @@index([dateDebut, dateFin])
+}
