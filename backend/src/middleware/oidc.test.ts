@@ -10,16 +10,16 @@ describe('verifyOIDCToken Middleware', () => {
   let statusMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    jsonMock = vi.fn().mockReturnValue(undefined);
-    statusMock = vi.fn().mockReturnValue({ json: jsonMock });
+    jsonMock = vi.fn().mockReturnValue({ json: undefined } as any);
+    statusMock = vi.fn().mockReturnValue({ json: jsonMock } as any);
 
     mockReq = {
       headers: {},
     };
 
     mockRes = {
-      status: statusMock,
-      json: jsonMock,
+      status: statusMock as any,
+      json: jsonMock as any,
     };
 
     mockNext = vi.fn();

@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
-import { z } from 'zod';
 
 const router = Router();
 
@@ -20,7 +19,7 @@ const router = Router();
  *               items:
  *                 $ref: '#/components/schemas/Gite'
  */
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (_req, res: Response) => {
   try {
     const gites = await prisma.gite.findMany({
       include: {

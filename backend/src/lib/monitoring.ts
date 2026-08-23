@@ -67,10 +67,16 @@ export function captureError(error: Error | unknown, context?: Record<string, an
 // Capture important events
 export function captureEvent(
   event: string,
-  level: 'info' | 'warning' | 'error' = 'info',
+  level: 'info' | 'warn' | 'error' = 'info',
   data?: Record<string, any>
 ) {
-  logger[level](data, event);
+  if (level === 'error') {
+    logger.error(data, event);
+  } else if (level === 'warn') {
+    logger.warn(data, event);
+  } else {
+    logger.info(data, event);
+  }
 
   if (process.env.SENTRY_DSN && level !== 'info') {
     Sentry.captureMessage(event, level === 'error' ? 'error' : 'warning');

@@ -1,16 +1,8 @@
 import { google } from 'googleapis';
 import { promises as fs } from 'fs';
-import path from 'path';
 import { prisma } from '../lib/prisma';
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
-
-interface CalendarEvent {
-  id: string;
-  summary: string;
-  start: { dateTime: string };
-  end: { dateTime: string };
-}
 
 class GoogleCalendarService {
   private auth: any;

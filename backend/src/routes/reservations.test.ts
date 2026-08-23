@@ -81,7 +81,7 @@ describe('Reservations Business Logic', () => {
       const res2Start = new Date('2026-09-12');
       const res2End = new Date('2026-09-15');
 
-      const reservation1 = await prisma.reservation.create({
+      await prisma.reservation.create({
         data: {
           giteId,
           dateDebut: res1Start,

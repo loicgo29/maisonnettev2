@@ -3,7 +3,7 @@ import { prisma } from '../lib/prisma';
 
 const router = Router();
 
-router.get('/health', async (req: Request, res: Response) => {
+router.get('/health', async (_req: Request, res: Response) => {
   try {
     // Check database connectivity
     await prisma.$queryRaw`SELECT 1`;
@@ -33,12 +33,12 @@ router.get('/health', async (req: Request, res: Response) => {
 });
 
 // Liveness probe (is the app running?)
-router.get('/live', (req: Request, res: Response) => {
+router.get('/live', (_req: Request, res: Response) => {
   res.status(200).json({ status: 'alive' });
 });
 
 // Readiness probe (is the app ready to serve?)
-router.get('/ready', async (req: Request, res: Response) => {
+router.get('/ready', async (_req: Request, res: Response) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
     res.status(200).json({ status: 'ready' });

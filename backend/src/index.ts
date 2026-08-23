@@ -42,7 +42,7 @@ app.use('/api/reservations', reservationsRouter);
 app.use('/api/contact', contactRouter);
 
 // 404 handler
-app.use((req, res) => {
+app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import gitesRouter from './gites';
@@ -73,7 +73,7 @@ describe('Gites API', () => {
 
     it('should order photos by ordre field', async () => {
       // Create gite with multiple photos
-      const gite = await prisma.gite.create({
+      await prisma.gite.create({
         data: {
           slug: 'gite-with-photos',
           nom: 'Gite With Photos',
