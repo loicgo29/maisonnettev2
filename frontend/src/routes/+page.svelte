@@ -5,7 +5,7 @@
 	let loading = true;
 
 	onMount(async () => {
-		const res = await fetch('http://localhost:3001/api/gites');
+		const res = await fetch('/api/gites');
 		gites = await res.json();
 		loading = false;
 	});

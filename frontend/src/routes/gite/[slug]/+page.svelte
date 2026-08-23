@@ -6,8 +6,22 @@
 	let loading = true;
 
 	onMount(async () => {
-		const res = await fetch(`http://localhost:3001/api/gites/${$page.params.slug}`);
-		gite = await res.json();
+		try {
+			const slug = $page.params.slug;
+			console.log('Fetching gite:', slug);
+			const res = await fetch(`/api/gites/${slug}`);
+			console.log('Response status:', res.status);
+			if (!res.ok) {
+				console.error('API error:', res.statusText);
+				loading = false;
+				return;
+			}
+			const data = await res.json();
+			console.log('Data received:', data);
+			gite = data;
+		} catch (e) {
+			console.error('Fetch error:', e);
+		}
 		loading = false;
 	});
 </script>
