@@ -54,9 +54,10 @@
 	}
 
 	const thumbnailsPerPage = 5;
-	const startIdx = Math.max(0, mainPhotoIndex - Math.floor(thumbnailsPerPage / 2));
-	const endIdx = Math.min(photos.length, startIdx + thumbnailsPerPage);
-	const visibleThumbnails = photos.slice(startIdx, endIdx);
+	const startIdx = $derived(
+		Math.max(0, Math.min(mainPhotoIndex - Math.floor(thumbnailsPerPage / 2), photos.length - thumbnailsPerPage))
+	);
+	const visibleThumbnails = $derived(photos.slice(startIdx, startIdx + thumbnailsPerPage));
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
