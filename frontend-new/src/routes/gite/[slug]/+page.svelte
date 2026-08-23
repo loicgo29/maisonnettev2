@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import PhotoGallery from './PhotoGallery.svelte';
 
 	let gite = $state<any>(null);
 	let loading = $state(true);
@@ -36,16 +37,7 @@
 
 	{#if gite.photos && gite.photos.length > 0}
 		<h2>Galerie ({gite.photos.length} photos)</h2>
-		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-			{#each gite.photos as photo (photo.id)}
-				<div>
-					<img src={photo.url} alt={photo.alt || 'Photo'} style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" />
-					{#if photo.alt}
-						<p style="font-size: 0.9rem; margin: 0.5rem 0; color: #666;">{photo.alt}</p>
-					{/if}
-				</div>
-			{/each}
-		</div>
+		<PhotoGallery photos={gite.photos} />
 	{/if}
 
 	<a href="/">← Retour à l'accueil</a>
