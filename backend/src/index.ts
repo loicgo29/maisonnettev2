@@ -32,6 +32,9 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
+// Static files
+app.use(express.static('public'));
+
 // Swagger documentation
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

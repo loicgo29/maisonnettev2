@@ -1,28 +1,13 @@
 {
+  "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "jsx": "react-jsx",
-    "skipLibCheck": true,
+    "allowJs": true,
+    "checkJs": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
-    "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
+    "skipLibCheck": true,
     "sourceMap": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "types": ["vite/client"]
-  },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+    "strict": true
+  }
 }
