@@ -54,9 +54,6 @@ services:
       retries: 3
     networks:
       - maisonnettev2-net
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
 
   frontend:
     build:
@@ -75,9 +72,6 @@ services:
       - backend
     networks:
       - maisonnettev2-net
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
 
 volumes:
   maisonnettev2_pg_data:

@@ -1,13 +1,15 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Contact from './pages/Contact'
+import { GiteDetail } from './pages/GiteDetail'
 
 export default function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
-        <Route path="/contact" element={<Contact />} />
         <Route path="/" element={<div className="p-8"><h1>Maisonnette v2</h1></div>} />
+        <Route path="/gite/:slug" element={<GiteDetail />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   )
 }
