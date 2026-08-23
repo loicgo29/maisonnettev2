@@ -39,7 +39,7 @@
 		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
 			{#each gite.photos as photo (photo.id)}
 				<div>
-					<img src="/api{photo.url}" alt={photo.alt || 'Photo'} style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" />
+					<img src={photo.url} alt={photo.alt || 'Photo'} style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;" />
 					{#if photo.alt}
 						<p style="font-size: 0.9rem; margin: 0.5rem 0; color: #666;">{photo.alt}</p>
 					{/if}
