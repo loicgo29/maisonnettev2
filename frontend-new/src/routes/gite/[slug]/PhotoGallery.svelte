@@ -34,6 +34,20 @@
 		if (e.key === 'ArrowLeft') prevPhoto();
 		if (e.key === 'Escape') closeModal();
 	}
+
+	let touchStartX = 0;
+	function handleTouchStart(e: TouchEvent) {
+		touchStartX = e.touches[0].clientX;
+	}
+
+	function handleTouchEnd(e: TouchEvent) {
+		const touchEndX = e.changedTouches[0].clientX;
+		const diff = touchStartX - touchEndX;
+		if (Math.abs(diff) > 50) {
+			if (diff > 0) nextPhoto();
+			else prevPhoto();
+		}
+	}
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -48,6 +62,7 @@
 			<img
 				src={photo.url}
 				alt={photo.alt || 'Photo'}
+				loading="lazy"
 				style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; transition: transform 0.2s;"
 				on:mouseover={(e) => ((e.target as HTMLImageElement).style.transform = 'scale(1.05)')}
 				on:mouseout={(e) => ((e.target as HTMLImageElement).style.transform = 'scale(1)')}
@@ -61,9 +76,11 @@
 
 {#if selectedPhotoIndex !== null}
 	<div
-		style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000;"
+		style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; touch-action: none;"
 		on:click={closeModal}
 		on:keydown={handleKeydown}
+		on:touchstart={handleTouchStart}
+		on:touchend={handleTouchEnd}
 		role="dialog"
 		aria-modal="true"
 	>
