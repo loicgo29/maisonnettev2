@@ -1,0 +1,24 @@
+{
+  "gite": {
+    "slug": "bertheaume",
+    "nom": "Maisonnette de Bertheaume",
+    "description": "Nichée à la pointe de Bertheaume, cette maisonnette et son très grand jardin arboré vous accueillent pour des vacances paisibles en bord de mer, dans un véritable havre de nature. La plage de sable fin se rejoint en 3 minutes à pied par un magnifique chemin piéton, le bourg et ses commerces sont à 10 minutes à pied, et le sentier côtier du GR34 passe à 200 m.\n\nRécemment rénovée, chaleureuse et tout confort, la maison offre 45 m² fonctionnels pour 6 personnes :\n- 1 chambre avec un lit double\n- 1 chambre avec 2 lits superposés\n- 1 canapé convertible au salon (couchage 2 personnes)\n- 1 salle de bain équipée : lave-linge, sèche-linge, fer à repasser, aspirateur\n- 1 WC indépendant\n- Cuisine équipée : plaques de cuisson, lave-vaisselle, réfrigérateur, congélateur, machine à café, grille-pain\n- WiFi et prise Ethernet, box multimédia, grande télévision\n- Poêle à bois cocooning\n- Terrasse sous auvent avec mobilier extérieur\n- Grand jardin arboré avec barbecue et jeux d'extérieur\n- Stationnement aisé\n\nLe linge de maison (draps, serviettes, torchons) est fourni, ainsi que thé, café et quelques bases alimentaires.",
+    "adresse": "Pointe de Bertheaume, 29120 Plonéour-Lanvern, Finistère",
+    "capacite": 6,
+    "prixNuit": 90,
+    "photos": 31
+  },
+  "tarifs": {
+    "basse_saison": "60€ du 30 octobre au 15 avril",
+    "ponts": "90€ pendant les ponts",
+    "haute_saison": "120€ du 1er juillet au 31 août",
+    "mensuel": "720€/mois (hors charges) du 15 septembre au 15 juin"
+  },
+  "conditions": {
+    "forfait_menage": "50€ obligatoire par location",
+    "acompte": "30% à la réservation, solde à l'arrivée",
+    "nettoyage": "Les lieux doivent être rendus propres par les locataires"
+  },
+  "photos_location": "backend/public/uploads/gites/bertheaume/",
+  "instructions": "Importer via API: POST /api/gites avec les données ci-dessus"
+}
