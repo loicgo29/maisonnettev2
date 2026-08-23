@@ -1,0 +1,44 @@
+# Routeur interne du site public maisonnette-pecheur-bertheaume.fr
+#
+# Le TLS est terminé par Cloudflare, en amont du tunnel : Caddy ne fait donc
+# PAS de Let's Encrypt ici et écoute en clair sur :80, uniquement sur le réseau
+# Docker interne (aucun port publié vers l'hôte).
+#
+# Rôle de Caddy : aiguiller /api et /uploads vers le backend, le reste vers le
+# serveur SvelteKit. En développement ce rôle est tenu par le proxy Vite, qui
+# n'existe plus en production.
+
+{
+	auto_https off
+}
+
+:80 {
+	encode gzip zstd
+
+	handle /api/* {
+		reverse_proxy backend:3001
+	}
+
+	# Photos des gîtes, servies par express.static du backend.
+	handle /uploads/* {
+		reverse_proxy backend:3001
+	}
+
+	handle {
+		reverse_proxy frontend:3000
+	}
+
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	log {
+		output file /data/access.log {
+			roll_size 10MB
+			roll_keep 5
+		}
+	}
+}

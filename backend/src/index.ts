@@ -18,12 +18,14 @@ const PORT = process.env.PORT || 3001;
 
 // Security middleware
 app.use(helmet());
+// En production, Caddy sert le front et l'API sur le même domaine : les appels
+// sont same-origin. L'origine reste déclarée pour les requêtes qui la portent.
 app.use(
   cors({
     origin:
       process.env.NODE_ENV === 'production'
-        ? process.env.VITE_API_URL || 'https://maisonnettev2.local'
-        : 'http://localhost:5173',
+        ? process.env.PUBLIC_ORIGIN || `https://${process.env.DOMAIN}`
+        : 'http://localhost:1234',
     credentials: true,
   })
 );

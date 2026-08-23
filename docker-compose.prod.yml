@@ -1,81 +1,100 @@
-version: '3.8'
+# Site public maisonnette-pecheur-bertheaume.fr
+#
+# Volontairement ISOLÉ de l'écosystème NAS privé : ce compose crée son propre
+# réseau et ne rejoint pas `nas-network`. Un site exposé à Internet ne doit pas
+# partager de réseau Docker avec l'IDP, Immich ou Paperless.
+#
+# Caddy dédié avec Let's Encrypt (HTTPS automatique), distinct du Caddy interne
+# de NAS-logo-UI qui tourne en `auto_https off` avec des certificats manuels.
 
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: maisonnettev2-db
+    container_name: maisonnette-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USER:-maisonnette}
+      POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME:-maisonnettev2}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER} -d ${DB_NAME}']
       interval: 10s
       timeout: 5s
       retries: 5
+    networks: [maisonnette]
+    # Pas de `ports:` — la base n'est joignable que depuis le réseau interne.
 
   backend:
-    image: ghcr.io/loicgo29/maisonnettev2/backend:latest
-    container_name: maisonnettev2-backend
+    build:
+      context: ./backend
+    container_name: maisonnette-backend
     restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://${DB_USER:-maisonnette}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-maisonnettev2}
       PORT: 3001
-    ports:
-      - "3001:3001"
+      DOMAIN: ${DOMAIN}
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN}
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+    volumes:
+      # Les photos des gîtes doivent survivre aux reconstructions d'image.
+      - uploads_data:/app/public/uploads
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      test: ['CMD', 'node', '-e', "require('http').get('http://127.0.0.1:3001/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
       interval: 30s
-      timeout: 10s
+      timeout: 5s
       retries: 3
-      start_period: 10s
-    networks:
-      - maisonnettev2-network
+      start_period: 15s
+    networks: [maisonnette]
 
   frontend:
-    image: ghcr.io/loicgo29/maisonnettev2/frontend:latest
-    container_name: maisonnettev2-frontend
+    build:
+      context: ./frontend-new
+    container_name: maisonnette-frontend
     restart: unless-stopped
-    ports:
-      - "5173:5173"
-    environment:
-      - VITE_API_URL=/api
-    networks:
-      - maisonnettev2-network
     depends_on:
       - backend
-
-  caddy:
-    image: caddy:latest-alpine
-    container_name: maisonnettev2-caddy
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
     environment:
-      DOMAIN: ${DOMAIN:-maisonnettev2.local}
-    networks:
-      - maisonnettev2-network
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+    networks: [maisonnette]
+
+  # Point d'entrée du site, exposé UNIQUEMENT sur la boucle locale du Mac Mini.
+  #
+  # 127.0.0.1:8030 — seul un processus de la machine (cloudflared, qui tourne
+  # nativement) peut l'atteindre. Ni le réseau local, ni Internet.
+  # Le port 8030 suit la convention 80xx de l'écosystème (8020 nas-logo-api,
+  # 8021/8022 alo) et était libre au moment de la mise en place.
+  #
+  # Ingress à déclarer dans le tunnel Cloudflare :
+  #   maisonnette-pecheur-bertheaume.fr      -> http://localhost:8030
+  #   www.maisonnette-pecheur-bertheaume.fr  -> http://localhost:8030
+  caddy:
+    image: caddy:2-alpine
+    container_name: maisonnette-caddy
+    restart: unless-stopped
     depends_on:
       - frontend
       - backend
+    ports:
+      - '127.0.0.1:8030:80'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [maisonnette]
 
 volumes:
   postgres_data:
+  uploads_data:
   caddy_data:
   caddy_config:
 
 networks:
-  maisonnettev2-network:
+  maisonnette:
     driver: bridge
