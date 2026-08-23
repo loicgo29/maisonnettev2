@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test';
 
 const FRONTEND_URL = 'http://localhost:5173';
 const BACKEND_URL = 'http://localhost:3001';
-const AUTHENTIK_URL = 'http://localhost:9000';
+const KEYCLOAK_URL = 'http://localhost:9001';
+const KEYCLOAK_REALM = 'maisonnettev2';
 
 test.describe('maisonnettev2 - Authentication Flow', () => {
 
@@ -16,7 +17,7 @@ test.describe('maisonnettev2 - Authentication Flow', () => {
     expect(heading.length).toBeGreaterThan(0);
   });
 
-  test('Login button redirects to Authentik', async ({ page }) => {
+  test('Login button redirects to Keycloak', async ({ page }) => {
     await page.goto(FRONTEND_URL);
 
     // Look for login button
@@ -25,12 +26,12 @@ test.describe('maisonnettev2 - Authentication Flow', () => {
     if (await loginButton.isVisible().catch(() => false)) {
       await loginButton.click();
 
-      // Should redirect to Authentik
-      await page.waitForURL(/localhost:9000|authentik/, { timeout: 5000 }).catch(() => {
-        console.log('Navigation to Authentik timed out (may already be on login page)');
+      // Should redirect to Keycloak
+      await page.waitForURL(/localhost:9001|keycloak/, { timeout: 5000 }).catch(() => {
+        console.log('Navigation to Keycloak timed out (may already be on login page)');
       });
 
-      expect(page.url()).toContain('localhost:9000');
+      expect(page.url()).toContain('localhost:9001');
     } else {
       console.log('Login button not found (frontend may not be fully interactive yet)');
     }
@@ -111,7 +112,7 @@ test.describe('maisonnettev2 - Backend API', () => {
   });
 
   test('GET /api/reservations with valid JWT succeeds', async ({ request }) => {
-    // Generate a mock JWT for testing (in real tests, obtain from Authentik)
+    // Generate a mock JWT for testing (in real tests, obtain from Keycloak)
     const mockJWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6OTk5OTk5OTk5OX0.fake';
 
     const response = await request.get(`${BACKEND_URL}/api/reservations`, {
@@ -126,7 +127,7 @@ test.describe('maisonnettev2 - Backend API', () => {
 
   test('JWKS endpoint is reachable', async ({ request }) => {
     const response = await request.get(
-      `${AUTHENTIK_URL}/application/o/maisonnettev2/jwks/`
+      `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs`
     );
 
     expect([200, 404]).toContain(response.status());
@@ -140,7 +141,7 @@ test.describe('maisonnettev2 - Backend API', () => {
 
   test('OIDC Configuration discovery works', async ({ request }) => {
     const response = await request.get(
-      `${AUTHENTIK_URL}/application/o/maisonnettev2/.well-known/openid-configuration`
+      `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/.well-known/openid-configuration`
     );
 
     expect([200, 404]).toContain(response.status());
@@ -162,9 +163,9 @@ test.describe('maisonnettev2 - Integration Checks', () => {
     expect(response.status()).toMatch(/2\d\d|5\d\d/);
   });
 
-  test('Backend can reach Authentik JWKS', async ({ request }) => {
+  test('Backend can reach Keycloak JWKS', async ({ request }) => {
     const response = await request.get(
-      `${AUTHENTIK_URL}/application/o/maisonnettev2/jwks/`,
+      `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs`,
       { timeout: 5000 }
     );
 
@@ -192,7 +193,7 @@ test.describe('maisonnettev2 - Integration Checks', () => {
     const checks = [
       { name: 'Frontend', url: FRONTEND_URL },
       { name: 'Backend Health', url: `${BACKEND_URL}/health` },
-      { name: 'Authentik Health', url: `${AUTHENTIK_URL}/-/health/live/` }
+      { name: 'Keycloak Health', url: `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}` }
     ];
 
     for (const check of checks) {

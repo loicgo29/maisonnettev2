@@ -69,10 +69,10 @@ echo ""
 
 if [ "$HEADLESS" = true ]; then
   echo "Mode: Headless"
-  npx playwright test --project=chromium --headed=false
+  npx playwright test --project=chromium
 else
   echo "Mode: Headed (Chrome visible)"
-  npx playwright test --project=chromium --headed=true
+  npx playwright test --project=chromium --headed
 fi
 
 # ============ RESULTS ============
