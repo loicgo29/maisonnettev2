@@ -16,8 +16,7 @@ export const userManager = new UserManager({
   automaticSilentRenew: true,
   silent_redirect_uri: `${window.location.origin}/silent-renew.html`,
   loadUserInfo: true,
-  // PKCE is enabled by default in oidc-client-ts
-  revokeAccessTokenOnSignout: true,
+  revokeTokensOnSignout: true,
 });
 
 userManager.events.addUserLoaded(() => {

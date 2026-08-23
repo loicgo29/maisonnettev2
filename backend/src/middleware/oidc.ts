@@ -38,7 +38,7 @@ export async function verifyOIDCToken(req: AuthRequest, res: Response, next: Nex
 
       // Attach decoded token payload to request
       req.user = verified.payload as any;
-      next();
+      return next();
     } catch (err) {
       if (err instanceof Error) {
         console.error(`[OIDC] Token verification failed: ${err.message}`);

@@ -14,13 +14,12 @@ export const api: AxiosInstance = axios.create({
 // Add auth headers to every request
 api.interceptors.request.use(async (config) => {
   const headers = await getAuthHeaders();
-  return {
-    ...config,
-    headers: {
-      ...config.headers,
-      ...headers,
-    },
+  const mergedConfig = config as any;
+  mergedConfig.headers = {
+    ...config.headers,
+    ...headers,
   };
+  return mergedConfig;
 });
 
 // Handle errors

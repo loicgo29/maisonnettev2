@@ -1,0 +1,1 @@
+{"version":3,"file":"OIDCManager.d.ts","sourceRoot":"","sources":["OIDCManager.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,WAAW,EAAwB,IAAI,EAAE,MAAM,gBAAgB,CAAC;AAOzE,eAAO,MAAM,WAAW,aAYtB,CAAC;AAsBH,wBAAsB,OAAO,IAAI,OAAO,CAAC,IAAI,GAAG,IAAI,CAAC,CAOpD;AAED,wBAAsB,cAAc;;;;GAMnC;AAED,wBAAsB,KAAK,kBAO1B;AAED,wBAAsB,MAAM,kBAO3B;AAED,wBAAsB,cAAc,yBAOnC"}
