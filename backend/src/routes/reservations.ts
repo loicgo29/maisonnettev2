@@ -156,13 +156,13 @@ router.post('/', verifyOIDCToken, async (req: AuthRequest, res: Response) => {
       },
     });
 
-    res.status(201).json(reservation);
+    return res.status(201).json(reservation);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: 'Invalid request data', details: error.errors });
     }
     console.error('Error creating reservation:', error);
-    res.status(500).json({ error: 'Failed to create reservation' });
+    return res.status(500).json({ error: 'Failed to create reservation' });
   }
 });
 
@@ -204,10 +204,10 @@ router.get('/:id', verifyOIDCToken, async (req: AuthRequest, res: Response) => {
     // Optionnel: vérifier que l'utilisateur est propriétaire de la réservation
     // (pour l'instant, on retourne la réservation si elle existe)
 
-    res.json(reservation);
+    return res.json(reservation);
   } catch (error) {
     console.error('Error fetching reservation:', error);
-    res.status(500).json({ error: 'Failed to fetch reservation' });
+    return res.status(500).json({ error: 'Failed to fetch reservation' });
   }
 });
 

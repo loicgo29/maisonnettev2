@@ -74,10 +74,10 @@ router.get('/:slug', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Gite not found' });
     }
 
-    res.json(gite);
+    return res.json(gite);
   } catch (error) {
     console.error('Error fetching gite:', error);
-    res.status(500).json({ error: 'Failed to fetch gite' });
+    return res.status(500).json({ error: 'Failed to fetch gite' });
   }
 });
 
