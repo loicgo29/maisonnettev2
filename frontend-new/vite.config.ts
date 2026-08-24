@@ -17,9 +17,15 @@ export default defineConfig({
 		})
 	],
 	server: {
-		port: 1234,
+		host: '0.0.0.0',
+		port: 8030,
+		middlewareMode: false,
 		proxy: {
-			'/api': {
+			'/api/gites': {
+				target: 'http://localhost:3001',
+				changeOrigin: true
+			},
+			'/api/reservations': {
 				target: 'http://localhost:3001',
 				changeOrigin: true
 			},
