@@ -1,9 +1,21 @@
-import { Router, Response } from 'express';
+import { Router, Request, Response } from 'express';
+import rateLimit from 'express-rate-limit';
 import { prisma } from '../lib/prisma.js';
 import { verifyOIDCToken, AuthRequest } from '../middleware/oidc.js';
 import { z } from 'zod';
 
 const router = Router();
+
+// La création d'une demande est ouverte au public : un visiteur doit pouvoir
+// réserver sans compte. La limitation de débit remplace l'authentification
+// pour contenir les abus.
+const limiteurDemandes = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Trop de demandes, réessayez dans une heure.' },
+});
 
 const ReservationCreateSchema = z.object({
   giteId: z.string().cuid(),
@@ -92,10 +104,10 @@ router.get('/', verifyOIDCToken, async (req: AuthRequest, res: Response) => {
  *         description: Réservation créée (en attente de paiement)
  *       400:
  *         description: Données invalides
- *       401:
- *         description: Non authentifié
+ *       429:
+ *         description: Trop de demandes
  */
-router.post('/', verifyOIDCToken, async (req: AuthRequest, res: Response) => {
+router.post('/', limiteurDemandes, async (req: Request, res: Response) => {
   try {
     const parsed = ReservationCreateSchema.parse(req.body);
 

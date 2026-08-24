@@ -19,7 +19,6 @@ export default defineConfig({
 	server: {
 		host: '0.0.0.0',
 		port: 8030,
-		middlewareMode: false,
 		proxy: {
 			'/api/gites': {
 				target: 'http://localhost:3001',
