@@ -1,16 +1,23 @@
 <script>
 	import GoogleCalendar from '$lib/components/GoogleCalendar.svelte';
-	// Fixed: Calendar route is working
+	import BookingCalendar from '$lib/components/BookingCalendar.svelte';
 </script>
 
 <div class="page">
 	<header>
-		<h1>Calendrier de Maisonnette</h1>
-		<p class="subtitle">Consultez la disponibilité des chambres</p>
+		<h1>📅 Calendrier de Réservation</h1>
+		<p class="subtitle">Consultez les disponibilités et réservez votre séjour</p>
 	</header>
 
 	<main>
-		<GoogleCalendar />
+		<div class="calendar-section">
+			<div class="calendar-main">
+				<BookingCalendar />
+			</div>
+			<div class="calendar-auth">
+				<GoogleCalendar />
+			</div>
+		</div>
 	</main>
 </div>
 
@@ -24,6 +31,7 @@
 		text-align: center;
 		color: white;
 		padding: 3rem 2rem;
+		margin-bottom: 2rem;
 	}
 
 	h1 {
@@ -40,5 +48,32 @@
 
 	main {
 		padding-bottom: 3rem;
+	}
+
+	.calendar-section {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 2rem;
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 2rem;
+	}
+
+	.calendar-main {
+		order: 1;
+	}
+
+	.calendar-auth {
+		order: 2;
+	}
+
+	@media (max-width: 900px) {
+		.calendar-section {
+			grid-template-columns: 1fr;
+		}
+
+		.calendar-auth {
+			order: 2;
+		}
 	}
 </style>
