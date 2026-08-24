@@ -169,7 +169,10 @@
 					</tbody>
 				</table>
 
-				<a class="cta" href="mailto:contact@maisonnette-bertheaume.fr?subject=Demande%20de%20r%C3%A9servation">
+				<a
+					class="cta"
+					href="mailto:contact@maisonnette-pecheur-bertheaume.fr?subject=Demande%20de%20r%C3%A9servation%20%E2%80%94%20Maisonnette%20de%20Bertheaume"
+				>
 					Demander une réservation
 				</a>
 

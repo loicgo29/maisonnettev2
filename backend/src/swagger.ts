@@ -9,7 +9,7 @@ const options: swaggerJSDoc.Options = {
       description: 'Gîte rental booking API with Stripe payments and Google Calendar sync',
       contact: {
         name: 'Support',
-        email: process.env.OWNER_EMAIL || 'contact@maisonnettev2.local',
+        email: process.env.OWNER_EMAIL || 'contact@maisonnette-pecheur-bertheaume.fr',
       },
     },
     servers: [

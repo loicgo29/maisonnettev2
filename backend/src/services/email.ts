@@ -6,10 +6,17 @@ interface EmailOptions {
   html: string
 }
 
+// L'expéditeur doit appartenir à un domaine vérifié dans Resend (DKIM/SPF
+// publiés), sans quoi l'envoi est refusé. Distinct des MX, qui ne concernent
+// que la réception.
+const EXPEDITEUR =
+  process.env.MAIL_FROM ||
+  `contact@${process.env.DOMAIN || 'maisonnette-pecheur-bertheaume.fr'}`
+
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   try {
     const response = await axios.post('https://api.resend.com/emails', {
-      from: 'contact@maisonnette.fr',
+      from: EXPEDITEUR,
       to: options.to,
       subject: options.subject,
       html: options.html,
