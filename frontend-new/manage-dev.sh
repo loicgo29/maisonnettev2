@@ -27,6 +27,7 @@ clean_cache() {
 
 # Fonction : démarrer Vite
 start_vite() {
+    # Les secrets doivent être dans .env.local ou variables d'environnement
     npm run dev > "$LOG_FILE" 2>&1 &
     sleep 8
     echo "✅ Vite started on port $PORT (PID: $!)"
