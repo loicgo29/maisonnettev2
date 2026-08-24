@@ -1,6 +1,6 @@
 import { google } from 'googleapis';
 import { promises as fs } from 'fs';
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma.js';
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 

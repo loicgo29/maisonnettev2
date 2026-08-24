@@ -3,6 +3,11 @@
 
 generator client {
   provider = "prisma-client-js"
+  // "native" pour le développement sur macOS.
+  // Les cibles musl-openssl-3.0.x sont indispensables en conteneur : l'image
+  // node:20-alpine embarque OpenSSL 3, alors que le moteur par défaut réclame
+  // libssl.so.1.1 et échoue au démarrage.
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {

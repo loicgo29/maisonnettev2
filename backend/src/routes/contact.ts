@@ -1,8 +1,8 @@
 import { Router, Request, Response } from 'express'
 import { z } from 'zod'
 import rateLimit from 'express-rate-limit'
-import { sendEmail } from '../services/email'
-import { sendWhatsApp } from '../services/whatsapp'
+import { sendEmail } from '../services/email.js'
+import { sendWhatsApp } from '../services/whatsapp.js'
 
 const router = Router()
 

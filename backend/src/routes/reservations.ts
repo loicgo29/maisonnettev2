@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
-import { prisma } from '../lib/prisma';
-import { verifyOIDCToken, AuthRequest } from '../middleware/oidc';
+import { prisma } from '../lib/prisma.js';
+import { verifyOIDCToken, AuthRequest } from '../middleware/oidc.js';
 import { z } from 'zod';
 
 const router = Router();

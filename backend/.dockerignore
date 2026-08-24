@@ -1,0 +1,10 @@
+node_modules
+dist
+.env
+.env.*
+*.log
+coverage
+test-results
+.git
+# Les photos (public/uploads) sont volontairement conservées :
+# elles alimentent le volume au premier démarrage.

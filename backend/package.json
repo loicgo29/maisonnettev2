@@ -18,7 +18,9 @@
     "test:coverage": "vitest --coverage",
     "test:bdd": "cucumber-js features/",
     "test:all": "npm run lint && npm run type-check && npm run test && npm run test:bdd",
-    "audit": "npm audit --audit-level=high"
+    "audit": "npm audit --audit-level=high",
+    "db:seed": "node prisma/seed.mjs",
+    "db:deploy": "prisma migrate deploy && node prisma/seed.mjs"
   },
   "keywords": [
     "gite",

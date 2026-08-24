@@ -20,15 +20,22 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
+# Sans openssl, la détection de Prisma retombe sur le moteur openssl-1.1.x,
+# absent d'Alpine 3 : le conteneur démarre puis meurt sur libssl.so.1.1.
+RUN apk add --no-cache openssl
+
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+# Schéma, migrations et seed : nécessaires au provisionnement au déploiement.
+COPY --from=builder /app/prisma ./prisma
+# Photos livrées avec l'image ; elles alimentent le volume uploads_data.
+COPY --from=builder /app/public ./public
 COPY package*.json ./
 
 EXPOSE 3001
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3001/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD node -e "require('http').get('http://127.0.0.1:3001/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
 
 CMD ["npm", "start"]

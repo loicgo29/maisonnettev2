@@ -4,12 +4,12 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 
-import { swaggerSpec } from './swagger';
-import contactRouter from './routes/contact';
-import healthRouter from './routes/health';
-import gitesRouter from './routes/gites';
-import reservationsRouter from './routes/reservations';
-import { errorHandler } from './middleware/error';
+import { swaggerSpec } from './swagger.js';
+import contactRouter from './routes/contact.js';
+import healthRouter from './routes/health.js';
+import gitesRouter from './routes/gites.js';
+import reservationsRouter from './routes/reservations.js';
+import { errorHandler } from './middleware/error.js';
 
 dotenv.config();
 

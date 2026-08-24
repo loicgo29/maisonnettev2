@@ -75,7 +75,8 @@ services:
   #   maisonnette-pecheur-bertheaume.fr      -> http://localhost:8030
   #   www.maisonnette-pecheur-bertheaume.fr  -> http://localhost:8030
   caddy:
-    image: caddy:2-alpine
+    build:
+      context: ./caddy
     container_name: maisonnette-caddy
     restart: unless-stopped
     depends_on:
@@ -84,7 +85,6 @@ services:
     ports:
       - '127.0.0.1:8030:80'
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     networks: [maisonnette]
