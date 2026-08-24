@@ -1,5 +1,16 @@
 {
+  "name": "maisonnettev2-tests",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test:bdd": "cucumber-js tests/features --require tests/steps",
+    "test:tunnel": "cucumber-js tests/features/cloudflare-tunnel.feature --require tests/steps"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.0.0"
+  },
   "dependencies": {
-    "@playwright/test": "^1.62.1"
+    "@playwright/test": "^1.62.1",
+    "node-fetch": "^3.0.0"
   }
 }
