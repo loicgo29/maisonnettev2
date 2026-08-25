@@ -4,13 +4,20 @@
   "type": "module",
   "scripts": {
     "test:bdd": "cucumber-js tests/features --require tests/steps",
-    "test:tunnel": "cucumber-js tests/features/cloudflare-tunnel.feature --require tests/steps"
+    "test:tunnel": "cucumber-js tests/features/cloudflare-tunnel.feature --require tests/steps",
+    "test:smoke": "cucumber-js tests/features/smoke-test.feature --require tests/steps",
+    "test:gallery": "cucumber-js tests/features/gallery.feature --require tests/steps",
+    "test:carousel": "npx playwright test tests/carousel.spec.ts --reporter=html",
+    "test:all": "bash run-all-tests.sh",
+    "test:carousel-verify": "bash test-carousel.sh",
+    "healthcheck": "bash run-all-tests.sh"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^11.0.0"
   },
   "dependencies": {
     "@playwright/test": "^1.62.1",
-    "node-fetch": "^3.0.0"
+    "node-fetch": "^3.0.0",
+    "pg": "^8.23.0"
   }
 }

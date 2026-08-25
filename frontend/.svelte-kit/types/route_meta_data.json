@@ -1,4 +1,17 @@
 {
 	"/": [],
-	"/gite/[slug]": []
+	"/api/calendar": [
+		"src/routes/api/calendar/+server.ts"
+	],
+	"/api/calendar/callback": [
+		"src/routes/api/calendar/callback/+server.ts"
+	],
+	"/api/test": [
+		"src/routes/api/test/+server.ts"
+	],
+	"/calendar": [],
+	"/gite/[slug]": [],
+	"/test-api": [
+		"src/routes/test-api/+server.ts"
+	]
 }

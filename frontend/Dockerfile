@@ -1,3 +1,4 @@
+# --- Build ---
 FROM node:20-alpine AS builder
 
 WORKDIR /app
@@ -6,24 +7,24 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
-
-ARG VITE_API_URL=http://localhost:3001
-ARG VITE_STRIPE_PUBLISHABLE_KEY
-
-ENV VITE_API_URL=$VITE_API_URL
-ENV VITE_STRIPE_PUBLISHABLE_KEY=$VITE_STRIPE_PUBLISHABLE_KEY
-
 RUN npm run build
 
-# Production stage
+# --- Production ---
 FROM node:20-alpine
 
 WORKDIR /app
 
-RUN npm install -g serve
+ENV NODE_ENV=production
+ENV PORT=5173
+ENV HOST=0.0.0.0
 
-COPY --from=builder /app/dist ./dist
+# adapter-node produit un serveur autonome dans build/
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/package.json ./
 
 EXPOSE 5173
 
-CMD ["serve", "-s", "dist", "-l", "5173"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD node -e "require('http').get('http://127.0.0.1:5173/', r => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))"
+
+CMD ["node", "build/index.js"]

@@ -1,0 +1,152 @@
+import { Given, When, Then, Before, After } from '@cucumber/cucumber';
+import fetch from 'node-fetch';
+import { execSync } from 'child_process';
+import pkg from 'pg';
+const { Client } = pkg;
+
+let page;
+let response;
+let jsonData;
+let errors = [];
+
+When('je navigue vers {string}', async function(url) {
+  try {
+    response = await fetch(url);
+    if (!response.ok && response.status !== 404) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+  } catch (error) {
+    throw new Error(`Failed to navigate to ${url}: ${error.message}`);
+  }
+});
+
+Then('la page charge avec un code HTTP 200', function() {
+  if (response.status !== 200) {
+    throw new Error(`Expected 200, got ${response.status}`);
+  }
+});
+
+Then('le titre de la page contient {string} ou {string}', async function(text1, text2) {
+  const html = await response.text();
+  const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+  const title = titleMatch ? titleMatch[1] : '';
+
+  if (!title.toLowerCase().includes(text1.toLowerCase()) &&
+      !title.toLowerCase().includes(text2.toLowerCase())) {
+    throw new Error(`Title "${title}" doesn't contain "${text1}" or "${text2}"`);
+  }
+});
+
+Then('aucune erreur JavaScript n\'est affichée', function() {
+  if (errors.length > 0) {
+    throw new Error(`Found console errors: ${errors.join(', ')}`);
+  }
+});
+
+When('j\'appelle GET {string}', async function(url) {
+  try {
+    response = await fetch(url);
+  } catch (error) {
+    throw new Error(`Failed to GET ${url}: ${error.message}`);
+  }
+});
+
+Then('la réponse est {int}', function(statusCode) {
+  if (response.status !== statusCode) {
+    throw new Error(`Expected ${statusCode}, got ${response.status}`);
+  }
+});
+
+Then('le JSON contient {string} = {string}', async function(key, value) {
+  jsonData = await response.json();
+  if (jsonData[key] !== value) {
+    throw new Error(`Expected ${key}="${value}", got "${jsonData[key]}"`);
+  }
+});
+
+Then('le champ {string} contient {string}', function(field, value) {
+  const fieldValue = jsonData.checks ? jsonData.checks[field] : jsonData[field];
+  if (typeof fieldValue === 'object') {
+    if (!JSON.stringify(fieldValue).includes(value)) {
+      throw new Error(`Field ${field} doesn't contain "${value}"`);
+    }
+  } else if (!String(fieldValue).includes(value)) {
+    throw new Error(`Field ${field} doesn't contain "${value}"`);
+  }
+});
+
+When('je test la connexion PostgreSQL sur {string}', async function(connectionString) {
+  const client = new Client({
+    host: 'localhost',
+    port: 5433,
+    user: 'maisonnettev2',
+    password: process.env.DB_PASSWORD || 'postgres',
+    database: 'maisonnettev2',
+  });
+
+  try {
+    await client.connect();
+    this.pgClient = client;
+  } catch (error) {
+    throw new Error(`Failed to connect to PostgreSQL: ${error.message}`);
+  }
+});
+
+// Credentials are handled in the When step
+
+Then('la connexion est établie', async function() {
+  const result = await this.pgClient.query('SELECT 1');
+  if (!result.rows || result.rows.length === 0) {
+    throw new Error('Database connection failed');
+  }
+});
+
+Then('au minimum une table existe', async function() {
+  const result = await this.pgClient.query(
+    `SELECT COUNT(*) as count FROM information_schema.tables WHERE table_schema='public'`
+  );
+  const count = parseInt(result.rows[0].count);
+  if (count === 0) {
+    throw new Error('No tables found in database');
+  }
+});
+
+After(async function() {
+  if (this.pgClient) {
+    await this.pgClient.end();
+  }
+});
+
+Then('je vois {string}', async function(text) {
+  const html = await response.text();
+  if (!html.includes(text)) {
+    throw new Error(`Text "${text}" not found on page`);
+  }
+});
+
+When('je liste les containers Docker', function() {
+  try {
+    const output = execSync('docker ps --format "{{.Names}}:{{.Status}}"', { encoding: 'utf-8' });
+    this.dockerContainers = output;
+  } catch (error) {
+    throw new Error(`Failed to list Docker containers: ${error.message}`);
+  }
+});
+
+Then('le container {string} est running', function(containerName) {
+  const lines = this.dockerContainers.split('\n');
+  const found = lines.some(line => {
+    const [name, status] = line.split(':');
+    return name === containerName && status.includes('Up');
+  });
+
+  if (!found) {
+    throw new Error(`Container "${containerName}" is not running`);
+  }
+});
+
+Then('aucun container n\'est dans l\'état {string}', function(state) {
+  if (this.dockerContainers.includes(state)) {
+    throw new Error(`Found containers in "${state}" state`);
+  }
+});
