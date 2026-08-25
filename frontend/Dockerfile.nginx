@@ -1,0 +1,29 @@
+FROM nginx:alpine
+
+# Copier la page HTML
+COPY index.html /usr/share/nginx/html/
+
+# Copier les images statiques
+COPY static/images /usr/share/nginx/html/static/images
+
+# Config nginx simple
+RUN echo 'server { \
+  listen 5173; \
+  server_name _; \
+  root /usr/share/nginx/html; \
+  index index.html; \
+  location / { \
+    try_files $uri /index.html; \
+  } \
+  location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ { \
+    expires 1d; \
+    add_header Cache-Control "public, immutable"; \
+  } \
+}' > /etc/nginx/conf.d/default.conf
+
+EXPOSE 5173
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://127.0.0.1:5173/ || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -58,16 +58,10 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:3001}
-        VITE_STRIPE_PUBLISHABLE_KEY: ${VITE_STRIPE_PUBLISHABLE_KEY}
+      dockerfile: Dockerfile.nginx
     container_name: maisonnettev2-frontend
-    environment:
-      VITE_API_URL: ${VITE_API_URL:-http://localhost:3001}
-      VITE_STRIPE_PUBLISHABLE_KEY: ${VITE_STRIPE_PUBLISHABLE_KEY}
     ports:
-      - "5173:8030"
+      - "5173:5173"
     depends_on:
       - backend
     networks:
