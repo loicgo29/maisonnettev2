@@ -1,21 +1,33 @@
+# Build SvelteKit
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Serve with nginx
 FROM nginx:alpine
+WORKDIR /usr/share/nginx/html
 
-# Copier la page HTML
-COPY index.html /usr/share/nginx/html/
+# Copy SvelteKit build
+COPY --from=builder /app/build ./
 
-# Copier les images statiques
-COPY static/images /usr/share/nginx/html/static/images
+# Copy static assets (images)
+COPY --from=builder /app/static ./static
 
-# Config nginx simple
+# Nginx config for SPA routing
 RUN echo 'server { \
   listen 5173; \
   server_name _; \
   root /usr/share/nginx/html; \
   index index.html; \
+  \
   location / { \
-    try_files $uri /index.html; \
+    try_files $uri $uri/ /index.html; \
   } \
-  location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ { \
+  \
+  location ~* \.(jpg|jpeg|png|gif|ico|css|js|wasm)$ { \
     expires 1d; \
     add_header Cache-Control "public, immutable"; \
   } \

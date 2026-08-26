@@ -1,5 +1,6 @@
 <script>
-	import { goto } from '$app/navigation';
+	import BookingCalendar from '$lib/components/BookingCalendar.svelte';
+	import GoogleCalendar from '$lib/components/GoogleCalendar.svelte';
 
 	const photos = [
 		{ src: '/images/IMG_0618.JPG', alt: 'Jardin à gauche' },
@@ -14,6 +15,7 @@
 
 	let lightboxOpen = false;
 	let selectedPhoto = null;
+	let showCalendar = false;
 
 	function openLightbox(photo) {
 		selectedPhoto = photo;
@@ -27,13 +29,21 @@
 		selectedPhoto = null;
 	}
 
-	function goToCalendar() {
-		goto('/calendar');
+	function toggleCalendar() {
+		showCalendar = !showCalendar;
+		if (showCalendar) {
+			setTimeout(() => {
+				document.getElementById('calendar-section')?.scrollIntoView({ behavior: 'smooth' });
+			}, 100);
+		}
 	}
 
 	function handleKeydown(e) {
 		if (e.key === 'Escape') {
 			closeLightbox();
+			if (showCalendar) {
+				showCalendar = false;
+			}
 		}
 	}
 </script>
@@ -84,8 +94,24 @@
 
 	<section class="cta">
 		<h2>Prêt pour vos vacances?</h2>
-		<button class="btn-primary" on:click={goToCalendar}>Consulter les disponibilités</button>
+		<button class="btn-primary" on:click={toggleCalendar}>
+			{showCalendar ? 'Masquer le calendrier' : 'Consulter les disponibilités'}
+		</button>
 	</section>
+
+	{#if showCalendar}
+		<section id="calendar-section" class="calendar-section">
+			<h2>📅 Calendrier de Réservation</h2>
+			<div class="calendar-grid">
+				<div class="calendar-main">
+					<BookingCalendar />
+				</div>
+				<div class="calendar-auth">
+					<GoogleCalendar />
+				</div>
+			</div>
+		</section>
+	{/if}
 </div>
 
 {#if lightboxOpen && selectedPhoto}
@@ -335,6 +361,50 @@
 
 		.cta h2 {
 			font-size: 24px;
+		}
+
+		.calendar-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	/* Calendar Section */
+	.calendar-section {
+		background: #f5f7fa;
+		padding: 60px 20px;
+		margin-top: 40px;
+	}
+
+	.calendar-section h2 {
+		text-align: center;
+		font-size: 32px;
+		margin: 0 0 40px 0;
+		color: #1a1a1a;
+	}
+
+	.calendar-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 30px;
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+
+	.calendar-main {
+		order: 1;
+	}
+
+	.calendar-auth {
+		order: 2;
+	}
+
+	@media (max-width: 900px) {
+		.calendar-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.calendar-auth {
+			order: 2;
 		}
 	}
 </style>
