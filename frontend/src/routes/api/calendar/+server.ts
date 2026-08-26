@@ -1,6 +1,8 @@
 import { json } from '@sveltejs/kit';
 
-const CALENDAR_ID = 'lgbertheaume@gmail.com';
+// Utilise "primary" = ton calendrier principal
+// Ou remplace par l'ID du calendrier dédié aux réservations
+const CALENDAR_ID = process.env.GITE_CALENDAR_ID || 'primary';
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:8030/api/calendar/callback';

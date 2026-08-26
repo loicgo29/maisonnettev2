@@ -53,7 +53,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend-new
+      context: ./frontend
     container_name: maisonnette-frontend
     restart: unless-stopped
     depends_on:
