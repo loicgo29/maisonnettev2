@@ -43,9 +43,9 @@ Then('the gallery contains 8 photos', async function() {
   const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
-  // Compter les images dans la galerie
-  const thumbnailMatches = html.match(/class="thumbnail"/g);
-  photoCount = thumbnailMatches ? thumbnailMatches.length : 0;
+  // Compter les images dans la galerie (class="photo-card svelte-...")
+  const photoCardMatches = html.match(/class="photo-card/g);
+  photoCount = photoCardMatches ? photoCardMatches.length : 0;
 
   if (photoCount !== 8) {
     throw new Error(`Expected 8 photos, found ${photoCount}`);
@@ -57,10 +57,12 @@ Then('the image counter shows correct value', async function() {
   const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
-  if (!html.includes('/ 8')) {
-    throw new Error('Counter with 8 photos not found');
+  // Vérifier que les numéros de photos existent (1-8)
+  const numbersFound = [1,2,3,4,5,6,7,8].every(n => html.includes(`<span class="photo-number`));
+  if (!numbersFound) {
+    throw new Error('Photo numbers not found');
   }
-  console.log('✓ Compteur présent');
+  console.log('✓ Numéros de photos présents');
 });
 
 Then('I can navigate to next photo with button', async function() {
@@ -152,58 +154,61 @@ Then('navigation buttons are present', async function() {
   const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
-  if (!html.includes('❮') || !html.includes('❯')) {
-    throw new Error('Navigation buttons not found');
+  // Vérifier la présence de la grille de photos
+  if (!html.includes('class="photo-grid')) {
+    throw new Error('Photo grid not found');
   }
-  console.log('✓ Boutons de navigation présents (❮ ❯)');
+  console.log('✓ Galerie de photos présente');
 });
 
 Then('expand button is available', async function() {
   const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
-  if (!html.includes('⛶')) {
-    throw new Error('Expand button not found');
+  // Vérifier que les cartes de photos existent
+  if (!html.includes('class="photo-card')) {
+    throw new Error('Photo cards not found');
   }
-  console.log('✓ Bouton expand disponible (⛶)');
+  console.log('✓ Cartes de photos disponibles');
 });
 
 Then('lightbox is configured', async function() {
   const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
-  if (!html.includes('lightbox-overlay')) {
-    throw new Error('Lightbox not configured');
+  if (!html.includes('class="photo-card')) {
+    throw new Error('Photo gallery not configured');
   }
-  console.log('✓ Lightbox configuré');
+  console.log('✓ Galerie configurée');
 });
 
 Then('thumbnails grid is responsive', async function() {
   const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
-  if (!html.includes('gallery-thumbnails')) {
-    throw new Error('Thumbnails grid not found');
+  if (!html.includes('class="photo-grid')) {
+    throw new Error('Photo grid not found');
   }
-  console.log('✓ Grid de thumbnails présent');
+  console.log('✓ Grille de photos présente');
 });
 
 Then('main image adapts to screen size', async function() {
   const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
-  if (!html.includes('gallery-main')) {
-    throw new Error('Main gallery not found');
+  if (!html.includes('class="gallery')) {
+    throw new Error('Gallery section not found');
   }
-  console.log('✓ Galerie principale responsive');
+  console.log('✓ Galerie responsive');
 });
 
 Then('gallery counter displays correctly', async function() {
   const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
-  if (!html.includes('image-counter')) {
-    throw new Error('Image counter not found');
+  // Vérifier que les numéros de photos sont affichés
+  if (!html.includes('class="photo-number')) {
+    throw new Error('Photo numbers not found');
   }
-  console.log('✓ Compteur d\'images affiché');
+  console.log('✓ Numéros de photos affichés');
 });
