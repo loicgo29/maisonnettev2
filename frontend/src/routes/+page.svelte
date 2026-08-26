@@ -123,6 +123,11 @@
 	</div>
 {/if}
 
+<footer class="footer">
+	<p>&copy; 2026 Maisonnette de Bertheaume. Tous droits réservés.</p>
+	<p><a href="/contact">Nous contacter</a> | Téléphone: <a href="tel:+33781103889">+33 7 81 10 38 89</a></p>
+</footer>
+
 <style>
 	:global(body) {
 		margin: 0;
@@ -366,6 +371,29 @@
 		.calendar-grid {
 			grid-template-columns: 1fr;
 		}
+	}
+
+	/* Footer */
+	.footer {
+		background: #1a1a1a;
+		color: white;
+		padding: 40px 20px;
+		text-align: center;
+		font-size: 14px;
+		margin-top: 60px;
+	}
+
+	.footer p {
+		margin: 8px 0;
+	}
+
+	.footer a {
+		color: #667eea;
+		text-decoration: none;
+	}
+
+	.footer a:hover {
+		text-decoration: underline;
 	}
 
 	/* Calendar Section */
