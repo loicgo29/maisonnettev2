@@ -4,18 +4,24 @@ dotenv.config();
 import { When, Then, Before, After } from '@cucumber/cucumber';
 import { execSync } from 'child_process';
 import fetch from 'node-fetch';
+import dotenv from 'dotenv';
 import pkg from 'pg';
+dotenv.config();
 const { Client } = pkg;
 
 let dockerStatus;
 let backendResponse;
 let databaseConnected;
 
-// Déterminer les hostnames
-const isInDocker = process.env.DB_HOST === 'postgres-maisonnettev2';
-const backendHost = isInDocker ? 'backend' : 'localhost';
-const dbHost = isInDocker ? 'postgres-maisonnettev2' : 'localhost';
-const dbPort = isInDocker ? 5432 : 5433;
+// Configuration depuis .env ou defaults
+const BACKEND_HOST = process.env.BACKEND_HOST || 'localhost';
+const BACKEND_PORT = process.env.BACKEND_PORT || '3001';
+const BACKEND_URL = `http://${BACKEND_HOST}:${BACKEND_PORT}`;
+const DB_HOST = process.env.DB_HOST || 'localhost';
+const DB_PORT = process.env.DB_PORT || 5433;
+const DB_USER = process.env.DB_USER || 'test';
+const DB_PASSWORD = process.env.DB_PASSWORD || 'test';
+const DB_NAME = process.env.DB_NAME || 'maisonnettev2_test';
 
 When('I check the Docker container status', function() {
   try {
@@ -45,7 +51,7 @@ Then('no container is restarting', function() {
 
 When('I check the backend health endpoint', async function() {
   try {
-    backendResponse = await fetch(`http://${backendHost}:3001/health`);
+    backendResponse = await fetch(`${BACKEND_URL}/health`);
   } catch (error) {
     throw new Error(`Failed to reach backend: ${error.message}`);
   }
@@ -66,11 +72,11 @@ Then('the response contains healthy status', async function() {
 
 When('I attempt to connect to the database', async function() {
   const client = new Client({
-    host: dbHost,
-    port: dbPort,
-    user: process.env.DB_USER || 'maisonnettev2',
-    password: process.env.DB_PASSWORD || 'postgres',
-    database: process.env.DB_NAME || 'maisonnettev2',
+    host: DB_HOST,
+    port: DB_PORT,
+    user: DB_USER,
+    password: DB_PASSWORD,
+    database: DB_NAME,
   });
 
   try {

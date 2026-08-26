@@ -1,15 +1,23 @@
 import { When, Then, Before, After } from '@cucumber/cucumber';
 import fetch from 'node-fetch';
+import dotenv from 'dotenv';
 import pkg from 'pg';
+dotenv.config();
 const { Client } = pkg;
 
 let pageLoaded = false;
 let photoCount = 0;
 let photosVisible = [];
 
+// Configuration des hosts/ports depuis .env ou defaults
+// Frontend: 5173 (direct) en dev, via Caddy 8030 en prod via 127.0.0.1
+const FRONTEND_HOST = process.env.FRONTEND_HOST || 'localhost';
+const FRONTEND_PORT = process.env.FRONTEND_PORT || '8030';
+const FRONTEND_URL = `http://${FRONTEND_HOST}:${FRONTEND_PORT}`;
+
 When('I navigate to the gallery page', async function() {
   try {
-    const response = await fetch('http://localhost:5173');
+    const response = await fetch(FRONTEND_URL);
     pageLoaded = response.status === 200;
   } catch (error) {
     throw new Error(`Failed to navigate: ${error.message}`);
@@ -18,7 +26,7 @@ When('I navigate to the gallery page', async function() {
 
 When('I check the gallery page', async function() {
   try {
-    const response = await fetch('http://localhost:5173');
+    const response = await fetch(FRONTEND_URL);
     pageLoaded = response.status === 200;
   } catch (error) {
     throw new Error(`Failed to check gallery: ${error.message}`);

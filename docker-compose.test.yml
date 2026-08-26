@@ -1,0 +1,75 @@
+# Compose pour lancer les services + tests BDD
+# Utilisé dans le CI/CD et pour tester en local
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: maisonnette-test-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER} -d ${DB_NAME}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [maisonnette-test]
+
+  backend:
+    build:
+      context: ./backend
+    container_name: maisonnette-test-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: test
+      PORT: 3001
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+    ports:
+      - '127.0.0.1:3001:3001'
+    healthcheck:
+      test: ['CMD', 'node', '-e', "require('http').get('http://127.0.0.1:3001/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks: [maisonnette-test]
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: maisonnette-test-frontend
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+    networks: [maisonnette-test]
+
+  caddy:
+    build:
+      context: ./caddy
+    container_name: maisonnette-test-caddy
+    depends_on:
+      - frontend
+      - backend
+    ports:
+      - '127.0.0.1:8030:80'
+    volumes:
+      - caddy_test_data:/data
+      - caddy_test_config:/config
+    networks: [maisonnette-test]
+
+volumes:
+  postgres_test_data:
+  caddy_test_data:
+  caddy_test_config:
+
+networks:
+  maisonnette-test:
+    driver: bridge
