@@ -1,5 +1,6 @@
 import { When, Then, Before } from '@cucumber/cucumber';
 import fetch from 'node-fetch';
+import { execSync } from 'child_process';
 
 const FRONTEND_HOST = process.env.FRONTEND_HOST || '127.0.0.1';
 const FRONTEND_PORT = process.env.FRONTEND_PORT || '8030';
@@ -8,6 +9,7 @@ const FRONTEND_URL = `http://${FRONTEND_HOST}:${FRONTEND_PORT}`;
 let pageContent = '';
 let loadTime = 0;
 let responseTime = 0;
+let lastResponseStatus = 0;
 
 Before(async function() {
   const startTime = Date.now();
@@ -182,6 +184,42 @@ Then('la page a une section {word}', function(section) {
 
   if (!found) {
     throw new Error(`Section "${section}" not found on page`);
+  }
+});
+
+Then('la page a un footer ou navigation', function() {
+  const hasFooter = pageContent.includes('footer') ||
+                    pageContent.includes('<nav') ||
+                    pageContent.includes('navigation');
+
+  if (!hasFooter) {
+    throw new Error('Footer or navigation not found on page');
+  }
+});
+
+Then('la description contient {string}', function(text) {
+  if (!pageContent.includes(text)) {
+    throw new Error(`Description text "${text}" not found`);
+  }
+});
+
+When('Caddy proxifie vers le frontend', async function() {
+  try {
+    const cmd = 'docker-compose -f docker-compose.prod.yml exec caddy curl -s -w "\\n%{http_code}" http://frontend:5173/';
+    const result = execSync(cmd, { encoding: 'utf-8' }).trim();
+    const lines = result.split('\n');
+    lastResponseStatus = parseInt(lines[lines.length - 1]);
+    if (lastResponseStatus !== 200) {
+      throw new Error(`Expected 200, got ${lastResponseStatus}`);
+    }
+  } catch (error) {
+    throw new Error(`Caddy cannot proxy to frontend: ${error.message}`);
+  }
+});
+
+Then('la réponse est {int} OK', function(statusCode) {
+  if (lastResponseStatus !== statusCode) {
+    throw new Error(`Expected status ${statusCode}, got ${lastResponseStatus}`);
   }
 });
 

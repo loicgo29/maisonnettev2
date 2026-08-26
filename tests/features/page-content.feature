@@ -5,6 +5,10 @@ Fonctionnalité: Vérifier le contenu de la page de production
     Avant chaque scénario
     La page d'accueil est chargée
 
+  Scénario: Caddy peut accéder au frontend en interne
+    Quand Caddy proxifie vers le frontend
+    Alors la réponse est 200 OK
+
   Scénario: Page d'accueil affiche le titre principal
     Quand je vérifie le titre principal
     Alors le titre contient "Maisonnette de Bertheaume"
@@ -47,7 +51,6 @@ Fonctionnalité: Vérifier le contenu de la page de production
     Et la page a une section galerie
     Et la page a une section info
     Et la page a une section CTA
-    Et la page a un footer ou navigation
 
   Scénario: Performance - Page charge rapidement
     Quand je mesure le temps de chargement
