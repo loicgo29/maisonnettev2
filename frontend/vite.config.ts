@@ -37,6 +37,8 @@ export default defineConfig({
 		allowedHosts: [
 			'localhost',
 			'127.0.0.1',
+			'frontend',
+			'caddy',
 			'maisonnette-pecheur-bertheaume.fr',
 			'www.maisonnette-pecheur-bertheaume.fr'
 		]
