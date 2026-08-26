@@ -10,6 +10,9 @@ RUN npm run build
 FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
 
+# Clean directory (remove default nginx files)
+RUN rm -rf /usr/share/nginx/html/*
+
 # Copy SvelteKit build
 COPY --from=builder /app/build ./
 
