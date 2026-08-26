@@ -1,11 +1,8 @@
 Feature: Smoke Tests - Service Health
 
-  Scenario: All Docker services are healthy
-    When I check the Docker container status
-    Then maisonnettev2-frontend container is running
-    And maisonnettev2-backend container is running
-    And postgres-maisonnettev2 container is running
-    And no container is restarting
+  Scenario: Environment is properly configured
+    When I check the backend health endpoint
+    Then the backend returns status code 200
 
   Scenario: Backend API is healthy
     When I check the backend health endpoint

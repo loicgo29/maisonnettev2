@@ -16,8 +16,11 @@ Before(function () {
 
 Given('the Cloudflare tunnel is running', async function () {
   try {
-    const status = execSync('cloudflared tunnel info 9fe4952e-7609-4c06-8069-dce5e16c7cad --json').toString();
-    context.tunnelStatus = JSON.parse(status);
+    const status = execSync('cloudflared tunnel info maisonnette-pecheur-bertheaume').toString();
+    context.tunnelStatus = status;
+    if (!status.includes('CONNECTOR ID')) {
+      throw new Error('Tunnel not properly configured (no active connectors)');
+    }
   } catch (e) {
     throw new Error(`Tunnel not running or not configured: ${e.message}`);
   }
@@ -42,7 +45,7 @@ Given('the production domain is maisonnette-pecheur-bertheaume.fr', function () 
 
 When('I check the tunnel status', async function () {
   try {
-    const status = execSync('cloudflared tunnel info 9fe4952e-7609-4c06-8069-dce5e16c7cad').toString();
+    const status = execSync('cloudflared tunnel info maisonnette-pecheur-bertheaume').toString();
     context.tunnelInfoOutput = status;
   } catch (e) {
     throw new Error(`Failed to get tunnel info: ${e.message}`);
@@ -55,9 +58,13 @@ Then('the tunnel should be registered with Cloudflare', function () {
 });
 
 Then('the tunnel should have active connections \\(>= {int}\\)', function (minConnections) {
-  const matches = context.tunnelInfoOutput.match(/(\d+)\s+\d+\.\d+\.\d+/g);
-  const connectionCount = matches ? matches.length : 0;
-  assert(connectionCount >= minConnections, `Expected >= ${minConnections} connections, got ${connectionCount}`);
+  // Count the lines that contain CONNECTOR ID entries (after the header line)
+  const lines = context.tunnelInfoOutput.split('\n');
+  const connectorLines = lines.filter(line =>
+    line.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/)
+  );
+  const connectionCount = connectorLines.length;
+  assert(connectionCount >= minConnections, `Expected >= ${minConnections} connectors, got ${connectionCount}`);
 });
 
 Then('the ingress rules should point to http:\\/\\/localhost:8030', function () {
@@ -162,7 +169,7 @@ Then('the tunnel should reconnect within {int} seconds', async function (seconds
 
   while (Date.now() - startTime < maxWait) {
     try {
-      const status = execSync('cloudflared tunnel info 9fe4952e-7609-4c06-8069-dce5e16c7cad').toString();
+      const status = execSync('cloudflared tunnel info maisonnette-pecheur-bertheaume').toString();
       if (status.includes('CONNECTOR ID')) {
         return; // Reconnected
       }

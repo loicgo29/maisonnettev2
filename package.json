@@ -13,7 +13,8 @@
     "healthcheck": "bash run-all-tests.sh"
   },
   "devDependencies": {
-    "@cucumber/cucumber": "^11.0.0"
+    "@cucumber/cucumber": "^11.0.0",
+    "dotenv": "^17.4.2"
   },
   "dependencies": {
     "@playwright/test": "^1.62.1",

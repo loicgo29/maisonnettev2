@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { Given, When, Then, Before, After } from '@cucumber/cucumber';
 import fetch from 'node-fetch';
 import { execSync } from 'child_process';
@@ -8,6 +11,11 @@ let page;
 let response;
 let jsonData;
 let errors = [];
+
+// Déterminer les hostnames
+const isInDocker = process.env.DB_HOST === 'postgres-maisonnettev2';
+const dbHost = isInDocker ? 'postgres-maisonnettev2' : 'localhost';
+const dbPort = isInDocker ? 5432 : 5433;
 
 When('je navigue vers {string}', async function(url) {
   try {
@@ -77,11 +85,11 @@ Then('le champ {string} contient {string}', function(field, value) {
 
 When('je test la connexion PostgreSQL sur {string}', async function(connectionString) {
   const client = new Client({
-    host: 'localhost',
-    port: 5433,
-    user: 'maisonnettev2',
+    host: dbHost,
+    port: dbPort,
+    user: process.env.DB_USER || 'maisonnettev2',
     password: process.env.DB_PASSWORD || 'postgres',
-    database: 'maisonnettev2',
+    database: process.env.DB_NAME || 'maisonnettev2',
   });
 
   try {

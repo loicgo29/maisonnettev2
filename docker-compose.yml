@@ -48,10 +48,11 @@ services:
       postgres-maisonnettev2:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/health/ready"]
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3001/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
       interval: 10s
       timeout: 5s
       retries: 3
+      start_period: 15s
     networks:
       - maisonnettev2-net
 
@@ -67,8 +68,48 @@ services:
     networks:
       - maisonnettev2-net
 
+  caddy:
+    build:
+      context: ./caddy
+      dockerfile: Dockerfile
+    container_name: maisonnettev2-caddy
+    ports:
+      - "8030:80"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - maisonnettev2-net
+    volumes:
+      - maisonnettev2_caddy_data:/data
+      - maisonnettev2_caddy_config:/config
+
+  tests:
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+    container_name: maisonnettev2-tests
+    environment:
+      DB_USER: ${DB_USER:-maisonnettev2}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME:-maisonnettev2}
+      DB_HOST: postgres-maisonnettev2
+      NODE_ENV: ${NODE_ENV:-development}
+      VITE_API_URL: http://backend:3001
+    depends_on:
+      backend:
+        condition: service_healthy
+      postgres-maisonnettev2:
+        condition: service_healthy
+    networks:
+      - maisonnettev2-net
+    profiles:
+      - test
+
 volumes:
   maisonnettev2_pg_data:
+  maisonnettev2_caddy_data:
+  maisonnettev2_caddy_config:
 
 networks:
   maisonnettev2-net:

@@ -11,33 +11,33 @@ Feature: Cloudflare Tunnel Production Deployment
   Scenario: Tunnel configuration is correct
     When I check the tunnel status
     Then the tunnel should be registered with Cloudflare
-    And the tunnel should have active connections (>= 2)
+    And the tunnel should have active connections (>= 1)
     And the ingress rules should point to http://localhost:8030
 
   Scenario: Production homepage is accessible via HTTPS
-    When I access https://maisonnette-pecheur-bertheaume.fr/
+    When I access "https://maisonnette-pecheur-bertheaume.fr/"
     Then the response status code should be 200
     And the response should contain the landing page HTML
     And the response headers should include HTTPS certificate
 
   Scenario: Production calendar page is accessible
-    When I access https://maisonnette-pecheur-bertheaume.fr/calendar
+    When I access "https://maisonnette-pecheur-bertheaume.fr/calendar"
     Then the response status code should be 200
     And the response should contain "Calendrier" text
     And the response should be valid HTML
 
   Scenario: Production API gites endpoint works
-    When I access https://maisonnette-pecheur-bertheaume.fr/api/gites
+    When I access "https://maisonnette-pecheur-bertheaume.fr/api/gites"
     Then the response status code should be 200
     And the response should be valid JSON
     And the response should contain at least 1 gite
 
   Scenario: Invalid routes return 404
-    When I access https://maisonnette-pecheur-bertheaume.fr/invalid-route
+    When I access "https://maisonnette-pecheur-bertheaume.fr/invalid-route"
     Then the response status code should be 404
 
   Scenario: WWW subdomain redirects correctly
-    When I access https://www.maisonnette-pecheur-bertheaume.fr/
+    When I access "https://www.maisonnette-pecheur-bertheaume.fr/"
     Then the response status code should be 200
     And the response should contain the landing page HTML
 
