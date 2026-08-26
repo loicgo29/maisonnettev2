@@ -170,10 +170,30 @@ jobs:
             });
           "
 
+  bdd-tests:
+    name: Tests BDD / E2E
+    runs-on: ubuntu-latest
+    needs: [frontend, backend, provisionnement]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Tests BDD
+        run: npm run test:bdd
+
   docker-images:
     name: Build des images de production
     runs-on: ubuntu-latest
-    needs: [frontend, backend, provisionnement]
+    needs: [frontend, backend, provisionnement, bdd-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
@@ -188,7 +208,7 @@ jobs:
   summary:
     name: Récapitulatif
     runs-on: ubuntu-latest
-    needs: [frontend, backend, provisionnement, docker-images]
+    needs: [frontend, backend, provisionnement, bdd-tests, docker-images]
     if: always()
 
     steps:
@@ -197,11 +217,13 @@ jobs:
           echo "Frontend       : ${{ needs.frontend.result }}"
           echo "Backend        : ${{ needs.backend.result }}"
           echo "Provisionnement: ${{ needs.provisionnement.result }}"
-          echo "Images   : ${{ needs.docker-images.result }}"
+          echo "Tests BDD      : ${{ needs.bdd-tests.result }}"
+          echo "Images         : ${{ needs.docker-images.result }}"
 
           if [ "${{ needs.frontend.result }}" = "failure" ] || \
              [ "${{ needs.backend.result }}" = "failure" ] || \
              [ "${{ needs.provisionnement.result }}" = "failure" ] || \
+             [ "${{ needs.bdd-tests.result }}" = "failure" ] || \
              [ "${{ needs.docker-images.result }}" = "failure" ]; then
             echo "Pipeline en échec"
             exit 1
