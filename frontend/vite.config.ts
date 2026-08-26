@@ -3,16 +3,7 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-	plugins: [
-		sveltekit({
-			compilerOptions: {
-				runes: true
-			},
-			// adapter-node : le site est auto-hébergé en conteneur derrière Caddy.
-			// Produit un serveur Node autonome démarré par `node build/index.js`.
-			adapter: adapter()
-		})
-	],
+	plugins: [sveltekit()],
 	server: {
 		host: '0.0.0.0',
 		port: 8030,
