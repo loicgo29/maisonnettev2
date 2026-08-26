@@ -11,7 +11,7 @@ interface EmailOptions {
 // que la réception.
 const EXPEDITEUR =
   process.env.MAIL_FROM ||
-  `contact@${process.env.DOMAIN || 'maisonnette-pecheur-bertheaume.fr'}`
+  'onboarding@resend.dev' // En prod, change en domaine vérifié
 
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
   try {
