@@ -47,7 +47,22 @@ router.post('/', limiter, async (req: Request, res: Response) => {
     await sendEmail({
       to: data.email,
       subject: 'Nous avons reçu votre message',
-      html: `<p>Merci ${data.nom}, nous vous recontacterons bientôt.</p>`,
+      html: `
+        <h2>Merci pour votre message!</h2>
+        <p>Bonjour ${data.nom},</p>
+        <p>Nous avons bien reçu votre message et vous remercie de nous avoir contactés.</p>
+        <p>Nous vous répondrons dans les meilleurs délais.</p>
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;" />
+        <h3>Pour nous joindre directement:</h3>
+        <p><strong>Téléphone:</strong> <a href="tel:+33781103889" style="color: #667eea; text-decoration: none;">+33 7 81 10 38 89</a></p>
+        <p><strong>Disponibilité:</strong> 24h/24, 7j/7</p>
+        <p><strong>Email:</strong> <a href="mailto:lgbertheaume@gmail.com" style="color: #667eea; text-decoration: none;">lgbertheaume@gmail.com</a></p>
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;" />
+        <p style="color: #666; font-size: 12px; margin-top: 30px;">
+          Maisonnette de Bertheaume<br />
+          Côtes d'Armor, France
+        </p>
+      `,
     })
 
     res.json({ success: true, data: { message: 'Email envoyé avec succès' } })
