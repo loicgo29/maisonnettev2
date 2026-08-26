@@ -30,5 +30,15 @@ export default defineConfig({
 				changeOrigin: true
 			}
 		}
+	},
+	preview: {
+		host: '0.0.0.0',
+		port: 4173,
+		allowedHosts: [
+			'localhost',
+			'127.0.0.1',
+			'maisonnette-pecheur-bertheaume.fr',
+			'www.maisonnette-pecheur-bertheaume.fr'
+		]
 	}
 });
