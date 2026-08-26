@@ -181,6 +181,6 @@ Then('Caddy écoute sur le port {int}', function(port) {
 
 Then('Caddy ne retourne pas 403 Forbidden du frontend', function() {
   if (lastResponseText.includes('403')) {
-    throw new Error('Caddy returning 403 Forbidden - Vite allowedHosts misconfigured');
+    throw new Error('Caddy returning 403 Forbidden - check frontend nginx configuration');
   }
 });
