@@ -1,4 +1,6 @@
 <script>
+	import { goto } from '$app/navigation';
+
 	const photos = [
 		{ src: '/images/IMG_0618.JPG', alt: 'Jardin à gauche' },
 		{ src: '/images/IMG_0627.JPG', alt: 'Vue d\'ensemble' },
@@ -9,7 +11,34 @@
 		{ src: '/images/IMG_0619.JPG', alt: 'Extérieur 2' },
 		{ src: '/images/GOPR5983.JPG', alt: 'Piscine' }
 	];
+
+	let lightboxOpen = false;
+	let selectedPhoto = null;
+
+	function openLightbox(photo) {
+		selectedPhoto = photo;
+		lightboxOpen = true;
+		document.body.style.overflow = 'hidden';
+	}
+
+	function closeLightbox() {
+		lightboxOpen = false;
+		document.body.style.overflow = '';
+		selectedPhoto = null;
+	}
+
+	function goToCalendar() {
+		goto('/calendar');
+	}
+
+	function handleKeydown(e) {
+		if (e.key === 'Escape') {
+			closeLightbox();
+		}
+	}
 </script>
+
+<svelte:window on:keydown={handleKeydown} />
 
 <div class="page">
 	<section class="hero">
@@ -26,7 +55,7 @@
 		<h2>Photos de la propriété</h2>
 		<div class="photo-grid">
 			{#each photos as photo, i}
-				<div class="photo-card" title={photo.alt}>
+				<div class="photo-card" title={photo.alt} on:click={() => openLightbox(photo)} role="button" tabindex="0">
 					<img src={photo.src} alt={photo.alt} loading="lazy" />
 					<span class="photo-number">{i + 1}</span>
 				</div>
@@ -55,9 +84,18 @@
 
 	<section class="cta">
 		<h2>Prêt pour vos vacances?</h2>
-		<button class="btn-primary">Consulter les disponibilités</button>
+		<button class="btn-primary" on:click={goToCalendar}>Consulter les disponibilités</button>
 	</section>
 </div>
+
+{#if lightboxOpen && selectedPhoto}
+	<div class="lightbox" on:click={closeLightbox} role="button" tabindex="-1">
+		<div class="lightbox-content" on:click|stopPropagation={() => {}}>
+			<button class="lightbox-close" on:click={closeLightbox}>✕</button>
+			<img src={selectedPhoto.src} alt={selectedPhoto.alt} />
+		</div>
+	</div>
+{/if}
 
 <style>
 	:global(body) {
@@ -219,6 +257,61 @@
 	.btn-primary:hover {
 		transform: translateY(-2px);
 		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+	}
+
+	/* Lightbox */
+	.lightbox {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.9);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1000;
+		padding: 20px;
+		cursor: pointer;
+	}
+
+	.lightbox-content {
+		position: relative;
+		max-width: 90vw;
+		max-height: 90vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: default;
+	}
+
+	.lightbox-content img {
+		max-width: 100%;
+		max-height: 100%;
+		border-radius: 4px;
+		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+	}
+
+	.lightbox-close {
+		position: absolute;
+		top: -40px;
+		right: 0;
+		background: rgba(255, 255, 255, 0.2);
+		border: none;
+		color: white;
+		font-size: 32px;
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: background 0.3s ease;
+	}
+
+	.lightbox-close:hover {
+		background: rgba(255, 255, 255, 0.4);
 	}
 
 	/* Responsive */
