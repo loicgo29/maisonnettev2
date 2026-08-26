@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import { When, Then, Before, After } from '@cucumber/cucumber';
 import { execSync } from 'child_process';
 import fetch from 'node-fetch';

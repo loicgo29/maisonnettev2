@@ -40,7 +40,7 @@ Then('the page loads successfully', function() {
 });
 
 Then('the gallery contains 8 photos', async function() {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   // Compter les images dans la galerie
@@ -54,7 +54,7 @@ Then('the gallery contains 8 photos', async function() {
 });
 
 Then('the image counter shows correct value', async function() {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   if (!html.includes('/ 8')) {
@@ -64,7 +64,7 @@ Then('the image counter shows correct value', async function() {
 });
 
 Then('I can navigate to next photo with button', async function() {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   // Vérifier que les boutons de navigation existent
@@ -75,7 +75,7 @@ Then('I can navigate to next photo with button', async function() {
 });
 
 Then('I can navigate to previous photo', async function() {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   if (!html.includes('❮')) {
@@ -85,7 +85,7 @@ Then('I can navigate to previous photo', async function() {
 });
 
 Then('photo {int} filename is {string}', async function(photoNum, filename) {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   if (!html.includes(filename)) {
@@ -99,7 +99,7 @@ Then('I can click thumbnail {int}', async function(thumbNum) {
 });
 
 Then('I can open lightbox with expand button', async function() {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   if (!html.includes('⛶')) {
@@ -109,7 +109,7 @@ Then('I can open lightbox with expand button', async function() {
 });
 
 Then('lightbox is visible', async function() {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   if (!html.includes('lightbox-overlay')) {
@@ -119,7 +119,7 @@ Then('lightbox is visible', async function() {
 });
 
 Then('I can close lightbox with close button', async function() {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   if (!html.includes('lightbox-close')) {
@@ -149,7 +149,7 @@ Then('escape key closes lightbox', async function() {
 });
 
 Then('navigation buttons are present', async function() {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   if (!html.includes('❮') || !html.includes('❯')) {
@@ -159,7 +159,7 @@ Then('navigation buttons are present', async function() {
 });
 
 Then('expand button is available', async function() {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   if (!html.includes('⛶')) {
@@ -169,7 +169,7 @@ Then('expand button is available', async function() {
 });
 
 Then('lightbox is configured', async function() {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   if (!html.includes('lightbox-overlay')) {
@@ -179,7 +179,7 @@ Then('lightbox is configured', async function() {
 });
 
 Then('thumbnails grid is responsive', async function() {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   if (!html.includes('gallery-thumbnails')) {
@@ -189,7 +189,7 @@ Then('thumbnails grid is responsive', async function() {
 });
 
 Then('main image adapts to screen size', async function() {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   if (!html.includes('gallery-main')) {
@@ -199,7 +199,7 @@ Then('main image adapts to screen size', async function() {
 });
 
 Then('gallery counter displays correctly', async function() {
-  const response = await fetch('http://localhost:5173');
+  const response = await fetch(FRONTEND_URL);
   const html = await response.text();
 
   if (!html.includes('image-counter')) {
