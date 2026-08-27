@@ -56,6 +56,11 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        PRIVATE_GOOGLE_CLIENT_ID: ${PRIVATE_GOOGLE_CLIENT_ID}
+        PRIVATE_GOOGLE_CLIENT_SECRET: ${PRIVATE_GOOGLE_CLIENT_SECRET}
+        PRIVATE_GOOGLE_REDIRECT_URI: ${PRIVATE_GOOGLE_REDIRECT_URI}
+        PRIVATE_GITE_CALENDAR_ID: ${PRIVATE_GITE_CALENDAR_ID}
     container_name: maisonnette-frontend
     restart: unless-stopped
     depends_on:
