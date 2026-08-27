@@ -158,3 +158,44 @@ Then('aucun container n\'est dans l\'état {string}', function(state) {
     throw new Error(`Found containers in "${state}" state`);
   }
 });
+
+Then('la page charge', function() {
+  if (!response.ok) {
+    throw new Error(`Expected successful response, got ${response.status}`);
+  }
+});
+
+Then('les endpoints sont listés', async function() {
+  const html = await response.text();
+  if (!html.includes('swagger') && !html.includes('openapi') && !html.includes('/api')) {
+    throw new Error('No API endpoints found in Swagger documentation');
+  }
+});
+
+When('je vérifie le fichier .env', function() {
+  const fs = require('fs');
+  const path = require('path');
+
+  try {
+    const envPath = path.resolve(process.cwd(), '.env');
+    const envContent = fs.readFileSync(envPath, 'utf-8');
+    this.envContent = envContent;
+  } catch (error) {
+    throw new Error(`Failed to read .env file: ${error.message}`);
+  }
+});
+
+Then('les clés requises existent:', function(dataTable) {
+  const keys = dataTable.raw().flat();
+  const missingKeys = [];
+
+  keys.forEach(key => {
+    if (!this.envContent.includes(`${key}=`)) {
+      missingKeys.push(key);
+    }
+  });
+
+  if (missingKeys.length > 0) {
+    throw new Error(`Missing environment keys: ${missingKeys.join(', ')}`);
+  }
+});
