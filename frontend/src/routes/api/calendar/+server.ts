@@ -1,11 +1,13 @@
 import { json } from '@sveltejs/kit';
 
+import { PRIVATE_GOOGLE_CLIENT_ID, PRIVATE_GOOGLE_CLIENT_SECRET, PRIVATE_GOOGLE_REDIRECT_URI, PRIVATE_GITE_CALENDAR_ID } from '$env/static/private';
+
 // Utilise "primary" = ton calendrier principal
 // Ou remplace par l'ID du calendrier dédié aux réservations
-const CALENDAR_ID = process.env.GITE_CALENDAR_ID || 'primary';
-const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:8030/api/calendar/callback';
+const CALENDAR_ID = PRIVATE_GITE_CALENDAR_ID || 'primary';
+const CLIENT_ID = PRIVATE_GOOGLE_CLIENT_ID;
+const CLIENT_SECRET = PRIVATE_GOOGLE_CLIENT_SECRET;
+const REDIRECT_URI = PRIVATE_GOOGLE_REDIRECT_URI || 'http://localhost:8030/api/calendar/callback';
 
 export async function GET({ cookies }) {
 	try {

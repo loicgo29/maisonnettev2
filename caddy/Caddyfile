@@ -15,6 +15,10 @@
 :80 {
 	encode gzip zstd
 
+	handle /api/calendar* {
+		reverse_proxy frontend:5173
+	}
+
 	handle /api/* {
 		reverse_proxy backend:3001
 	}
