@@ -1,0 +1,70 @@
+# Dependencies
+node_modules/
+*/node_modules/
+.npm/
+
+# Build outputs
+dist/
+build/
+.next/
+.svelte-kit/
+backend/dist/
+frontend/build/
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+.env.example
+
+# Git & VCS
+.git/
+.gitignore
+.gitattributes
+
+# IDE & editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+*.log.json
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+tmp/
+
+# Large files (already in git)
+*.tar.gz
+*.zip
+
+# Docker
+.colima/
+.docker/
+colima/
+
+# Database
+*.sqlite
+*.db
+dump.sql
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Lock files (optional - keep if you want claude to see versions)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
