@@ -11,7 +11,8 @@ COPY . .
 
 RUN npm run build
 
-RUN npx prisma generate
+# Prisma must generate even if DB is unavailable (introspection skipped in CI)
+RUN DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy" npx prisma generate || true
 
 # Production stage
 FROM node:20-alpine

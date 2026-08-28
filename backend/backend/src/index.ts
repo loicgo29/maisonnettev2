@@ -1,12 +1,7 @@
-import dotenv from 'dotenv';
-console.log('[index] Before dotenv.config(), DATABASE_URL:', process.env.DATABASE_URL?.substring(0, 50));
-// Load .env for local development (in Docker, env vars come from docker-compose)
-dotenv.config();
-console.log('[index] After dotenv.config(), DATABASE_URL:', process.env.DATABASE_URL?.substring(0, 50));
-
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swagger.js';
 import contactRouter from './routes/contact.js';
@@ -14,17 +9,37 @@ import healthRouter from './routes/health.js';
 import gitesRouter from './routes/gites.js';
 import reservationsRouter from './routes/reservations.js';
 import calendarRouter from './routes/calendar.js';
-import aloRouter from './routes/alo.js';
 import { errorHandler } from './middleware/error.js';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
+// Security middleware
 app.use(helmet());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+
+// En production, Caddy sert le front et l'API sur le même domaine : les appels
+// sont same-origin. L'origine reste déclarée pour les requêtes qui la portent.
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? process.env.PUBLIC_ORIGIN || `https://${process.env.DOMAIN}`
+        : 'http://localhost:1234',
+    credentials: true,
+  })
+);
+
+// Body parser
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+// Static files
+app.use(express.static('public'));
+
+// Swagger documentation
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.use('/health', healthRouter);
@@ -32,7 +47,6 @@ app.use('/api/gites', gitesRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use('/api/calendar', calendarRouter);
 app.use('/api/contact', contactRouter);
-app.use('/api/alo', aloRouter);
 
 // 404 handler
 app.use((_req, res) => {
