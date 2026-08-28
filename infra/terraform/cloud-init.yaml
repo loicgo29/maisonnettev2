@@ -4,7 +4,12 @@
 
 users:
   - name: ${utilisateur}
-    groups: [docker, sudo]
+    # Pas de groupe `docker` ici : il n'existe pas encore à la création de
+    # l'utilisateur, Docker n'étant installé que dans runcmd. Le demander
+    # maintenant fait échouer la création du compte sur certaines versions de
+    # cloud-init — et laisse le serveur sans accès SSH. L'ajout au groupe se
+    # fait après l'installation (`usermod -aG docker` plus bas).
+    groups: [sudo]
     shell: /bin/bash
     sudo: ALL=(ALL) NOPASSWD:ALL
     ssh_authorized_keys: []  # rempli par hcloud_ssh_key sur root, recopié ci-dessous
@@ -40,7 +45,21 @@ runcmd:
   - systemctl enable --now docker
   - usermod -aG docker ${utilisateur}
 
-  # --- Volume de données : formaté seulement s'il est vierge ---
+  # --- Volume de données ---
+  # Le volume est attaché APRÈS la création du serveur : au premier démarrage,
+  # le périphérique peut ne pas encore exister. On l'attend jusqu'à 120 s.
+  # Sans cette attente, mkfs et mount échouent, et PostgreSQL écrirait sur le
+  # disque éphémère du serveur — silencieusement, jusqu'à la première
+  # destruction de la machine.
+  - |
+    for i in $(seq 1 60); do
+      [ -b ${volume_device} ] && break
+      sleep 2
+    done
+    if [ ! -b ${volume_device} ]; then
+      echo "ERREUR: volume ${volume_device} absent après 120 s" | tee /donnees-VOLUME-ABSENT
+      exit 1
+    fi
   # blkid échoue sur un volume sans système de fichiers : c'est le signal qu'il
   # faut le formater. Sur un volume déjà rempli (serveur recréé), on se contente
   # de le monter — le formater détruirait la base.
@@ -48,7 +67,11 @@ runcmd:
   - mkdir -p /donnees
   - echo "${volume_device} /donnees ext4 discard,nofail,defaults 0 0" >> /etc/fstab
   - mount /donnees
-  - mkdir -p /donnees/postgres /donnees/uploads /donnees/sauvegardes
+  # Garde-fou : vérifier que /donnees est bien le volume et non le disque
+  # système. Un montage silencieusement raté placerait la base au mauvais
+  # endroit, ce qui ne se verrait qu'au moment de recréer le serveur.
+  - mountpoint -q /donnees || { echo "ERREUR: /donnees n'est pas un point de montage" | tee /donnees-NON-MONTE; exit 1; }
+  - mkdir -p /donnees/postgres /donnees/uploads /donnees/sauvegardes /donnees/caddy
   - chown -R ${utilisateur}:${utilisateur} /donnees
 
   # --- Répertoire applicatif ---
