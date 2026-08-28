@@ -1,0 +1,8 @@
+# État Terraform : contient les valeurs sensibles en clair (jeton, IP, secrets).
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+# Fichiers de variables : ne jamais versionner un jeton.
+*.tfvars
+!example.tfvars

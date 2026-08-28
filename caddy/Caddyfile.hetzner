@@ -1,0 +1,54 @@
+# Routeur du site public sur Hetzner.
+#
+# Différence essentielle avec le Caddyfile du Mac mini : ici Caddy est en
+# frontal direct sur Internet et termine lui-même le TLS via Let's Encrypt.
+# Sur le Mac mini, le TLS était assuré par Cloudflare en amont du tunnel, d'où
+# `auto_https off` et une écoute en clair sur :80.
+#
+# Le certificat est obtenu au premier démarrage : les DNS A/AAAA doivent donc
+# déjà pointer sur le serveur, sinon la validation HTTP-01 échoue.
+
+{
+	email {$ACME_EMAIL}
+	# Décommenter pour mettre au point sans consommer le quota Let's Encrypt
+	# (5 échecs/heure/domaine, et le blocage dure une heure) :
+	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+{$DOMAIN}, www.{$DOMAIN} {
+	encode gzip zstd
+
+	handle /api/calendar* {
+		reverse_proxy frontend:5173
+	}
+
+	handle /api/* {
+		reverse_proxy backend:3001
+	}
+
+	# Photos des gîtes, servies par express.static du backend.
+	handle /uploads/* {
+		reverse_proxy backend:3001
+	}
+
+	handle {
+		reverse_proxy frontend:5173
+	}
+
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		# HSTS : uniquement ici, pas sur le Mac mini où le domaine peut être
+		# servi en clair pendant une bascule.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	log {
+		output file /data/access.log {
+			roll_size 10MB
+			roll_keep 5
+		}
+	}
+}

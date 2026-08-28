@@ -1,0 +1,81 @@
+#cloud-config
+# Prépare le serveur au premier démarrage : Docker, utilisateur de déploiement,
+# volume de données monté, durcissement SSH.
+
+users:
+  - name: ${utilisateur}
+    groups: [docker, sudo]
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys: []  # rempli par hcloud_ssh_key sur root, recopié ci-dessous
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - ca-certificates
+  - curl
+  - gnupg
+  - ufw
+  - fail2ban
+  - postgresql-client
+  - unattended-upgrades
+
+write_files:
+  # Le pare-feu Hetzner filtre déjà en amont ; ufw est une seconde barrière au
+  # cas où une règle cloud serait relâchée par erreur.
+  - path: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+
+runcmd:
+  # --- Docker depuis le dépôt officiel ---
+  - install -m 0755 -d /etc/apt/keyrings
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  - chmod a+r /etc/apt/keyrings/docker.asc
+  - echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list
+  - apt-get update
+  - apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  - systemctl enable --now docker
+  - usermod -aG docker ${utilisateur}
+
+  # --- Volume de données : formaté seulement s'il est vierge ---
+  # blkid échoue sur un volume sans système de fichiers : c'est le signal qu'il
+  # faut le formater. Sur un volume déjà rempli (serveur recréé), on se contente
+  # de le monter — le formater détruirait la base.
+  - blkid ${volume_device} || mkfs.ext4 -F ${volume_device}
+  - mkdir -p /donnees
+  - echo "${volume_device} /donnees ext4 discard,nofail,defaults 0 0" >> /etc/fstab
+  - mount /donnees
+  - mkdir -p /donnees/postgres /donnees/uploads /donnees/sauvegardes
+  - chown -R ${utilisateur}:${utilisateur} /donnees
+
+  # --- Répertoire applicatif ---
+  - mkdir -p /opt/maisonnettev2
+  - chown -R ${utilisateur}:${utilisateur} /opt/maisonnettev2
+
+  # --- Clés SSH : recopier celles de root vers l'utilisateur de déploiement ---
+  - mkdir -p /home/${utilisateur}/.ssh
+  - cp /root/.ssh/authorized_keys /home/${utilisateur}/.ssh/authorized_keys
+  - chown -R ${utilisateur}:${utilisateur} /home/${utilisateur}/.ssh
+  - chmod 700 /home/${utilisateur}/.ssh
+  - chmod 600 /home/${utilisateur}/.ssh/authorized_keys
+
+  # --- Durcissement SSH ---
+  # Fait après la recopie des clés : inverser l'ordre couperait tout accès.
+  - sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+  - sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+  - systemctl restart ssh
+
+  # --- ufw ---
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw allow 22/tcp
+  - ufw allow 80/tcp
+  - ufw allow 443/tcp
+  - ufw --force enable
+
+  - systemctl enable --now fail2ban
+
+final_message: "Serveur prêt après $UPTIME s — Docker installé, volume monté sur /donnees"

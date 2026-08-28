@@ -1,0 +1,59 @@
+# Surcharge de docker-compose.prod.yml pour le serveur Hetzner.
+#
+# Usage :
+#   docker compose -f docker-compose.prod.yml -f docker-compose.hetzner.yml up -d
+#
+# Trois écarts avec le Mac mini :
+#
+# 1. Caddy est en frontal direct sur Internet (80/443) et termine le TLS
+#    lui-même via Let's Encrypt, au lieu d'écouter sur 127.0.0.1:8030 derrière
+#    le tunnel Cloudflare qui assurait le TLS.
+# 2. Les données vivent sur /donnees, le volume Hetzner attaché au serveur, et
+#    non dans des volumes Docker anonymes. Le serveur peut ainsi être détruit
+#    et recréé sans perdre la base — une remise à zéro du moteur Docker a
+#    effacé des données vivantes le 2026-08-28, ce montage l'évite.
+# 3. Le port 3001 du backend n'est plus publié : rien n'a besoin de l'atteindre
+#    depuis l'hôte, Caddy le joint par le réseau Docker interne.
+
+services:
+  postgres:
+    volumes: !override
+      - /donnees/postgres:/var/lib/postgresql/data
+
+  backend:
+    # `!reset` et non `ports: []` : Compose ADDITIONNE les listes d'un fichier
+    # de surcharge au lieu de les remplacer. Sans ce tag, le 3001 hérité reste
+    # publié et le port serait exposé sur l'hôte.
+    ports: !reset []
+    volumes: !override
+      - /donnees/uploads:/app/public/uploads
+
+  caddy:
+    build:
+      context: ./caddy
+      dockerfile: Dockerfile
+    # `!override` et non `!reset` : le premier REMPLACE la liste héritée, le
+    # second la supprime purement et simplement. Sans l'un des deux, Compose
+    # additionne et le 127.0.0.1:8030 du Mac mini subsisterait à côté de 443.
+    ports: !override
+      - '80:80'
+      - '443:443'
+      - '443:443/udp' # HTTP/3
+    environment:
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+    volumes: !override
+      # Caddyfile dédié : HTTPS automatique et domaine réel.
+      - ./caddy/Caddyfile.hetzner:/etc/caddy/Caddyfile:ro
+      # Les certificats survivent aux redémarrages : sans cela, chaque
+      # reconstruction redemanderait un certificat et heurterait le quota
+      # Let's Encrypt (5 par domaine et par semaine).
+      - /donnees/caddy:/data
+
+volumes:
+  # Les volumes nommés du compose de base ne servent plus : tout est sur
+  # /donnees. Déclarés ici pour que Compose reste satisfait.
+  postgres_data:
+  uploads_data:
+  caddy_data:
+  caddy_config:
