@@ -5,17 +5,13 @@ const router = Router();
 
 // GET /api/alo/accounts
 router.get('/accounts', async (_req: Request, res: Response): Promise<void> => {
-  console.log('[alo/accounts] Request received, DATABASE_URL:', process.env.DATABASE_URL?.substring(0, 40));
   try {
-    console.log('[alo/accounts] Calling prisma.aloAccounts.findMany()');
     const accounts = await prisma.aloAccounts.findMany({
       orderBy: { id: 'asc' }
     });
-    console.log('[alo/accounts] Success:', accounts.length, 'accounts');
     res.json(accounts);
   } catch (error) {
-    console.error('[alo/accounts] Error:', error instanceof Error ? error.message : String(error));
-    res.status(500).json({ error: 'Failed to fetch accounts', details: error instanceof Error ? error.message : String(error) });
+    res.status(500).json({ error: 'Failed to fetch accounts' });
   }
 });
 

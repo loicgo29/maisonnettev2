@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
-console.log('[index] Before dotenv.config(), DATABASE_URL:', process.env.DATABASE_URL?.substring(0, 50));
-// Load .env for local development (in Docker, env vars come from docker-compose)
+// Chargé avant les imports de routes : les routers instancient Prisma au chargement
+// du module, donc DATABASE_URL doit déjà être en place. En conteneur, les variables
+// viennent de docker-compose et .env est absent.
 dotenv.config();
-console.log('[index] After dotenv.config(), DATABASE_URL:', process.env.DATABASE_URL?.substring(0, 50));
 
 import express from 'express';
 import cors from 'cors';
