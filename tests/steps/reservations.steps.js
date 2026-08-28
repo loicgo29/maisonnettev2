@@ -9,12 +9,17 @@ let lastResponse = null;
 let lastStatus = 0;
 let requestCount = 0;
 
-// Données de test
-const testGiteId = 'clmk0dz0j000008mh1a2b3c4d'; // Gîte de test
+// Le gîte est créé par le seed avec un cuid généré : coder un identifiant en
+// dur produisait un 404 systématique. On le résout depuis l'API avant chaque
+// scénario.
+// Les réservations créées ne sont pas nettoyées : des dates fixes feraient
+// échouer toute exécution suivante en « Dates not available ». On décale la
+// fenêtre à chaque lancement pour garantir l'isolation.
+const decalageJours = 3650 + Math.floor(Math.random() * 3650);
 const validReservation = {
-  giteId: testGiteId,
-  dateDebut: new Date(Date.now() + 7*24*60*60*1000).toISOString(),
-  dateFin: new Date(Date.now() + 14*24*60*60*1000).toISOString(),
+  giteId: null,
+  dateDebut: new Date(Date.now() + decalageJours*24*60*60*1000).toISOString(),
+  dateFin: new Date(Date.now() + (decalageJours+7)*24*60*60*1000).toISOString(),
   clientNom: 'Test Client',
   clientEmail: 'test@example.com',
   clientTelephone: '+33612345678'
@@ -22,6 +27,14 @@ const validReservation = {
 
 Before(async function() {
   requestCount = 0;
+  if (!validReservation.giteId) {
+    const response = await fetch(`${API_URL}/gites`);
+    const gites = await response.json();
+    if (!Array.isArray(gites) || gites.length === 0) {
+      throw new Error('Aucun gîte en base : exécuter prisma/seed.mjs avant les tests');
+    }
+    validReservation.giteId = gites[0].id;
+  }
 });
 
 When('l\'API est accessible', async function() {
