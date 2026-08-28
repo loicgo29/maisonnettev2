@@ -26,10 +26,15 @@ Fonctionnalité: Vérification de santé des services (Health Check)
 
   Scénario: Toutes les variables d'environnement sont définies
     Quand je vérifie le fichier .env
+    # DATABASE_URL n'est pas listée : docker-compose la compose à partir de
+    # DB_USER / DB_PASSWORD / DB_NAME. L'exiger ici dupliquerait la source de
+    # vérité de la chaîne de connexion.
     Alors les clés requises existent:
       | VITE_API_URL |
       | NODE_ENV |
-      | DATABASE_URL |
+      | DB_USER |
+      | DB_PASSWORD |
+      | DB_NAME |
       | STRIPE_SECRET_KEY |
       | STRIPE_PUBLISHABLE_KEY |
 

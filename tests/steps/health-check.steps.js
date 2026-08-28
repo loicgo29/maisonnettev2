@@ -3,6 +3,9 @@ dotenv.config();
 
 import { Given, When, Then, Before, After } from '@cucumber/cucumber';
 import fetch from 'node-fetch';
+// Ce fichier est un module ESM : `require` n'y existe pas.
+import fs from 'node:fs';
+import path from 'node:path';
 import { execSync } from 'child_process';
 import pkg from 'pg';
 const { Client } = pkg;
@@ -173,9 +176,6 @@ Then('les endpoints sont listés', async function() {
 });
 
 When('je vérifie le fichier .env', function() {
-  const fs = require('fs');
-  const path = require('path');
-
   try {
     const envPath = path.resolve(process.cwd(), '.env');
     const envContent = fs.readFileSync(envPath, 'utf-8');
