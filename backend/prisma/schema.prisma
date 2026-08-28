@@ -8,11 +8,13 @@ generator client {
   // node:20-alpine embarque OpenSSL 3, alors que le moteur par défaut réclame
   // libssl.so.1.1 et échoue au démarrage.
   binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["public", "alo"]
 }
 
 model Gite {
@@ -30,6 +32,7 @@ model Gite {
   photos       Photo[]
   reservations Reservation[]
 
+  @@schema("public")
   @@index([slug])
 }
 
@@ -43,6 +46,7 @@ model Photo {
   alt       String?
   createdAt DateTime @default(now())
 
+  @@schema("public")
   @@index([giteId])
   @@index([categorie])
 }
@@ -63,6 +67,7 @@ model Reservation {
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
+  @@schema("public")
   @@index([giteId])
   @@index([statut])
   @@index([dateDebut, dateFin])
@@ -73,12 +78,13 @@ model aloAccounts {
   id              Int                @id
   name            String
   institution     String?
-  owner           String?
+  owner           AloAccountOwner
   current_balance Decimal?  @db.Decimal(10, 2)
   updated_at      DateTime?
   expenses        aloExpenses[]
 
-  @@map("alo_accounts")
+  @@schema("alo")
+  @@map("accounts")
 }
 
 model aloExpenses {
@@ -88,9 +94,9 @@ model aloExpenses {
   // erreurs d'arrondi sur les agrégats.
   amount      Decimal   @db.Decimal(10, 2)
   label       String?
-  category    String?
-  source      String?
-  status      String?
+  category    AloExpenseCategory?
+  source      AloExpenseSource?
+  status      AloExpenseStatus?
   comment     String?
   sharing_mode String?
   account_id  Int
@@ -99,7 +105,8 @@ model aloExpenses {
   updated_at  DateTime
   account     aloAccounts @relation(fields: [account_id], references: [id])
 
-  @@map("alo_expenses")
+  @@schema("alo")
+  @@map("expenses")
   @@index([account_id])
   @@index([period_id])
 }
@@ -109,8 +116,62 @@ model aloPeriods {
   name      String?
   startDate DateTime
   endDate   DateTime
-  status    String?
+  status    AloPeriodStatus?
   createdAt DateTime
 
-  @@map("alo_periods")
+  @@schema("alo")
+  @@map("periods")
+}
+
+// Enums PostgreSQL du schéma `alo`, propriété d'alo (SQLAlchemy les crée).
+// Prisma doit les déclarer pour lire les colonnes : sans cela il attend des
+// String et échoue sur « incompatible value ».
+enum AloAccountOwner {
+  adulte1
+  adulte2
+  commun
+
+  @@map("account_owner")
+  @@schema("alo")
+}
+
+enum AloExpenseCategory {
+  quotepart
+  cinquante_cinquante @map("50/50")
+  dette
+  brico
+  virement
+  trop_plein
+  regule_periode
+  divers
+
+  @@map("expense_category")
+  @@schema("alo")
+}
+
+enum AloExpenseSource {
+  manuel
+  telegram
+  csv_import
+  bankin
+  brico
+
+  @@map("expense_source")
+  @@schema("alo")
+}
+
+enum AloExpenseStatus {
+  draft
+  frozen
+
+  @@map("expense_status")
+  @@schema("alo")
+}
+
+enum AloPeriodStatus {
+  draft
+  frozen
+
+  @@map("period_status")
+  @@schema("alo")
 }

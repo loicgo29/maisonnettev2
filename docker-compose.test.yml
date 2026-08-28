@@ -28,7 +28,12 @@ services:
     environment:
       NODE_ENV: test
       PORT: 3001
-      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      # Instance mutualisée du Mac mini : le schéma `public` (maisonnettev2)
+      # et le schéma `alo` (propriété d'alo) cohabitent dans la même base.
+      # Prisma n'a qu'une seule datasource : les deux schémas doivent donc
+      # vivre ensemble pour que /api/alo lise les données réelles d'alo au
+      # lieu d'une copie qui vieillit.
+      DATABASE_URL: postgresql://logo:${SHARED_DB_PASSWORD}@postgres-shared:5432/logo
     ports:
       - '127.0.0.1:3001:3001'
     healthcheck:
@@ -37,7 +42,7 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
-    networks: [maisonnette-test]
+    networks: [maisonnette-test, nas-network]
 
   frontend:
     build:
@@ -73,3 +78,5 @@ volumes:
 networks:
   maisonnette-test:
     driver: bridge
+  nas-network:
+    external: true
