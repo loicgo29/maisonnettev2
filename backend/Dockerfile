@@ -33,10 +33,15 @@ COPY --from=builder /app/prisma ./prisma
 # Photos livrées avec l'image ; elles alimentent le volume uploads_data.
 COPY --from=builder /app/public ./public
 COPY package*.json ./
+# Applique `prisma migrate deploy` avant npm start : sans lui, une base vide
+# reste sans tables et l'application sert des erreurs P2021.
+COPY docker-entrypoint.sh ./
+RUN chmod +x docker-entrypoint.sh
 
 EXPOSE 3001
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD node -e "require('http').get('http://127.0.0.1:3001/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
 
+ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["npm", "start"]
