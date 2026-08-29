@@ -1,12 +1,12 @@
 # Déploiement sur Hetzner — procédure
 
-Cible : `maisonnette-pecheur-bertheaume.fr` servi depuis un serveur Hetzner CPX11,
+Cible : `maisonnette-pecheur-bertheaume.fr` servi depuis un serveur Hetzner CPX12,
 en remplacement de l'hébergement actuel (Mac mini + tunnel Cloudflare).
 
 **Périmètre :** maisonnettev2 uniquement. alo reste sur le Mac mini derrière
 Tailscale — c'est un outil personnel, sans intérêt à être exposé.
 
-**Coût :** ~5,30 €/mois — CPX11 4,35 € + IPv4 0,50 € + volume 10 Go 0,44 €.
+**Coût :** ~12,40 €/mois — CPX12 11,49 € + IPv4 0,50 € + volume 10 Go 0,44 €.
 PostgreSQL tourne en conteneur, pas en base managée : le volume de données est
 minuscule (577 dépenses, 1 gîte) et la sauvegarde avec garde-fou existe déjà.
 
@@ -132,7 +132,7 @@ domaine public : ils passeront au vert une fois le site en ligne.
 
 ## Étape 7 — Sauvegardes
 
-Adapter `backup-alo-volume.sh` pour PostgreSQL distant, ou ajouter sur le
+Adapter `backup-alo.sh` pour PostgreSQL distant, ou ajouter sur le
 serveur un `pg_dump` quotidien vers `/donnees/sauvegardes`, rapatrié ensuite.
 Conserver le garde-fou anti-régression : **refuser d'écraser une sauvegarde si
 le nombre de lignes diminue.**

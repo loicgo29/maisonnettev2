@@ -16,9 +16,11 @@ variable "nom_projet" {
 }
 
 variable "type_serveur" {
-  description = "Gabarit Hetzner. CPX11 : 2 vCPU AMD, 2 Go de RAM, 40 Go de disque, ~4,35 €/mois."
+  # CPX11 a disparu du catalogue : CPX12 le remplace (1 vCPU, 2 Go, 40 Go,
+  # 20 To de trafic, 11,49 €/mois).
+  description = "Gabarit Hetzner. CPX12 : 1 vCPU, 2 Go de RAM, 40 Go de disque, 11,49 €/mois."
   type        = string
-  default     = "cpx11"
+  default     = "cpx12"
 }
 
 variable "localisation" {

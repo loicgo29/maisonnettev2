@@ -27,5 +27,5 @@ output "dns_a_faire" {
 
 output "cout_mensuel_estime" {
   description = "Estimation, hors trafic sortant (20 To inclus)."
-  value       = "~5,30 €/mois : CPX11 4,35 € + IPv4 0,50 € + volume ${var.taille_volume_go} Go 0,44 €"
+  value       = "~12,40 €/mois : CPX12 11,49 € + IPv4 0,50 € + volume ${var.taille_volume_go} Go 0,44 €"
 }
