@@ -16,13 +16,14 @@ variable "nom_projet" {
 }
 
 variable "type_serveur" {
-  # CAX11 (ARM Ampere) plutôt que CPX12 (x86) : deux fois plus de vCPU et de
-  # RAM pour moitié prix. L'ARM64 est aussi l'architecture du Mac mini, donc
-  # les images se construisent à l'identique — Prisma déclare déjà la cible
-  # linux-musl-arm64-openssl-3.0.x, et postgres/node/caddy sont multi-arch.
-  description = "Gabarit Hetzner. CAX11 : 2 vCPU ARM, 4 Go de RAM, 40 Go de disque, 5,99 €/mois."
+  # CX23 (x86) plutôt que CAX11 (ARM) : caractéristiques identiques — 2 vCPU,
+  # 4 Go, 40 Go, 20 To — pour 5,49 € au lieu de 5,99 €, et disponible en stock
+  # là où CAX11 et CPX11 étaient épuisés.
+  # Prisma déclare déjà la cible linux-musl-openssl-3.0.x, les images se
+  # construisent sur le serveur : l'architecture est sans conséquence ici.
+  description = "Gabarit Hetzner. CX23 : 2 vCPU, 4 Go de RAM, 40 Go de disque, 5,49 €/mois."
   type        = string
-  default     = "cax11"
+  default     = "cx23"
 }
 
 variable "localisation" {

@@ -27,5 +27,5 @@ output "dns_a_faire" {
 
 output "cout_mensuel_estime" {
   description = "Estimation, hors trafic sortant (20 To inclus)."
-  value       = "~6,93 €/mois : CAX11 5,99 € + IPv4 0,50 € + volume ${var.taille_volume_go} Go 0,44 €"
+  value       = "~6,43 €/mois : CX23 5,49 € + IPv4 0,50 € + volume ${var.taille_volume_go} Go 0,44 €"
 }
