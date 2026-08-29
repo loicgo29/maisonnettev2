@@ -180,7 +180,13 @@ Then('Caddy écoute sur le port {int}', function(port) {
 });
 
 Then('Caddy ne retourne pas 403 Forbidden du frontend', function() {
-  if (lastResponseText.includes('403')) {
+  // La recherche portait sur la sous-chaîne « 403 » dans tout le flux de
+  // logs : un horodatage Unix (ex. 1788021534.209403) la contient par pur
+  // hasard, ce qui produisait un échec sans rapport avec un vrai 403 HTTP.
+  // On cherche désormais le motif effectivement loggé par Caddy pour un
+  // refus HTTP : `"status":403` (accès JSON) ou `403 Forbidden` (texte).
+  const contient403Reel = /"status"\s*:\s*403|403 Forbidden/.test(lastResponseText);
+  if (contient403Reel) {
     throw new Error('Caddy returning 403 Forbidden - check frontend nginx configuration');
   }
 });
