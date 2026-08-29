@@ -51,6 +51,39 @@ model Photo {
   @@index([categorie])
 }
 
+model MessageSejour {
+  id            String      @id @default(cuid())
+  reservationId String
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  // CANAL | GUIDE | RAPPEL_ARRIVEE | ARRIVEE_OK | PLANTES | CHECKOUT | RETOUR
+  type          String
+  // EMAIL | SMS | WHATSAPP — tout part par e-mail en v1
+  canal         String      @default("EMAIL")
+  // PLANIFIE | ENVOYE | ECHEC | ANNULE | IMPOSSIBLE
+  // IMPOSSIBLE : pas d'adresse e-mail. Un état distinct plutôt qu'un échec,
+  // pour que le backoffice puisse le signaler et proposer de saisir l'adresse
+  // — jamais d'échec silencieux.
+  statut        String      @default("PLANIFIE")
+
+  planifieLe    DateTime
+  envoyeLe      DateTime?
+  // Motif conservé : c'est ce qui permet le réessai depuis /admin/messages.
+  erreur        String?
+  sujet         String?
+  corps         String?     @db.Text
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@schema("public")
+  @@index([reservationId])
+  @@index([statut, planifieLe])
+  // Garde-fou en base et pas seulement dans le code : deux exécutions
+  // simultanées du planificateur ne peuvent pas créer de doublon.
+  @@unique([reservationId, type])
+}
+
 model Reservation {
   id                      String   @id @default(cuid())
   giteId                  String
@@ -59,11 +92,26 @@ model Reservation {
   dateFin                 DateTime
   statut                  String   @default("PENDING") // PENDING | CONFIRMED | CANCELLED
   clientNom               String
-  clientEmail             String
+  clientPrenom            String   @default("")
+  // Facultatif : Airbnb et Leboncoin masquent souvent l'adresse réelle.
+  // Sans elle, les messages passent en IMPOSSIBLE plutôt que d'échouer.
+  clientEmail             String?
   clientTelephone         String
   montantTotal            Float
   stripePaymentIntentId   String?  // Stripe payment tracking
   googleCalendarEventId   String?  // Google Calendar event link
+
+  // Suivi des paiements, utile aux réservations directes et Leboncoin :
+  // Airbnb et Booking encaissent eux-mêmes. Affiché dans le backoffice, il ne
+  // déclenche aucun message — la séquence suit le séjour, pas les paiements.
+  acompteVerse            Boolean  @default(false)
+  soldeVerse              Boolean  @default(false)
+  // AIRBNB | BOOKING | LEBONCOIN | DIRECT | AUTRE
+  plateforme              String   @default("DIRECT")
+  notesInternes           String?  @db.Text
+
+  messages                MessageSejour[]
+
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 

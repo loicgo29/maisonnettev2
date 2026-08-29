@@ -60,3 +60,33 @@
 		}
 	}
 }
+
+# Fournisseur d'identité du backoffice.
+# Bloc séparé : Keycloak a son propre domaine et son propre certificat, et ne
+# doit partager aucune règle avec le site public.
+auth.{$DOMAIN} {
+	encode gzip zstd
+
+	reverse_proxy keycloak:8080 {
+		# Keycloak génère ses URL de redirection OIDC à partir de ces en-têtes.
+		# Sans eux il produit des liens en http, et l'authentification boucle.
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+		header_up X-Forwarded-For {remote_host}
+	}
+
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	log {
+		output file /data/auth-access.log {
+			roll_size 10MB
+			roll_keep 5
+		}
+	}
+}

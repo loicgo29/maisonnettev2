@@ -90,6 +90,22 @@ runcmd:
   - mkdir -p /donnees/postgres /donnees/uploads /donnees/sauvegardes /donnees/caddy
   - chown -R ${utilisateur}:${utilisateur} /donnees
 
+  # --- Swap ---
+  # Le CX23 n'a que 4 Go et aucun swap par défaut. Sans filet, un pic mémoire
+  # transitoire fait tuer un processus par le noyau au lieu de ralentir — ce
+  # qui ferait tomber le site. swappiness=10 : on ne swappe qu'à pression
+  # réelle, un serveur qui swappe par habitude est lent.
+  - |
+    if ! swapon --show | grep -q swapfile; then
+      fallocate -l 2G /swapfile
+      chmod 600 /swapfile
+      mkswap /swapfile
+      swapon /swapfile
+      echo "/swapfile none swap sw 0 0" >> /etc/fstab
+      echo "vm.swappiness=10" > /etc/sysctl.d/99-swap.conf
+      sysctl -w vm.swappiness=10
+    fi
+
   # --- Répertoire applicatif ---
   - mkdir -p /opt/maisonnettev2
   - chown -R ${utilisateur}:${utilisateur} /opt/maisonnettev2

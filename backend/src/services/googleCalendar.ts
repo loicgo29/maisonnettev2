@@ -71,7 +71,9 @@ class GoogleCalendarService {
     reservation: {
       id: string;
       clientNom: string;
-      clientEmail: string;
+      // Facultatif depuis la saisie manuelle : Airbnb et Leboncoin masquent
+      // souvent l'adresse du client.
+      clientEmail?: string | null;
       dateDebut: Date;
       dateFin: Date;
       giteName: string;
@@ -80,7 +82,7 @@ class GoogleCalendarService {
     try {
       const event = {
         summary: `Réservation: ${reservation.giteName} - ${reservation.clientNom}`,
-        description: `Réservation ID: ${reservation.id}\nClient: ${reservation.clientNom}\nEmail: ${reservation.clientEmail}`,
+        description: `Réservation ID: ${reservation.id}\nClient: ${reservation.clientNom}\nEmail: ${reservation.clientEmail ?? "non communiqué"}`,
         start: {
           dateTime: reservation.dateDebut.toISOString(),
           timeZone: 'Europe/Paris',
@@ -89,7 +91,8 @@ class GoogleCalendarService {
           dateTime: reservation.dateFin.toISOString(),
           timeZone: 'Europe/Paris',
         },
-        attendees: [{ email: reservation.clientEmail }],
+        // Sans adresse, aucun invité : Google refuse un attendee vide.
+        ...(reservation.clientEmail ? { attendees: [{ email: reservation.clientEmail }] } : {}),
         transparency: 'opaque', // Block time as busy
       };
 
