@@ -1,12 +1,12 @@
 # Déploiement sur Hetzner — procédure
 
-Cible : `maisonnette-pecheur-bertheaume.fr` servi depuis un serveur Hetzner CPX12,
+Cible : `maisonnette-pecheur-bertheaume.fr` servi depuis un serveur Hetzner CAX11 (ARM),
 en remplacement de l'hébergement actuel (Mac mini + tunnel Cloudflare).
 
 **Périmètre :** maisonnettev2 uniquement. alo reste sur le Mac mini derrière
 Tailscale — c'est un outil personnel, sans intérêt à être exposé.
 
-**Coût :** ~12,40 €/mois — CPX12 11,49 € + IPv4 0,50 € + volume 10 Go 0,44 €.
+**Coût :** ~6,93 €/mois — CAX11 5,99 € + IPv4 0,50 € + volume 10 Go 0,44 €.
 PostgreSQL tourne en conteneur, pas en base managée : le volume de données est
 minuscule (577 dépenses, 1 gîte) et la sauvegarde avec garde-fou existe déjà.
 

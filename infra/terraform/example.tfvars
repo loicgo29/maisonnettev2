@@ -4,7 +4,7 @@
 # cle_ssh_publique = "…"   → export TF_VAR_cle_ssh_publique
 
 nom_projet   = "maisonnettev2"
-type_serveur = "cpx11"
+type_serveur = "cax11"
 localisation = "fsn1"
 
 # Resserrer sur l'IP de sortie une fois celle-ci stable :

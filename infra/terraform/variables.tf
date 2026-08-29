@@ -16,11 +16,13 @@ variable "nom_projet" {
 }
 
 variable "type_serveur" {
-  # CPX11 a disparu du catalogue : CPX12 le remplace (1 vCPU, 2 Go, 40 Go,
-  # 20 To de trafic, 11,49 €/mois).
-  description = "Gabarit Hetzner. CPX12 : 1 vCPU, 2 Go de RAM, 40 Go de disque, 11,49 €/mois."
+  # CAX11 (ARM Ampere) plutôt que CPX12 (x86) : deux fois plus de vCPU et de
+  # RAM pour moitié prix. L'ARM64 est aussi l'architecture du Mac mini, donc
+  # les images se construisent à l'identique — Prisma déclare déjà la cible
+  # linux-musl-arm64-openssl-3.0.x, et postgres/node/caddy sont multi-arch.
+  description = "Gabarit Hetzner. CAX11 : 2 vCPU ARM, 4 Go de RAM, 40 Go de disque, 5,99 €/mois."
   type        = string
-  default     = "cpx12"
+  default     = "cax11"
 }
 
 variable "localisation" {
