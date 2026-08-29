@@ -42,7 +42,11 @@ services:
     depends_on:
       keycloak-db:
         condition: service_healthy
-    command: start --optimized
+    # Pas de `--optimized` : ce drapeau suppose une image déjà construite par
+    # `kc.sh build` et fait échouer le tout premier démarrage. Keycloak
+    # construit sa configuration au lancement, ce qui coûte une trentaine de
+    # secondes au démarrage — acceptable pour un service qui redémarre rarement.
+    command: start
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak

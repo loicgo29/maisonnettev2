@@ -9,10 +9,17 @@ RUN npm ci
 
 COPY . .
 
-RUN npm run build
+# `prisma generate` AVANT `npm run build` : TypeScript a besoin des types du
+# client Prisma pour compiler. Dans l'ordre inverse, les relations remontaient
+# en `any` et la compilation échouait sur noImplicitAny — alors qu'elle passait
+# en local, où le client avait été généré séparément.
+#
+# L'URL est factice : la génération ne se connecte pas, elle lit seulement le
+# schéma. Pas de `|| true` : un échec ici doit arrêter la construction, sinon
+# le build suivant échoue avec un message trompeur.
+RUN DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy" npx prisma generate
 
-# Prisma must generate even if DB is unavailable (introspection skipped in CI)
-RUN DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy" npx prisma generate || true
+RUN npm run build
 
 # Production stage
 FROM node:20-alpine

@@ -17,6 +17,7 @@ import gitesRouter from './routes/gites.js';
 import reservationsRouter from './routes/reservations.js';
 import calendarRouter from './routes/calendar.js';
 import aloRouter from './routes/alo.js';
+import adminRouter from './routes/admin.js';
 import { errorHandler } from './middleware/error.js';
 
 const app = express();
@@ -50,6 +51,9 @@ app.use('/api/gites', gitesRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use('/api/calendar', calendarRouter);
 app.use('/api/contact', contactRouter);
+
+// Backoffice — protégé au niveau du routeur (OIDC + rôle admin).
+app.use('/api/admin', adminRouter);
 
 // Le module alo n'est monté que là où le schéma `alo` est accessible, c'est-à-
 // dire sur l'instance PostgreSQL mutualisée du Mac mini. En production, alo
