@@ -10,7 +10,8 @@
     "test:carousel": "npx playwright test tests/carousel.spec.ts --reporter=html",
     "test:all": "bash run-all-tests.sh",
     "test:carousel-verify": "bash test-carousel.sh",
-    "healthcheck": "bash run-all-tests.sh"
+    "healthcheck": "bash run-all-tests.sh",
+    "test:alo": "playwright test --config=playwright.alo.config.ts"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^11.0.0",

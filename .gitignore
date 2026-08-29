@@ -32,3 +32,7 @@ yarn-debug.log*
 
 # Prisma
 prisma/migrations/dev.db*
+
+# Artefacts Playwright
+test-results/
+playwright-report/
