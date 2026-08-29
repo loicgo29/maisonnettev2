@@ -12,7 +12,16 @@ users:
     groups: [sudo]
     shell: /bin/bash
     sudo: ALL=(ALL) NOPASSWD:ALL
-    ssh_authorized_keys: []  # rempli par hcloud_ssh_key sur root, recopié ci-dessous
+    ssh_authorized_keys:
+      - ${cle_ssh}
+
+# Le durcissement SSH par sed + systemctl restart a coupé l'accès au serveur
+# lors du premier essai (2026-08-29) : sshd ne réécoutait plus, et la machine
+# est devenue injoignable, cloud-init ne rejouant pas au redémarrage.
+# On s'en remet donc aux réglages natifs de cloud-init, appliqués avant que
+# sshd ne démarre, plutôt qu'à une modification a posteriori.
+disable_root: true
+ssh_pwauth: false
 
 package_update: true
 package_upgrade: true
@@ -70,26 +79,20 @@ runcmd:
   # Garde-fou : vérifier que /donnees est bien le volume et non le disque
   # système. Un montage silencieusement raté placerait la base au mauvais
   # endroit, ce qui ne se verrait qu'au moment de recréer le serveur.
-  - mountpoint -q /donnees || { echo "ERREUR: /donnees n'est pas un point de montage" | tee /donnees-NON-MONTE; exit 1; }
+  # Bloc littéral obligatoire : une commande commençant par « { » et contenant
+  # un « : » est interprétée par YAML comme un dictionnaire, pas une chaîne.
+  # cloud-init rejette alors TOUT le bloc runcmd — constaté le 2026-08-29.
+  - |
+    if ! mountpoint -q /donnees; then
+      echo "ERREUR: /donnees n'est pas un point de montage" | tee /donnees-NON-MONTE
+      exit 1
+    fi
   - mkdir -p /donnees/postgres /donnees/uploads /donnees/sauvegardes /donnees/caddy
   - chown -R ${utilisateur}:${utilisateur} /donnees
 
   # --- Répertoire applicatif ---
   - mkdir -p /opt/maisonnettev2
   - chown -R ${utilisateur}:${utilisateur} /opt/maisonnettev2
-
-  # --- Clés SSH : recopier celles de root vers l'utilisateur de déploiement ---
-  - mkdir -p /home/${utilisateur}/.ssh
-  - cp /root/.ssh/authorized_keys /home/${utilisateur}/.ssh/authorized_keys
-  - chown -R ${utilisateur}:${utilisateur} /home/${utilisateur}/.ssh
-  - chmod 700 /home/${utilisateur}/.ssh
-  - chmod 600 /home/${utilisateur}/.ssh/authorized_keys
-
-  # --- Durcissement SSH ---
-  # Fait après la recopie des clés : inverser l'ordre couperait tout accès.
-  - sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-  - sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
-  - systemctl restart ssh
 
   # --- ufw ---
   - ufw default deny incoming

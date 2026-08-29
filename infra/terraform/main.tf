@@ -45,6 +45,7 @@ resource "hcloud_server" "app" {
   user_data = templatefile("${path.module}/cloud-init.yaml", {
     volume_device = hcloud_volume.donnees.linux_device
     utilisateur   = var.utilisateur_deploiement
+    cle_ssh       = var.cle_ssh_publique
   })
 
   public_net {
