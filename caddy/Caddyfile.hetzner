@@ -77,7 +77,12 @@ auth.{$DOMAIN} {
 
 	header {
 		X-Content-Type-Options "nosniff"
-		X-Frame-Options "DENY"
+		# PAS de X-Frame-Options : la console d'administration de Keycloak
+		# surveille la session par une iframe de même origine. Un « DENY » la
+		# bloque et la console échoue sur « somethingWentWrong », sans message
+		# exploitable. Keycloak pose lui-même `frame-ancestors 'self'`, qui
+		# autorise ses propres iframes et interdit les sites tiers — c'est
+		# l'équivalent moderne, et il suffit.
 		Referrer-Policy "strict-origin-when-cross-origin"
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		-Server
