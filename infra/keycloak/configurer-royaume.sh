@@ -98,11 +98,15 @@ fi
 # --- TOTP exigé à la première connexion ------------------------------------
 # C'est ce qui fait l'authentification forte : un mot de passe seul ne suffit
 # pas à atteindre les données des clients.
-api -X PUT "$BASE/admin/realms/$ROYAUME" -d '{
-  "realm": "'"$ROYAUME"'",
-  "requiredCredentials": ["password"],
-  "otpPolicyType": "totp"
-}' > /dev/null
+#
+# PUT remplace l'objet realm en entier : envoyer seulement otpPolicyType
+# réinitialise algorithm/digits/period à leurs valeurs vides (constaté en
+# production le 2026-08-29 — Google Authenticator produisait un code que
+# Keycloak refusait avec une erreur serveur interne). On relit le royaume
+# actuel et on ne modifie que les champs voulus, jamais un objet partiel.
+REALM_ACTUEL=$(api "$BASE/admin/realms/$ROYAUME")
+echo "$REALM_ACTUEL" | jq '.requiredCredentials = ["password"] | .otpPolicyType = "totp"' \
+  | api -X PUT "$BASE/admin/realms/$ROYAUME" -d @- > /dev/null
 
 echo ""
 echo -e "${GREEN}Royaume configuré.${NC}"
