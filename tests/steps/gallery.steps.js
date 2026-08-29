@@ -13,7 +13,9 @@ let photosVisible = [];
 // Frontend: 5173 (direct) en dev, via Caddy 8030 en prod via 127.0.0.1
 const FRONTEND_HOST = process.env.FRONTEND_HOST || 'localhost';
 const FRONTEND_PORT = process.env.FRONTEND_PORT || '8030';
-const FRONTEND_URL = `http://${FRONTEND_HOST}:${FRONTEND_PORT}`;
+const SCHEME = process.env.TEST_SCHEME || 'http';
+const PORT_SUFFIX = SCHEME === 'https' ? '' : `:${FRONTEND_PORT}`;
+const FRONTEND_URL = `${SCHEME}://${FRONTEND_HOST}${PORT_SUFFIX}`;
 
 When('I navigate to the gallery page', async function() {
   try {

@@ -26,6 +26,14 @@
 		reverse_proxy backend:3001
 	}
 
+	# Sonde de supervision. Seul /api/* était routé vers le backend, donc
+	# /health tombait sur le frontend et renvoyait 404 en production alors
+	# qu'il répond en local. Utile pour la supervision externe et pour les
+	# tests de recette.
+	handle /health {
+		reverse_proxy backend:3001
+	}
+
 	# Photos des gîtes, servies par express.static du backend.
 	handle /uploads/* {
 		reverse_proxy backend:3001

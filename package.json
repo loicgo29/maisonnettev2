@@ -11,7 +11,8 @@
     "test:all": "bash run-all-tests.sh",
     "test:carousel-verify": "bash test-carousel.sh",
     "healthcheck": "bash run-all-tests.sh",
-    "test:alo": "playwright test --config=playwright.alo.config.ts"
+    "test:alo": "playwright test --config=playwright.alo.config.ts",
+    "test:bdd:prod": "TEST_SCHEME=https BACKEND_HOST=maisonnette-pecheur-bertheaume.fr FRONTEND_HOST=maisonnette-pecheur-bertheaume.fr cucumber-js tests/features --require tests/steps"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^11.0.0",

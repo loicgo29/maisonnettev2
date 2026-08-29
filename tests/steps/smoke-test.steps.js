@@ -13,7 +13,9 @@ let databaseConnected;
 // Configuration depuis .env ou defaults
 const BACKEND_HOST = process.env.BACKEND_HOST || 'localhost';
 const BACKEND_PORT = process.env.BACKEND_PORT || '3001';
-const BACKEND_URL = `http://${BACKEND_HOST}:${BACKEND_PORT}`;
+const BACKEND_SCHEME = process.env.TEST_SCHEME || 'http';
+const BACKEND_SUFFIX = BACKEND_SCHEME === 'https' ? '' : `:${BACKEND_PORT}`;
+const BACKEND_URL = `${BACKEND_SCHEME}://${BACKEND_HOST}${BACKEND_SUFFIX}`;
 // Pour les tests en Docker, utiliser le hostname Docker 'postgres' au lieu de localhost
 const DB_HOST = process.env.DB_HOST === 'localhost' ? 'postgres' : process.env.DB_HOST || 'postgres';
 const DB_PORT = process.env.DB_HOST === 'localhost' ? 5432 : process.env.DB_PORT || 5432;

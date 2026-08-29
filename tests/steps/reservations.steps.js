@@ -3,7 +3,9 @@ import fetch from 'node-fetch';
 
 const BACKEND_HOST = process.env.BACKEND_HOST || '127.0.0.1';
 const BACKEND_PORT = process.env.BACKEND_PORT || '3001';
-const API_URL = `http://${BACKEND_HOST}:${BACKEND_PORT}/api`;
+const API_SCHEME = process.env.TEST_SCHEME || 'http';
+const API_SUFFIX = API_SCHEME === 'https' ? '' : `:${BACKEND_PORT}`;
+const API_URL = `${API_SCHEME}://${BACKEND_HOST}${API_SUFFIX}/api`;
 
 let lastResponse = null;
 let lastStatus = 0;

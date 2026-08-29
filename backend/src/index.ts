@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import express from 'express';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import cors from 'cors';
 import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
@@ -26,13 +28,38 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+// Photos des gîtes.
+// Le Caddyfile route /uploads/* vers ce backend, mais rien ne les servait :
+// les images renvoyaient 404 depuis toujours, en local comme en production.
+// Le dossier est monté depuis un volume, il survit donc aux reconstructions.
+const dossierCourant = path.dirname(fileURLToPath(import.meta.url));
+app.use(
+  '/uploads',
+  express.static(path.join(dossierCourant, '../public/uploads'), {
+    // Les photos ne changent pas : un an de cache évite de les retélécharger
+    // à chaque visite. Un nom de fichier différent suffit à les renouveler.
+    maxAge: '1y',
+    immutable: true,
+    fallthrough: false,
+  })
+);
+
 // Routes
 app.use('/health', healthRouter);
 app.use('/api/gites', gitesRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use('/api/calendar', calendarRouter);
 app.use('/api/contact', contactRouter);
-app.use('/api/alo', aloRouter);
+
+// Le module alo n'est monté que là où le schéma `alo` est accessible, c'est-à-
+// dire sur l'instance PostgreSQL mutualisée du Mac mini. En production, alo
+// reste hébergé à la maison : monter ces routes y produirait des 500 sur des
+// endpoints qui ne peuvent rien servir, et exposerait publiquement la surface
+// d'une application de comptabilité familiale.
+if (process.env.ALO_ENABLED === 'true') {
+  app.use('/api/alo', aloRouter);
+  console.log('🧮 Module alo monté sur /api/alo');
+}
 
 // 404 handler
 app.use((_req, res) => {

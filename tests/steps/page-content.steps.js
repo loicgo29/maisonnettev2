@@ -4,7 +4,9 @@ import { execSync } from 'child_process';
 
 const FRONTEND_HOST = process.env.FRONTEND_HOST || '127.0.0.1';
 const FRONTEND_PORT = process.env.FRONTEND_PORT || '8030';
-const FRONTEND_URL = `http://${FRONTEND_HOST}:${FRONTEND_PORT}`;
+const SCHEME = process.env.TEST_SCHEME || 'http';
+const PORT_SUFFIX = SCHEME === 'https' ? '' : `:${FRONTEND_PORT}`;
+const FRONTEND_URL = `${SCHEME}://${FRONTEND_HOST}${PORT_SUFFIX}`;
 
 let pageContent = '';
 let loadTime = 0;
