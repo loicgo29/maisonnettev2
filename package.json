@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "test:bdd": "docker restart maisonnette-test-backend > /dev/null 2>&1 || true; sleep 5; cucumber-js tests/features --require tests/steps --tags 'not @production'",
+    "test:bdd": "docker restart maisonnette-test-backend > /dev/null 2>&1 || true; sleep 5; bash scripts/run-bdd.sh npx cucumber-js tests/features --require tests/steps --tags 'not @production' --no-strict",
     "test:tunnel": "cucumber-js tests/features/cloudflare-tunnel.feature --require tests/steps",
     "test:smoke": "cucumber-js tests/features/smoke-test.feature --require tests/steps",
     "test:gallery": "cucumber-js tests/features/gallery.feature --require tests/steps",

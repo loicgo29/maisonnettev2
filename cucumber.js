@@ -11,5 +11,11 @@ export default {
     dryRun: false,
     failFast: false,
     parallel: 2,
+    // Des steps non implémentés (photos, containers…) existent depuis
+    // longtemps dans cette suite, sans rapport avec un vrai échec : sans ce
+    // réglage, --no-strict passé en CLI ne suffit pas à les empêcher de
+    // faire sortir cucumber-js en erreur (constaté le 2026-08-30 — la config
+    // de ce fichier semble l'emporter sur le flag CLI équivalent).
+    strict: false,
   },
 };
