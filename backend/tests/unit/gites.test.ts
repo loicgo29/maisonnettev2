@@ -20,7 +20,7 @@ describe('Gites Routes', () => {
   beforeEach(() => {
     app = express();
     app.use(express.json());
-    app.use(gitesRouter);
+    app.use('/api/gites', gitesRouter);
   });
 
   describe('GET /api/gites', () => {
@@ -40,7 +40,7 @@ describe('Gites Routes', () => {
 
       vi.mocked(prisma.gite.findMany).mockResolvedValue(mockGites);
 
-      const response = await request(app).get('/api/gites');
+      const response = await request(app).get('/');
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockGites);
@@ -49,7 +49,7 @@ describe('Gites Routes', () => {
     it('should return empty array when no gites exist', async () => {
       vi.mocked(prisma.gite.findMany).mockResolvedValue([]);
 
-      const response = await request(app).get('/api/gites');
+      const response = await request(app).get('/');
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual([]);
@@ -58,7 +58,7 @@ describe('Gites Routes', () => {
     it('should handle database errors gracefully', async () => {
       vi.mocked(prisma.gite.findMany).mockRejectedValue(new Error('Database error'));
 
-      const response = await request(app).get('/api/gites');
+      const response = await request(app).get('/');
 
       expect(response.status).toBe(500);
     });
@@ -79,7 +79,7 @@ describe('Gites Routes', () => {
 
       vi.mocked(prisma.gite.findUnique).mockResolvedValue(mockGite);
 
-      const response = await request(app).get('/api/gites/gite-1');
+      const response = await request(app).get('/gite-1');
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockGite);
@@ -100,7 +100,7 @@ describe('Gites Routes', () => {
   describe('POST /api/gites (protected)', () => {
     it('should require authentication', async () => {
       const response = await request(app)
-        .post('/api/gites')
+        .post('/')
         .send({ nom: 'New Gite', slug: 'new-gite' });
 
       expect(response.status).toBe(401);
@@ -108,7 +108,7 @@ describe('Gites Routes', () => {
 
     it('should validate required fields', async () => {
       const response = await request(app)
-        .post('/api/gites')
+        .post('/')
         .set('Authorization', 'Bearer mock-token')
         .send({ nom: 'New Gite' }); // Missing slug
 
@@ -130,7 +130,7 @@ describe('Gites Routes', () => {
       vi.mocked(prisma.gite.create).mockResolvedValue(newGite);
 
       const response = await request(app)
-        .post('/api/gites')
+        .post('/')
         .set('Authorization', 'Bearer mock-token')
         .send(newGite);
 

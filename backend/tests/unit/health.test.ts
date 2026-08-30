@@ -15,7 +15,7 @@ describe('Health Routes', () => {
 
   beforeEach(() => {
     app = express();
-    app.use(healthRouter);
+    app.use('/', healthRouter);
   });
 
   describe('GET /health', () => {
