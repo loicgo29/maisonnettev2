@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Déploiement de maisonnette-pecheur-bertheaume.fr sur le Mac Mini.
+# Déploiement de maisonnette-pecheur-bertheaume.fr sur le serveur Hetzner.
 #
 # Idempotent : rejouable autant de fois que nécessaire. Provisionne les images,
 # la base (migrations + données) et les photos.
@@ -9,8 +9,12 @@
 #
 set -euo pipefail
 
-COMPOSE="docker compose -f docker-compose.prod.yml --env-file .env"
-PORT_LOCAL=8030  # publié par Docker sur 127.0.0.1 (IPv4)
+# La surcharge Hetzner est indispensable, pas optionnelle : sans elle, Caddy
+# republierait 127.0.0.1:8030 (l'ancien schéma Mac Mini derrière un tunnel
+# Cloudflare) au lieu de 80/443 en direct, et le port 3001 du backend
+# resterait exposé sur l'hôte. Voir DEPLOY.md.
+COMPOSE="docker compose -f docker-compose.prod.yml -f docker-compose.hetzner.yml --env-file .env"
+PORT_LOCAL=80  # Caddy publié en direct, plus de tunnel ni de port dédié
 RACINE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$RACINE"
 
