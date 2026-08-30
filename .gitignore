@@ -41,3 +41,15 @@ playwright-report/
 # Override Compose local (contient parfois des identifiants en clair, comme
 # ici un mot de passe Postgres) — jamais destiné à partir avec le code.
 docker-compose.override.yml
+
+# Temporary documentation & debug files
+.env.hetzner
+*.old
+*_old
+CREATE_OAUTH_CLIENT.md
+OAUTH2_FIX_SUMMARY.md
+PKCE_DEBUG_GUIDE.md
+TEST_RESULTS.md
+tests/OAUTH2_TESTS.md
+debug-redirect.mjs
+debug-*.mjs
