@@ -183,6 +183,24 @@ Then('the tunnel should reconnect within {int} seconds', async function (seconds
 });
 
 Then('{string} should respond with {int}', async function (url, expectedStatus) {
-  await this.When(`I access "${url}"`);
-  await this.Then(`the response status code should be ${expectedStatus}`);
+  try {
+    const response = await fetch(url, { timeout: 10000, redirect: 'follow' });
+    assert.strictEqual(response.status, expectedStatus,
+      `Expected ${expectedStatus} but got ${response.status} for ${url}`);
+    context.lastResponse = response;
+  } catch (e) {
+    throw new Error(`Failed to fetch ${url}: ${e.message}`);
+  }
+});
+
+// Tunnel running (simplistic check)
+Given('the tunnel is running', async function () {
+  try {
+    const response = await fetch('https://maisonnette-pecheur-bertheaume.fr',
+      { timeout: 5000, redirect: 'follow' });
+    assert(response.status < 500, `Tunnel not responsive: ${response.status}`);
+    context.tunnelConfirmed = true;
+  } catch (e) {
+    throw new Error(`Tunnel not accessible: ${e.message}`);
+  }
 });

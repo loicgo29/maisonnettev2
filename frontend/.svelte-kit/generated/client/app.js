@@ -13,15 +13,31 @@ export const nodes = [
 	() => import('./nodes/1'),
 	() => import('./nodes/2'),
 	() => import('./nodes/3'),
-	() => import('./nodes/4')
+	() => import('./nodes/4'),
+	() => import('./nodes/5'),
+	() => import('./nodes/6'),
+	() => import('./nodes/7'),
+	() => import('./nodes/8'),
+	() => import('./nodes/9'),
+	() => import('./nodes/10'),
+	() => import('./nodes/11'),
+	() => import('./nodes/12'),
+	() => import('./nodes/13')
 ];
 
 export const server_loads = [];
 
 export const dictionary = {
-		"/": [2],
-		"/calendar": [3],
-		"/gite/[slug]": [4]
+		"/": [4],
+		"/admin": [5,[2]],
+		"/admin/callback": [6,[2,3]],
+		"/admin/messages": [7,[2]],
+		"/admin/reservations": [8,[2]],
+		"/admin/reservations/nouvelle": [10,[2]],
+		"/admin/reservations/[id]": [9,[2]],
+		"/calendar": [11],
+		"/contact": [12],
+		"/gite/[slug]": [13]
 	};
 
 export const hooks = {

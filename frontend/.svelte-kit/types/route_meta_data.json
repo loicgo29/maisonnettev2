@@ -1,5 +1,20 @@
 {
 	"/": [],
+	"/admin": [],
+	"/admin/callback": [
+		"src/routes/admin/callback/+layout.ts",
+		"src/routes/admin/callback/+layout.ts"
+	],
+	"/admin/messages": [],
+	"/admin/reservations": [],
+	"/admin/reservations/nouvelle": [],
+	"/admin/reservations/[id]": [],
+	"/api/auth/callback": [
+		"src/routes/api/auth/callback/+server.ts"
+	],
+	"/api/auth/token": [
+		"src/routes/api/auth/token/+server.ts"
+	],
 	"/api/calendar": [
 		"src/routes/api/calendar/+server.ts"
 	],
@@ -10,6 +25,7 @@
 		"src/routes/api/test/+server.ts"
 	],
 	"/calendar": [],
+	"/contact": [],
 	"/gite/[slug]": [],
 	"/test-api": [
 		"src/routes/test-api/+server.ts"
