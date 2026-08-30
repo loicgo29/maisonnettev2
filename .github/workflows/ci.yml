@@ -226,7 +226,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Start services with Docker Compose
-        run: docker-compose -f docker-compose.test.yml up -d --build
+        run: docker compose -f docker-compose.test.yml up -d --build
 
       - name: Wait for services to be ready
         run: |
@@ -240,7 +240,7 @@ jobs:
             sleep 2
           done
           echo "❌ Services failed to start"
-          docker-compose -f docker-compose.test.yml logs
+          docker compose -f docker-compose.test.yml logs
           exit 1
 
       - name: Tests BDD
@@ -258,7 +258,7 @@ jobs:
 
       - name: Cleanup
         if: always()
-        run: docker-compose -f docker-compose.test.yml down -v
+        run: docker compose -f docker-compose.test.yml down -v
 
   docker-images:
     name: Build & Push des images de production
