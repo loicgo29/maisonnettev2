@@ -28,6 +28,23 @@ jobs:
       - name: Install dependencies
         run: cd frontend && npm ci
 
+      # $env/static/* exige que chaque variable référencée dans le code soit
+      # déclarée quelque part, même vide — sinon Vite échoue avec
+      # MISSING_EXPORT au build. Ce job vérifie juste que le build réussit et
+      # type-check, il n'a besoin d'aucune vraie valeur.
+      - name: Placeholder .env pour $env/static
+        run: |
+          cd frontend
+          cat > .env << 'EOF'
+          PRIVATE_GOOGLE_CLIENT_ID=ci-placeholder
+          PRIVATE_GOOGLE_CLIENT_SECRET=ci-placeholder
+          PRIVATE_GOOGLE_REDIRECT_URI=http://localhost/callback
+          PRIVATE_GITE_CALENDAR_ID=ci-placeholder
+          PUBLIC_AUTH_URL=http://localhost:8081
+          PUBLIC_AUTH_REALM=maisonnettev2
+          PUBLIC_AUTH_CLIENT_ID=maisonnettev2-frontend
+          EOF
+
       - name: Type check (SvelteKit)
         run: cd frontend && npm run check 2>&1 || echo "Type check completed"
 
