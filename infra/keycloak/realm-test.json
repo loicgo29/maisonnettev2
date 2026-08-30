@@ -1,0 +1,35 @@
+{
+  "realm": "maisonnettev2",
+  "enabled": true,
+  "sslRequired": "none",
+  "bruteForceProtected": false,
+  "clients": [
+    {
+      "clientId": "maisonnettev2-frontend",
+      "name": "Backoffice maisonnettev2 (test)",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": ["http://localhost:8030/admin/*"],
+      "webOrigins": ["http://localhost:8030"],
+      "attributes": { "pkce.code.challenge.method": "S256" }
+    }
+  ],
+  "roles": {
+    "realm": [{ "name": "admin", "description": "Accès au backoffice" }]
+  },
+  "users": [
+    {
+      "username": "ci-tests",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "ci-tests@example.test",
+      "firstName": "CI",
+      "lastName": "Tests",
+      "requiredActions": [],
+      "credentials": [{ "type": "password", "value": "CiTestsMaisonnette2026", "temporary": false }],
+      "realmRoles": ["admin"]
+    }
+  ]
+}

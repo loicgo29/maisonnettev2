@@ -12,7 +12,8 @@ import { prisma } from '../lib/prisma.js';
 import { verifyOIDCToken, AuthRequest } from '../middleware/oidc.js';
 import { requireRole } from '../middleware/requireRole.js';
 import { REGLES_MESSAGES } from '../config/messages.js';
-import { envoyerUnMessage, executerPassage } from '../services/messagesSejour.js';
+import { envoyerUnMessage, executerPassage, construireApercu } from '../services/messagesSejour.js';
+import { texteBrut } from '../templates/messages/index.js';
 
 const router = Router();
 
@@ -148,17 +149,40 @@ router.patch('/reservations/:id', async (req: AuthRequest, res: Response): Promi
 // --- Messages --------------------------------------------------------------
 router.get('/messages', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { statut } = req.query;
+    const { statut, dus } = req.query;
+    // `dus=1` : ne garder que ce qui devrait déjà être parti — c'est la vue
+    // que Loïc ouvre chaque matin pour son copier-coller, pas la liste brute
+    // de tout ce qui est planifié dans les mois à venir.
+    const where: Record<string, unknown> = statut ? { statut: String(statut) } : {};
+    if (dus) where.planifieLe = { lte: new Date() };
+
     const messages = await prisma.messageSejour.findMany({
-      where: statut ? { statut: String(statut) } : {},
+      where,
       include: {
         reservation: {
-          select: { clientNom: true, clientPrenom: true, clientEmail: true, dateDebut: true },
+          select: {
+            clientNom: true,
+            clientPrenom: true,
+            clientEmail: true,
+            dateDebut: true,
+            dateFin: true,
+            gite: { select: { nom: true, adresse: true } },
+          },
         },
       },
       orderBy: { planifieLe: 'asc' },
     });
-    res.json(messages);
+
+    // Rendu à la volée, jamais persisté ici : `sujet`/`corps` en base ne sont
+    // écrits qu'au moment d'un envoi réel (voir envoyerUnMessage). Afficher un
+    // aperçu ne doit rien figer, une réservation modifiée entre-temps doit se
+    // refléter au prochain chargement.
+    const avecApercu = messages.map((m) => {
+      const rendu = construireApercu(m);
+      return { ...m, apercu: { sujet: rendu.sujet, texte: texteBrut(rendu.corps) } };
+    });
+
+    res.json(avecApercu);
   } catch {
     res.status(500).json({ error: 'Impossible de charger les messages' });
   }

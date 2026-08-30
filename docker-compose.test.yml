@@ -2,6 +2,38 @@
 # Utilisé dans le CI/CD et pour tester en local
 
 services:
+  # Keycloak éphémère, dédié aux tests — jamais le Keycloak de production.
+  #
+  # `start-dev` avec sa base H2 en mémoire : tout disparaît à l'arrêt du
+  # conteneur, ce qui est exactement ce qu'on veut pour un environnement de
+  # test rejoué à chaque run de CI. Le realm est importé au démarrage depuis
+  # infra/keycloak/realm-test.json, qui reproduit la config de production
+  # (client public, PKCE S256 — voir infra/keycloak/configurer-royaume.sh)
+  # avec un utilisateur de test à mot de passe fixe : ce realm ne vit que le
+  # temps du conteneur, un secret ici n'a aucune valeur à protéger.
+  keycloak-test:
+    build:
+      context: ./infra/keycloak
+      dockerfile: Dockerfile.test
+    container_name: maisonnette-test-keycloak
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: 'true'
+    ports:
+      # Publié : le navigateur (Playwright ou réel) doit atteindre Keycloak
+      # directement pour la redirection OIDC, pas seulement le réseau Docker
+      # interne qu'utilise le backend pour le JWKS.
+      - '127.0.0.1:8081:8080'
+    healthcheck:
+      test: ['CMD-SHELL', "exec 3<>/dev/tcp/127.0.0.1/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '\"status\": \"UP\"'"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    networks: [maisonnette-test]
+
   postgres:
     image: postgres:16-alpine
     container_name: maisonnette-test-db
@@ -25,12 +57,16 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      keycloak-test:
+        condition: service_healthy
     environment:
       NODE_ENV: test
       PORT: 3001
       ALO_ENABLED: 'true'
       DATABASE_URL: postgresql://logo:postgres_logo_dev@172.19.0.8:5432/logo?schema=public
-      KEYCLOAK_REALM_URL: https://auth.maisonnette-pecheur-bertheaume.fr/realms/maisonnettev2/
+      # Nom de service Docker, pas localhost:8081 : le backend joint le JWKS
+      # par le réseau interne, seul le navigateur a besoin du port publié.
+      KEYCLOAK_REALM_URL: http://keycloak-test:8080/realms/maisonnettev2/
     ports:
       - '127.0.0.1:3001:3001'
     healthcheck:
@@ -44,6 +80,15 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        # PUBLIC_* est intégré au bundle au moment du build (voir le
+        # commentaire dans frontend/Dockerfile) : une variable d'exécution
+        # serait ignorée. D'où le bug de redirection cassée constaté le
+        # 2026-08-30 quand ce bloc `args` était absent — le bundle partait
+        # avec ces valeurs vides.
+        PUBLIC_AUTH_URL: http://localhost:8081
+        PUBLIC_AUTH_REALM: maisonnettev2
+        PUBLIC_AUTH_CLIENT_ID: maisonnettev2-frontend
     container_name: maisonnette-test-frontend
     depends_on:
       - backend

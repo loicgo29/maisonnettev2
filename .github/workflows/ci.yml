@@ -201,6 +201,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # admin-oauth-login.steps.js pilote un vrai Chromium (voir son
+      # commentaire : ce projet n'a pas de World Cucumber partagé). Aucune
+      # autre suite BDD n'en avait besoin jusqu'ici, d'où l'absence de cette
+      # étape plus haut dans le job.
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
       - name: Start services with Docker Compose
         run: docker-compose -f docker-compose.test.yml up -d --build
 
@@ -273,6 +280,26 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository }}-backend:latest
             ${{ env.REGISTRY }}/${{ github.repository }}-backend:${{ github.sha }}
+
+  # Smoke test OAuth2 contre le VRAI Keycloak de production — jamais sur push
+  # ou pull_request : bdd-tests couvre déjà le flux complet contre un Keycloak
+  # éphémère et isolé (voir infra/keycloak/realm-test.json) à chaque commit.
+  # Ce job-ci vérifie que la production elle-même répond, avec le compte
+  # technique ci-tests (rôle admin, realm maisonnettev2) — à lancer à la main
+  # après un déploiement, pas à chaque push : marteler le Keycloak public à
+  # chaque commit userait sa protection anti brute-force pour rien.
+  smoke-test-prod:
+    name: Smoke test OAuth2 (production)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Flux OAuth2 complet contre la production
+        env:
+          KC_USER: ${{ secrets.KC_TEST_USER }}
+          KC_PASS: ${{ secrets.KC_TEST_PASSWORD }}
+          API_URL: https://maisonnette-pecheur-bertheaume.fr
+        run: bash scripts/test-oauth-flow.sh
 
   summary:
     name: Récapitulatif

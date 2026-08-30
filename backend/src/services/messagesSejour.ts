@@ -17,7 +17,35 @@
 import { prisma } from '../lib/prisma.js';
 import { REGLES_MESSAGES, calculerDateEnvoi, sejourTropCourtPourMilieu } from '../config/messages.js';
 import { sendEmail } from './email.js';
-import { rendreMessage } from '../templates/messages/index.js';
+import { rendreMessage, type MessageRendu } from '../templates/messages/index.js';
+
+interface MessageAvecReservation {
+  type: string;
+  reservation: {
+    clientPrenom: string;
+    clientNom: string;
+    dateDebut: Date;
+    dateFin: Date;
+    gite: { nom: string; adresse: string };
+  };
+}
+
+/**
+ * Rendu pur, sans effet de bord — partagé par l'envoi réel et par l'aperçu du
+ * backoffice (`GET /messages`), pour que le texte affiché avant envoi soit
+ * exactement celui qui partirait.
+ */
+export function construireApercu(message: MessageAvecReservation): MessageRendu {
+  return rendreMessage(message.type, {
+    clientPrenom: message.reservation.clientPrenom,
+    clientNom: message.reservation.clientNom,
+    giteNom: message.reservation.gite.nom,
+    adresse: message.reservation.gite.adresse,
+    dateDebut: message.reservation.dateDebut,
+    dateFin: message.reservation.dateFin,
+    telephone: process.env.OWNER_PHONE ?? '',
+  });
+}
 
 export interface ResultatPassage {
   crees: number;
@@ -182,15 +210,7 @@ export async function envoyerUnMessage(
     return { ok: false, motif: "Pas d'adresse e-mail" };
   }
 
-  const rendu = rendreMessage(message.type, {
-    clientPrenom: message.reservation.clientPrenom,
-    clientNom: message.reservation.clientNom,
-    giteNom: message.reservation.gite.nom,
-    adresse: message.reservation.gite.adresse,
-    dateDebut: message.reservation.dateDebut,
-    dateFin: message.reservation.dateFin,
-    telephone: process.env.OWNER_PHONE ?? '',
-  });
+  const rendu = construireApercu(message);
 
   try {
     const envoye = await expediteur({

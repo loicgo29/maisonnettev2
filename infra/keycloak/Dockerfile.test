@@ -1,0 +1,7 @@
+# Image Keycloak de test — le realm est copié à la construction plutôt que
+# monté au runtime : un bind-mount d'un chemin hors $HOME échoue silencieusement
+# sur Colima (VM ne montant que $HOME par défaut, mounts: [] sinon), Docker
+# créant alors un dossier vide au lieu du fichier attendu. La copie au build
+# fonctionne partout, y compris en CI où Docker tourne nativement sans VM.
+FROM quay.io/keycloak/keycloak:26.0
+COPY realm-test.json /opt/keycloak/data/import/realm.json

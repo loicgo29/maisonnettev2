@@ -129,6 +129,21 @@ const GABARITS: Record<TypeMessage, Gabarit> = {
   }),
 };
 
+/**
+ * Version texte du corps HTML, pour le copier-coller dans la messagerie
+ * Airbnb/Booking — coller du HTML brut y afficherait les balises.
+ */
+export function texteBrut(html: string): string {
+  return html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 export function rendreMessage(type: string, variables: Variables): MessageRendu {
   const gabarit = GABARITS[type as TypeMessage];
   if (!gabarit) {

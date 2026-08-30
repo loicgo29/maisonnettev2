@@ -6,17 +6,30 @@
 	let erreur = $state('');
 	let chargement = $state(true);
 	let filtre = $state('PLANIFIE');
+	// Vue par défaut : uniquement ce qui est dû aujourd'hui ou avant, pas tout
+	// ce qui est planifié dans les mois à venir — c'est la liste du matin.
+	let dusSeulement = $state(true);
 	let envoiEnCours: Set<string> = $state(new Set());
+	let copieId = $state('');
 
 	async function charger() {
 		chargement = true;
 		try {
-			messages = await apiAdmin.messages(filtre || undefined);
+			messages = await apiAdmin.messages({
+				statut: filtre || undefined,
+				dus: filtre === 'PLANIFIE' ? dusSeulement : false,
+			});
 		} catch (e) {
 			erreur = e instanceof ErreurAccesRefuse ? e.message : 'Chargement impossible';
 		} finally {
 			chargement = false;
 		}
+	}
+
+	async function copier(m: any) {
+		await navigator.clipboard.writeText(m.apercu.texte);
+		copieId = m.id;
+		setTimeout(() => { if (copieId === m.id) copieId = ''; }, 2000);
 	}
 
 	onMount(charger);
@@ -62,6 +75,12 @@
 			{libelle}
 		</button>
 	{/each}
+	{#if filtre === 'PLANIFIE'}
+		<label class="dus">
+			<input type="checkbox" bind:checked={dusSeulement} onchange={charger} />
+			Dus aujourd'hui seulement
+		</label>
+	{/if}
 </div>
 
 {#if chargement}
@@ -94,6 +113,21 @@
 						{/if}
 					</td>
 				</tr>
+				{#if m.apercu && (m.statut === 'PLANIFIE' || m.statut === 'ECHEC')}
+					<tr class="ligne-apercu">
+						<td colspan="5">
+							<div class="apercu">
+								<div class="apercu-entete">
+									<strong>{m.apercu.sujet}</strong>
+									<button class="petit copier" onclick={() => copier(m)}>
+										{copieId === m.id ? 'Copié !' : 'Copier'}
+									</button>
+								</div>
+								<pre class="apercu-texte">{m.apercu.texte}</pre>
+							</div>
+						</td>
+					</tr>
+				{/if}
 			{/each}
 		</tbody>
 	</table>
@@ -105,6 +139,12 @@
 	.filtres { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; }
 	.filtre { background: white; border: 1px solid #d1d5db; border-radius: 999px; padding: 0.35rem 0.9rem; font-size: 0.85rem; cursor: pointer; }
 	.filtre.actif { background: #14532d; color: white; border-color: #14532d; }
+	.dus { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: #4b5563; margin-left: 0.5rem; }
+	.ligne-apercu td { padding: 0 1rem 0.75rem; border-bottom: 1px solid #e5e7eb; }
+	.apercu { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 0.6rem 0.8rem; }
+	.apercu-entete { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
+	.apercu-texte { white-space: pre-wrap; font-family: inherit; font-size: 0.85rem; color: #374151; margin: 0; }
+	.petit.copier { background: #374151; }
 	table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
 	th, td { text-align: left; padding: 0.6rem 1rem; border-bottom: 1px solid #e5e7eb; }
 	th { background: #f3f4f6; font-size: 0.85rem; color: #6b7280; }

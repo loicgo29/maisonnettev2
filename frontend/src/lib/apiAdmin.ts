@@ -77,13 +77,19 @@ export const apiAdmin = {
     return appel(`/reservations${suffixe}`);
   },
 
+  messages: (filtres?: { statut?: string; dus?: boolean }) => {
+    const params = new URLSearchParams();
+    if (filtres?.statut) params.set('statut', filtres.statut);
+    if (filtres?.dus) params.set('dus', '1');
+    const suffixe = params.toString() ? `?${params}` : '';
+    return appel(`/messages${suffixe}`);
+  },
+
   creerReservation: (donnees: unknown) =>
     appel('/reservations', { method: 'POST', body: JSON.stringify(donnees) }),
 
   modifierReservation: (id: string, donnees: unknown) =>
     appel(`/reservations/${id}`, { method: 'PATCH', body: JSON.stringify(donnees) }),
-
-  messages: (statut?: string) => appel(`/messages${statut ? `?statut=${statut}` : ''}`),
 
   envoyerMessage: (id: string) => appel(`/messages/${id}/envoyer`, { method: 'POST' }),
 
