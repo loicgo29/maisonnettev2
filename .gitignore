@@ -36,3 +36,7 @@ prisma/migrations/dev.db*
 # Artefacts Playwright
 test-results/
 playwright-report/
+
+# Override Compose local (contient parfois des identifiants en clair, comme
+# ici un mot de passe Postgres) — jamais destiné à partir avec le code.
+docker-compose.override.yml

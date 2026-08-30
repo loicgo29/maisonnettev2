@@ -11,7 +11,16 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"test": "vitest",
+		"test:oauth": "npm run test:e2e:oauth && npm run test:bdd:oauth && npm run test:unit:oauth",
+		"test:e2e:oauth": "playwright test ../tests/e2e/admin-oauth-login.spec.ts",
+		"test:e2e:oauth:ui": "playwright test --ui ../tests/e2e/admin-oauth-login.spec.ts",
+		"test:e2e:oauth:debug": "playwright test --debug ../tests/e2e/admin-oauth-login.spec.ts",
+		"test:bdd:oauth": "cucumber-js ../tests/features/admin-oauth-login.feature --require ../tests/steps/admin-oauth-login.steps.js",
+		"test:bdd:oauth:report": "cucumber-js ../tests/features/admin-oauth-login.feature --format html:../test-results/cucumber-report.html",
+		"test:unit:oauth": "vitest ../tests/unit/auth.test.ts",
+		"test:coverage": "vitest ../tests/unit/auth.test.ts --coverage"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^7.0.1",

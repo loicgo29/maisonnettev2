@@ -18,12 +18,20 @@ class ErreurAccesRefuse extends Error {
 
 async function appel(chemin: string, options: RequestInit = {}): Promise<any> {
   const t = jeton();
+
   if (!t) {
+    console.error('[API] No token found in sessionStorage');
     await demarrerConnexion(location.pathname);
     // demarrerConnexion redirige la page : cette ligne n'est jamais atteinte
     // en conditions réelles, mais TypeScript exige un retour.
     throw new ErreurAccesRefuse(401, 'Redirection vers la connexion');
   }
+
+  console.log('[API] Sending request with token:', {
+    chemin,
+    tokenLength: t.length,
+    tokenStart: t.substring(0, 20) + '...',
+  });
 
   const reponse = await fetch(`${BASE}${chemin}`, {
     ...options,
@@ -33,6 +41,14 @@ async function appel(chemin: string, options: RequestInit = {}): Promise<any> {
       ...options.headers,
     },
   });
+
+  if (reponse.status === 401) {
+    console.error('[API] 401 Unauthorized:', {
+      chemin,
+      tokenLength: t.length,
+      response: await reponse.text().catch(() => 'No response body'),
+    });
+  }
 
   if (reponse.status === 401) {
     await demarrerConnexion(location.pathname);

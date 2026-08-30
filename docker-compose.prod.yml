@@ -40,6 +40,10 @@ services:
       DOMAIN: ${DOMAIN}
       PUBLIC_ORIGIN: ${PUBLIC_ORIGIN}
       DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      # Sans cette variable, oidc.ts lève au démarrage (voir son commentaire) :
+      # mieux vaut un backend qui refuse de démarrer qu'un backend qui démarre
+      # et rejette silencieusement tous les jetons en 401.
+      KEYCLOAK_REALM_URL: ${KEYCLOAK_REALM_URL}
     volumes:
       # Les photos des gîtes doivent survivre aux reconstructions d'image.
       - uploads_data:/app/public/uploads
