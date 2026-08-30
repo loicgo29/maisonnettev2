@@ -1,0 +1,26 @@
+# Surcharge de docker-compose.test.yml pour les runners GitHub Actions.
+#
+# Usage :
+#   docker compose -f docker-compose.test.yml -f docker-compose.test.ci.yml up -d --build
+#
+# nas-network est le réseau Docker externe du Mac mini, partagé avec les
+# autres projets (ALO notamment) : il n'existe pas sur un runner GitHub. Le
+# retirer du fichier partagé aurait pu casser un usage local sur le Mac mini
+# que ce fichier sert aussi.
+#
+# DATABASE_URL du fichier partagé pointe vers 172.19.0.8, la base ALO
+# partagée du Mac mini — une IP de son LAN, injoignable depuis n'importe où
+# ailleurs. Le backend exécute ses migrations Prisma AU DÉMARRAGE et refuse
+# de démarrer si la base est injoignable (pas seulement les routes ALO qui
+# seraient dégradées) : sans cette surcharge, le conteneur n'atteint jamais
+# /health en CI. On bascule vers `postgres`, le service déjà défini dans le
+# fichier partagé mais que backend n'utilisait pas — vide, mais suffisant
+# pour tout ce que la suite BDD teste ici (rien n'exerce les routes ALO).
+services:
+  backend:
+    networks: !override [maisonnette-test]
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}?schema=public
+
+networks:
+  nas-network: !reset null

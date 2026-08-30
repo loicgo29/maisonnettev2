@@ -226,7 +226,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Start services with Docker Compose
-        run: docker compose -f docker-compose.test.yml up -d --build
+        run: docker compose -f docker-compose.test.yml -f docker-compose.test.ci.yml up -d --build
 
       - name: Wait for services to be ready
         run: |
@@ -240,8 +240,14 @@ jobs:
             sleep 2
           done
           echo "❌ Services failed to start"
-          docker compose -f docker-compose.test.yml logs
+          docker compose -f docker-compose.test.yml -f docker-compose.test.ci.yml logs
           exit 1
+
+      # La base de docker-compose.test.ci.yml (voir son commentaire) est vide
+      # après migration : plusieurs steps (reservations.steps.js) attendent un
+      # gîte déjà en base et échouent sinon.
+      - name: Seed de la base de test
+        run: docker exec maisonnette-test-backend npm run db:seed
 
       - name: Tests BDD
         run: npm run test:bdd
@@ -258,7 +264,7 @@ jobs:
 
       - name: Cleanup
         if: always()
-        run: docker compose -f docker-compose.test.yml down -v
+        run: docker compose -f docker-compose.test.yml -f docker-compose.test.ci.yml down -v
 
   docker-images:
     name: Build & Push des images de production
