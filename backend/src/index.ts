@@ -46,7 +46,8 @@ app.use(
 );
 
 // Routes
-app.use('/health', healthRouter);
+app.use('/api/health', healthRouter);
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/gites', gitesRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use('/api/calendar', calendarRouter);
