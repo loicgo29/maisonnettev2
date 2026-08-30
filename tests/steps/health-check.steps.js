@@ -220,6 +220,28 @@ Then('les endpoints sont listés', async function() {
   }
 });
 
+When('I navigate to {string}', async function(url) {
+  try {
+    response = await fetch(url);
+    if (!response.ok && response.status !== 404) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+  } catch (error) {
+    throw new Error(`Failed to navigate to ${url}: ${error.message}`);
+  }
+});
+
+Then('je vois {string} ou {string}', async function(text1, text2) {
+  const html = await response.text();
+  const lowercaseHtml = html.toLowerCase();
+  const text1Lower = text1.toLowerCase();
+  const text2Lower = text2.toLowerCase();
+
+  if (!lowercaseHtml.includes(text1Lower) && !lowercaseHtml.includes(text2Lower)) {
+    throw new Error(`Page doesn't contain "${text1}" or "${text2}"`);
+  }
+});
+
 When('je vérifie le fichier .env', function() {
   try {
     const envPath = path.resolve(process.cwd(), '.env');
