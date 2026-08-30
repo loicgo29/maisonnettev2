@@ -5,6 +5,7 @@ Fonctionnalité: Vérifier le contenu de la page de production
     Avant chaque scénario
     La page d'accueil est chargée
 
+  @production
   Scénario: Caddy peut accéder au frontend en interne
     Quand Caddy proxifie vers le frontend
     Alors la réponse est 200 OK

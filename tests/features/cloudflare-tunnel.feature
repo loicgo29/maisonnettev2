@@ -1,3 +1,4 @@
+@production
 Feature: Cloudflare Tunnel Production Deployment
   As a developer
   I want to verify the Cloudflare tunnel is correctly configured

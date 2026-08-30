@@ -1,4 +1,5 @@
 # language: fr
+@production
 Fonctionnalité: Production est disponible et sans erreurs
 
   Contexte:

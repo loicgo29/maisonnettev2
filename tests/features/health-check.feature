@@ -24,6 +24,7 @@ Fonctionnalité: Vérification de santé des services (Health Check)
     Et je vois "Swagger UI"
     Et les endpoints sont listés
 
+  @production
   Scénario: Toutes les variables d'environnement sont définies
     Quand je vérifie le fichier .env
     # DATABASE_URL n'est pas listée : docker-compose la compose à partir de
@@ -38,6 +39,7 @@ Fonctionnalité: Vérification de santé des services (Health Check)
       | STRIPE_SECRET_KEY |
       | STRIPE_PUBLISHABLE_KEY |
 
+  @production
   Scénario: Services Docker sont running
     Quand je liste les containers Docker
     Alors le container maisonnettev2-frontend est running

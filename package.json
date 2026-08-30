@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "test:bdd": "docker restart maisonnette-test-backend > /dev/null 2>&1 || true; sleep 5; cucumber-js tests/features --require tests/steps",
+    "test:bdd": "docker restart maisonnette-test-backend > /dev/null 2>&1 || true; sleep 5; cucumber-js tests/features --require tests/steps --tags 'not @production'",
     "test:tunnel": "cucumber-js tests/features/cloudflare-tunnel.feature --require tests/steps",
     "test:smoke": "cucumber-js tests/features/smoke-test.feature --require tests/steps",
     "test:gallery": "cucumber-js tests/features/gallery.feature --require tests/steps",
@@ -15,7 +15,7 @@
     "test:carousel-verify": "bash test-carousel.sh",
     "healthcheck": "bash run-all-tests.sh",
     "test:alo": "playwright test --config=playwright.alo.config.ts",
-    "test:bdd:prod": "TEST_SCHEME=https BACKEND_HOST=maisonnette-pecheur-bertheaume.fr FRONTEND_HOST=maisonnette-pecheur-bertheaume.fr cucumber-js tests/features --require tests/steps",
+    "test:bdd:prod": "TEST_SCHEME=https BACKEND_HOST=maisonnette-pecheur-bertheaume.fr FRONTEND_HOST=maisonnette-pecheur-bertheaume.fr cucumber-js tests/features --require tests/steps --tags '@production'",
     "test:auth": "cd ../.shared && AUTH_BASE_URL=https://auth.maisonnette-pecheur-bertheaume.fr AUTH_REALM=maisonnettev2 AUTH_CLIENT_ID=maisonnettev2-frontend API_BASE_URL=https://maisonnette-pecheur-bertheaume.fr ADMIN_PATH=/api/admin/dashboard npm run --silent test:auth"
   },
   "devDependencies": {
