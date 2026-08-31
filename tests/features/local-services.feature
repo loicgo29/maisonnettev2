@@ -16,15 +16,15 @@ Feature: Local Development Services
     And no containers are in restarting state
 
   Scenario: Local frontend is accessible
-    When I navigate to "http://localhost:5173"
+    When I navigate to "http://localhost:8030"
     Then la page charge avec un code HTTP 200
 
   Scenario: Local backend API is responding
-    When I navigate to "http://localhost:3001/health"
+    When I navigate to "http://localhost:3001/api/health"
     Then la page charge avec un code HTTP 200
 
   Scenario: Local Keycloak is accessible
-    When I navigate to "http://localhost:9000"
+    When I navigate to "http://localhost:8081"
     Then la page charge avec un code HTTP 200
 
   Scenario: Local database is connected

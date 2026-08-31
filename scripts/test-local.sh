@@ -20,7 +20,7 @@ echo ""
 
 # Ensure containers are running
 echo "📦 Checking Docker containers..."
-if ! docker ps | grep -q maisonnette-test-frontend; then
+if ! docker ps --format "table {{.Names}}" | grep -q maisonnette-test-frontend; then
   echo "❌ Local containers not running. Start them with:"
   echo "   docker-compose -f docker-compose.test.yml up -d"
   exit 1
