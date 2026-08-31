@@ -48,6 +48,13 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Maisonnette de Bertheaume - Gîte de vacances Côtes d'Armor</title>
+	<meta name="description" content="Maisonnette de Bertheaume: gîte de 45m² pour 6 personnes aux Côtes d'Armor. À 3 min de la plage. Jardin arboré, chauffage, tout confort." />
+	<meta name="og:title" content="Maisonnette de Bertheaume - Gîte de vacances" />
+	<meta name="og:description" content="Maisonnette idéale pour vos vacances en famille aux Côtes d'Armor" />
+</svelte:head>
+
 <svelte:window on:keydown={handleKeydown} />
 
 <div class="page">
