@@ -62,4 +62,4 @@ EXPOSE 5173
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://127.0.0.1:5173/ || exit 1
 
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["npm", "run", "preview"]
