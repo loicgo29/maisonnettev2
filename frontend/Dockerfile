@@ -22,16 +22,16 @@ ENV PRIVATE_GITE_CALENDAR_ID=$PRIVATE_GITE_CALENDAR_ID
 WORKDIR /app
 
 # Create .env for SvelteKit build-time compilation
-# Use printf to avoid heredoc issues in Docker
-RUN printf 'PRIVATE_GOOGLE_CLIENT_ID=%s\nPRIVATE_GOOGLE_CLIENT_SECRET=%s\nPRIVATE_GOOGLE_REDIRECT_URI=%s\nPRIVATE_GITE_CALENDAR_ID=%s\nPUBLIC_AUTH_URL=%s\nPUBLIC_AUTH_REALM=%s\nPUBLIC_AUTH_CLIENT_ID=%s\n' \
-  "${PRIVATE_GOOGLE_CLIENT_ID}" \
-  "${PRIVATE_GOOGLE_CLIENT_SECRET}" \
-  "${PRIVATE_GOOGLE_REDIRECT_URI}" \
-  "${PRIVATE_GITE_CALENDAR_ID}" \
-  "${PUBLIC_AUTH_URL}" \
-  "${PUBLIC_AUTH_REALM}" \
-  "${PUBLIC_AUTH_CLIENT_ID}" > .env && \
-  cat .env
+RUN sh -c 'cat > .env << EOF
+PRIVATE_GOOGLE_CLIENT_ID='$PRIVATE_GOOGLE_CLIENT_ID'
+PRIVATE_GOOGLE_CLIENT_SECRET='$PRIVATE_GOOGLE_CLIENT_SECRET'
+PRIVATE_GOOGLE_REDIRECT_URI='$PRIVATE_GOOGLE_REDIRECT_URI'
+PRIVATE_GITE_CALENDAR_ID='$PRIVATE_GITE_CALENDAR_ID'
+PUBLIC_AUTH_URL='$PUBLIC_AUTH_URL'
+PUBLIC_AUTH_REALM='$PUBLIC_AUTH_REALM'
+PUBLIC_AUTH_CLIENT_ID='$PUBLIC_AUTH_CLIENT_ID'
+EOF
+cat .env'
 
 COPY package*.json ./
 RUN npm ci
@@ -56,9 +56,12 @@ COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/static ./static
 COPY --from=builder /app/.env ./.env
 
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 EXPOSE 5173
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://127.0.0.1:5173/ || exit 1
 
-CMD ["npm", "run", "preview"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
