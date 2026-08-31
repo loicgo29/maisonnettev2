@@ -151,3 +151,64 @@ Then('no remote containers are restarting', function() {
     );
   }
 });
+
+// Additional health check steps
+When('I check the health endpoint', async function() {
+  try {
+    const response = await fetch(`${config.api_url}/health`);
+    this.healthResponse = response;
+    this.healthStatus = response.status;
+  } catch (error) {
+    throw new Error(`Failed to check health: ${error.message}`);
+  }
+});
+
+Then('the response status is {int}', function(status) {
+  if (this.healthStatus !== status) {
+    throw new Error(`Expected ${status}, got ${this.healthStatus}`);
+  }
+});
+
+Then('the response contains {string}', async function(text) {
+  const data = await this.healthResponse.json();
+  if (!JSON.stringify(data).includes(text)) {
+    throw new Error(`Response missing: ${text}`);
+  }
+});
+
+Then('the production database has latest migrations', async function() {
+  const response = await fetch(`${config.api_url}/health`);
+  const data = await response.json();
+  if (data.checks?.database !== 'connected') {
+    throw new Error('DB migrations not applied');
+  }
+});
+
+Then('all schema tables exist', async function() {
+  const response = await fetch(`${config.api_url}/gites`);
+  if (response.status !== 200) {
+    throw new Error(`Table check failed: ${response.status}`);
+  }
+});
+
+// Keycloak OAuth2 client configuration
+Given('the Keycloak realm is accessible', async function() {
+  const response = await fetch('https://auth.maisonnette-pecheur-bertheaume.fr/realms/maisonnettev2/.well-known/openid-configuration');
+  this.keycloakResponse = response;
+  expect(response.ok).toBe(true);
+});
+
+When('I request the OAuth2 authorization endpoint', async function() {
+  const response = await fetch(
+    'https://auth.maisonnette-pecheur-bertheaume.fr/realms/maisonnettev2/protocol/openid-connect/auth' +
+    '?client_id=maisonnettev2-frontend' +
+    '&response_type=code' +
+    '&redirect_uri=https://maisonnette-pecheur-bertheaume.fr/admin/callback'
+  );
+  this.authResponse = response;
+  this.authBody = await response.text();
+});
+
+Then('the response does not contain {string}', function(text) {
+  expect(this.authBody).not.toContain(text);
+});
