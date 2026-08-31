@@ -96,6 +96,15 @@ services:
       NODE_ENV: production
       PORT: 3000
       HOST: 0.0.0.0
+      # Google Calendar OAuth2
+      PRIVATE_GOOGLE_CLIENT_ID: ${PRIVATE_GOOGLE_CLIENT_ID}
+      PRIVATE_GOOGLE_CLIENT_SECRET: ${PRIVATE_GOOGLE_CLIENT_SECRET}
+      PRIVATE_GOOGLE_REDIRECT_URI: ${PRIVATE_GOOGLE_REDIRECT_URI}
+      PRIVATE_GITE_CALENDAR_ID: ${PRIVATE_GITE_CALENDAR_ID}
+      # Keycloak
+      PUBLIC_AUTH_URL: ${PUBLIC_AUTH_URL:-http://localhost:8081}
+      PUBLIC_AUTH_REALM: ${PUBLIC_AUTH_REALM:-maisonnettev2}
+      PUBLIC_AUTH_CLIENT_ID: ${PUBLIC_AUTH_CLIENT_ID:-maisonnettev2-frontend}
     networks: [maisonnette-test]
 
   caddy:
