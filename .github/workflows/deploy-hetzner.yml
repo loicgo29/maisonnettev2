@@ -1,0 +1,108 @@
+name: Deploy to Hetzner
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy maisonnettev2 to Hetzner
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate .env.production from Bitwarden secrets
+        env:
+          PRIVATE_GOOGLE_CLIENT_ID: ${{ secrets.PRIVATE_GOOGLE_CLIENT_ID }}
+          PRIVATE_GOOGLE_CLIENT_SECRET: ${{ secrets.PRIVATE_GOOGLE_CLIENT_SECRET }}
+          PRIVATE_GOOGLE_REDIRECT_URI: ${{ secrets.PRIVATE_GOOGLE_REDIRECT_URI }}
+          PRIVATE_GITE_CALENDAR_ID: ${{ secrets.PRIVATE_GITE_CALENDAR_ID }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          KC_DB_PASSWORD: ${{ secrets.KC_DB_PASSWORD }}
+          KC_ADMIN_PASSWORD: ${{ secrets.KC_ADMIN_PASSWORD }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          cat > maisonnettev2/.env.production << 'ENVEOF'
+          DB_USER=maisonnettev2
+          DB_PASSWORD=${{ env.DB_PASSWORD }}
+          DB_NAME=maisonnettev2
+          NODE_ENV=production
+          PORT=3001
+          VITE_API_URL=https://maisonnette-pecheur-bertheaume.fr
+          OWNER_EMAIL=lgbertheaume@gmail.com
+          OWNER_PHONE=+33781103889
+
+          DOMAIN=maisonnette-pecheur-bertheaume.fr
+          PUBLIC_ORIGIN=https://maisonnette-pecheur-bertheaume.fr
+          ACME_EMAIL=loic@logo-solutions.fr
+          PUBLIC_AUTH_URL=https://auth.maisonnette-pecheur-bertheaume.fr
+          PUBLIC_AUTH_REALM=maisonnettev2
+          PUBLIC_AUTH_CLIENT_ID=maisonnettev2-frontend
+
+          FRONTEND_HOST=127.0.0.1
+          FRONTEND_PORT=8030
+          BACKEND_HOST=127.0.0.1
+          BACKEND_PORT=3001
+          DB_HOST=postgres
+          DB_PORT=5432
+
+          KC_DB_PASSWORD=${{ env.KC_DB_PASSWORD }}
+          KC_ADMIN_USER=admin
+          KC_ADMIN_PASSWORD=${{ env.KC_ADMIN_PASSWORD }}
+          KEYCLOAK_REALM_URL=https://auth.maisonnette-pecheur-bertheaume.fr/realms/maisonnettev2/
+          MESSAGES_AUTO=false
+
+          RESEND_API_KEY=${{ env.RESEND_API_KEY }}
+
+          PRIVATE_GOOGLE_CLIENT_ID=${{ env.PRIVATE_GOOGLE_CLIENT_ID }}
+          PRIVATE_GOOGLE_CLIENT_SECRET=${{ env.PRIVATE_GOOGLE_CLIENT_SECRET }}
+          PRIVATE_GOOGLE_REDIRECT_URI=${{ env.PRIVATE_GOOGLE_REDIRECT_URI }}
+          PRIVATE_GITE_CALENDAR_ID=${{ env.PRIVATE_GITE_CALENDAR_ID }}
+          ENVEOF
+
+          echo "✅ .env.production generated"
+
+      - name: Deploy via SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.HETZNER_DEPLOY_KEY }}
+          DEPLOY_HOST: ${{ secrets.HETZNER_DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.HETZNER_DEPLOY_USER }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+          # Transfer .env.production to server
+          scp -i ~/.ssh/deploy_key maisonnettev2/.env.production "$DEPLOY_USER@$DEPLOY_HOST:/tmp/.env.production"
+
+          ssh -i ~/.ssh/deploy_key "$DEPLOY_USER@$DEPLOY_HOST" << 'EOF'
+          set -euo pipefail
+          cd /opt/maisonnettev2
+
+          # Save current .env if exists (backup)
+          [ -f .env ] && cp .env .env.backup || true
+
+          # Move new .env.production to .env
+          mv /tmp/.env.production .env
+
+          # Sync code (exclude node_modules, .git, dist, .env)
+          rsync -az --delete \
+            --exclude node_modules \
+            --exclude .git \
+            --exclude dist \
+            --exclude .env \
+            --exclude .env.* \
+            ${{ github.server_url }}/${{ github.repository }}/archive/${{ github.ref_name }}.tar.gz \
+            ./code.tar.gz
+          tar -xzf code.tar.gz --strip-components=1
+          rm -f code.tar.gz
+
+          # Deploy
+          ./deploy.sh
+
+          echo "✅ Deployment complete"
+          EOF
