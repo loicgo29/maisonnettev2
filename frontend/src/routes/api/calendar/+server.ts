@@ -2,17 +2,29 @@ import { json } from '@sveltejs/kit';
 
 import { PRIVATE_GOOGLE_CLIENT_ID, PRIVATE_GOOGLE_CLIENT_SECRET, PRIVATE_GOOGLE_REDIRECT_URI, PRIVATE_GITE_CALENDAR_ID } from '$env/static/private';
 
-// Fallback to process.env for runtime variables (docker-compose environment:)
-const getEnv = (key: string, defaultValue: string = '') => {
-	return typeof process !== 'undefined' && process.env[key] ? process.env[key] : defaultValue;
+// SvelteKit node handler - use process.env directly
+// These values come from docker-compose environment: section at runtime
+const getEnvVar = (name: string): string | undefined => {
+	try {
+		// In Node.js/SvelteKit server context, process.env is available
+		if (typeof globalThis !== 'undefined' && globalThis.process?.env) {
+			return globalThis.process.env[name];
+		}
+		if (typeof process !== 'undefined' && process.env) {
+			return process.env[name];
+		}
+	} catch (e) {
+		// silently fail
+	}
+	return undefined;
 };
 
 // Utilise "primary" = ton calendrier principal
 // Ou remplace par l'ID du calendrier dédié aux réservations
-const CALENDAR_ID = PRIVATE_GITE_CALENDAR_ID || getEnv('PRIVATE_GITE_CALENDAR_ID', 'primary');
-const CLIENT_ID = PRIVATE_GOOGLE_CLIENT_ID || getEnv('PRIVATE_GOOGLE_CLIENT_ID');
-const CLIENT_SECRET = PRIVATE_GOOGLE_CLIENT_SECRET || getEnv('PRIVATE_GOOGLE_CLIENT_SECRET');
-const REDIRECT_URI = (PRIVATE_GOOGLE_REDIRECT_URI || getEnv('PRIVATE_GOOGLE_REDIRECT_URI') || 'http://localhost:8030/api/calendar/callback');
+const CALENDAR_ID = PRIVATE_GITE_CALENDAR_ID?.trim() || getEnvVar('PRIVATE_GITE_CALENDAR_ID') || 'primary';
+const CLIENT_ID = PRIVATE_GOOGLE_CLIENT_ID?.trim() || getEnvVar('PRIVATE_GOOGLE_CLIENT_ID') || '';
+const CLIENT_SECRET = PRIVATE_GOOGLE_CLIENT_SECRET?.trim() || getEnvVar('PRIVATE_GOOGLE_CLIENT_SECRET') || '';
+const REDIRECT_URI = (PRIVATE_GOOGLE_REDIRECT_URI?.trim() || getEnvVar('PRIVATE_GOOGLE_REDIRECT_URI') || 'http://localhost:8030/api/calendar/callback');
 
 export async function GET({ url, cookies }) {
 	try {
