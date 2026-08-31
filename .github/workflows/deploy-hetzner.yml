@@ -135,8 +135,18 @@ jobs:
           echo "✓ Code synced"
 
           # Deploy WITH NO-CACHE to force rebuild with new env vars
-          echo "=== DEPLOYING (NO-CACHE) ==="
-          ./deploy.sh
+          echo "=== DEPLOYING (NO-CACHE, WITH --env-file) ==="
+
+          # CRITICAL: Rebuild with --env-file (MUST come before -f)
+          echo "🔨 Rebuilding frontend with environment variables..."
+          docker compose \
+            --env-file .env \
+            -f docker-compose.prod.yml \
+            build --no-cache frontend
+
+          echo ""
+          echo "🚀 Starting services..."
+          docker compose -f docker-compose.prod.yml up -d
 
           echo "✅ Deployment complete"
           EOF

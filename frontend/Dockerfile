@@ -21,6 +21,18 @@ ENV PRIVATE_GITE_CALENDAR_ID=$PRIVATE_GITE_CALENDAR_ID
 
 WORKDIR /app
 
+# Create .env for SvelteKit build-time compilation
+# (SvelteKit $env/static/private requires .env at build time)
+RUN cat > .env << EOF
+PRIVATE_GOOGLE_CLIENT_ID=${PRIVATE_GOOGLE_CLIENT_ID}
+PRIVATE_GOOGLE_CLIENT_SECRET=${PRIVATE_GOOGLE_CLIENT_SECRET}
+PRIVATE_GOOGLE_REDIRECT_URI=${PRIVATE_GOOGLE_REDIRECT_URI}
+PRIVATE_GITE_CALENDAR_ID=${PRIVATE_GITE_CALENDAR_ID}
+PUBLIC_AUTH_URL=${PUBLIC_AUTH_URL}
+PUBLIC_AUTH_REALM=${PUBLIC_AUTH_REALM}
+PUBLIC_AUTH_CLIENT_ID=${PUBLIC_AUTH_CLIENT_ID}
+EOF
+
 COPY package*.json ./
 RUN npm ci
 
@@ -42,6 +54,7 @@ COPY --from=builder /app/.svelte-kit ./.svelte-kit
 COPY --from=builder /app/vite.config.ts ./vite.config.ts
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/static ./static
+COPY --from=builder /app/.env ./.env
 
 EXPOSE 5173
 
