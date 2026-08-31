@@ -91,6 +91,26 @@ export async function GET({ url, cookies }: RequestEvent) {
 			});
 		}
 
+		// Handle GET calendar list (debug)
+		if (url.searchParams.get('list') === 'true') {
+			const accessToken = cookies.get('google_calendar_token');
+			if (!accessToken) {
+				return json({ error: 'Not authenticated' }, { status: 401 });
+			}
+
+			const listResponse = await fetch(
+				'https://www.googleapis.com/calendar/v3/users/me/calendarList',
+				{
+					headers: {
+						'Authorization': `Bearer ${accessToken}`
+					}
+				}
+			);
+
+			const calendars = await listResponse.json();
+			return json({ calendars: calendars.items || [] });
+		}
+
 		// Handle GET calendar events
 		const accessToken = cookies.get('google_calendar_token');
 
