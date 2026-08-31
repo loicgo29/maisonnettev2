@@ -1,21 +1,11 @@
 import { json, type RequestEvent } from '@sveltejs/kit';
 
-import { PRIVATE_GOOGLE_CLIENT_ID, PRIVATE_GOOGLE_CLIENT_SECRET, PRIVATE_GOOGLE_REDIRECT_URI, PRIVATE_GITE_CALENDAR_ID } from '$env/static/private';
-
-// SvelteKit node handler - use process.env directly
+// Use ONLY process.env from container runtime, not compiled variables
 // These values come from docker-compose environment: section at runtime
 const getEnvVar = (name: string): string | undefined => {
 	try {
-		// In Node.js/SvelteKit server context, process.env is available
-		if (typeof globalThis !== 'undefined' && globalThis.process?.env) {
-			const val = globalThis.process.env[name];
-			console.log(`[getEnvVar] ${name}=${val}`);
-			return val;
-		}
 		if (typeof process !== 'undefined' && process.env) {
-			const val = process.env[name];
-			console.log(`[getEnvVar-process] ${name}=${val}`);
-			return val;
+			return process.env[name];
 		}
 	} catch (e) {
 		console.error(`[getEnvVar-error] ${name}: ${e}`);
@@ -23,15 +13,19 @@ const getEnvVar = (name: string): string | undefined => {
 	return undefined;
 };
 
-// Utilise "primary" = ton calendrier principal
-// Ou remplace par l'ID du calendrier dédié aux réservations
-const CALENDAR_ID = PRIVATE_GITE_CALENDAR_ID?.trim() || getEnvVar('PRIVATE_GITE_CALENDAR_ID') || 'primary';
-const CLIENT_ID = PRIVATE_GOOGLE_CLIENT_ID?.trim() || getEnvVar('PRIVATE_GOOGLE_CLIENT_ID') || '';
-const CLIENT_SECRET = PRIVATE_GOOGLE_CLIENT_SECRET?.trim() || getEnvVar('PRIVATE_GOOGLE_CLIENT_SECRET') || '';
-const REDIRECT_URI = (PRIVATE_GOOGLE_REDIRECT_URI?.trim() || getEnvVar('PRIVATE_GOOGLE_REDIRECT_URI') || 'http://localhost:8030/api/calendar/callback');
-
 export async function GET({ url, cookies }: RequestEvent) {
 	try {
+		// Load env vars at RUNTIME (not build time)
+		const CALENDAR_ID = getEnvVar('PRIVATE_GITE_CALENDAR_ID') || 'primary';
+		const CLIENT_ID = getEnvVar('PRIVATE_GOOGLE_CLIENT_ID') || '';
+		const CLIENT_SECRET = getEnvVar('PRIVATE_GOOGLE_CLIENT_SECRET') || '';
+		const REDIRECT_URI = getEnvVar('PRIVATE_GOOGLE_REDIRECT_URI') || 'http://localhost:8030/api/calendar/callback';
+
+		// DEBUG
+		console.log('🔐 [Calendar API] Runtime env vars:');
+		console.log(`  CLIENT_ID: ${CLIENT_ID ? 'present (' + CLIENT_ID.length + ' chars)' : 'EMPTY'}`);
+		console.log(`  REDIRECT_URI: ${REDIRECT_URI}`);
+
 		// Vérifier si c'est un callback OAuth2 (code dans URL)
 		const code = url.searchParams.get('code');
 		const error = url.searchParams.get('error');

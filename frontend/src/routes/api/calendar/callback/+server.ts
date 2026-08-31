@@ -14,9 +14,9 @@ export async function GET(event: RequestEvent) {
 		return new Response(JSON.stringify({ error: 'Missing authorization code' }), { status: 400 });
 	}
 
-	const CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
-	const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
-	const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || '';
+	const CLIENT_ID = process.env.PRIVATE_GOOGLE_CLIENT_ID || '';
+	const CLIENT_SECRET = process.env.PRIVATE_GOOGLE_CLIENT_SECRET || '';
+	const REDIRECT_URI = process.env.PRIVATE_GOOGLE_REDIRECT_URI || '';
 
 	try {
 		console.log('🔐 Callback received with code:', code);
