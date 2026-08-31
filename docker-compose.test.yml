@@ -106,7 +106,7 @@ services:
       - frontend
       - backend
     ports:
-      - '127.0.0.1:8030:80'
+      - '8030:80'
     volumes:
       - caddy_test_data:/data
       - caddy_test_config:/config
