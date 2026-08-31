@@ -65,13 +65,26 @@ export async function GET({ cookies }) {
 	}
 }
 
-// Callback OAuth2
-export async function POST({ url, cookies }) {
+// Callback OAuth2 (GET from Google redirect)
+export async function GET({ url, cookies }) {
 	try {
 		const code = url.searchParams.get('code');
+		const error = url.searchParams.get('error');
+
+		if (error) {
+			return json({ error: `Google OAuth2 error: ${error}` }, { status: 400 });
+		}
 
 		if (!code) {
 			return json({ error: 'Code non fourni' }, { status: 400 });
+		}
+
+		if (!CLIENT_ID || !CLIENT_SECRET) {
+			console.error('Missing Google OAuth2 credentials:', { CLIENT_ID, CLIENT_SECRET });
+			return json({
+				error: 'invalid_request',
+				error_description: 'Could not determine client ID from request.'
+			}, { status: 500 });
 		}
 
 		// Échanger le code contre un token d'accès
@@ -82,8 +95,8 @@ export async function POST({ url, cookies }) {
 			},
 			body: new URLSearchParams({
 				code,
-				client_id: CLIENT_ID || '',
-				client_secret: CLIENT_SECRET || '',
+				client_id: CLIENT_ID,
+				client_secret: CLIENT_SECRET,
 				redirect_uri: REDIRECT_URI,
 				grant_type: 'authorization_code'
 			}).toString()
@@ -92,7 +105,7 @@ export async function POST({ url, cookies }) {
 		const tokenData = await tokenResponse.json();
 
 		if (tokenData.error) {
-			return json({ error: tokenData.error }, { status: 400 });
+			return json({ error: tokenData.error_description || tokenData.error }, { status: 400 });
 		}
 
 		// Stocker le token d'accès dans un cookie sécurisé
@@ -104,9 +117,18 @@ export async function POST({ url, cookies }) {
 			path: '/'
 		});
 
-		return json({ success: true });
+		// Rediriger vers la page calendrier
+		return new Response(null, {
+			status: 302,
+			headers: { 'Location': '/calendar' }
+		});
 	} catch (error) {
 		console.error('OAuth2 error:', error);
 		return json({ error: 'Erreur d\'authentification' }, { status: 500 });
 	}
+}
+
+// Callback OAuth2 (POST fallback)
+export async function POST({ url, cookies }) {
+	return GET({ url, cookies });
 }
