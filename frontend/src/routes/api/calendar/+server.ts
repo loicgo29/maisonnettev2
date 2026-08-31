@@ -2,12 +2,17 @@ import { json } from '@sveltejs/kit';
 
 import { PRIVATE_GOOGLE_CLIENT_ID, PRIVATE_GOOGLE_CLIENT_SECRET, PRIVATE_GOOGLE_REDIRECT_URI, PRIVATE_GITE_CALENDAR_ID } from '$env/static/private';
 
+// Fallback to process.env for runtime variables (docker-compose environment:)
+const getEnv = (key: string, defaultValue: string = '') => {
+	return typeof process !== 'undefined' && process.env[key] ? process.env[key] : defaultValue;
+};
+
 // Utilise "primary" = ton calendrier principal
 // Ou remplace par l'ID du calendrier dédié aux réservations
-const CALENDAR_ID = PRIVATE_GITE_CALENDAR_ID || 'primary';
-const CLIENT_ID = PRIVATE_GOOGLE_CLIENT_ID;
-const CLIENT_SECRET = PRIVATE_GOOGLE_CLIENT_SECRET;
-const REDIRECT_URI = PRIVATE_GOOGLE_REDIRECT_URI || 'http://localhost:8030/api/calendar/callback';
+const CALENDAR_ID = PRIVATE_GITE_CALENDAR_ID || getEnv('PRIVATE_GITE_CALENDAR_ID', 'primary');
+const CLIENT_ID = PRIVATE_GOOGLE_CLIENT_ID || getEnv('PRIVATE_GOOGLE_CLIENT_ID');
+const CLIENT_SECRET = PRIVATE_GOOGLE_CLIENT_SECRET || getEnv('PRIVATE_GOOGLE_CLIENT_SECRET');
+const REDIRECT_URI = (PRIVATE_GOOGLE_REDIRECT_URI || getEnv('PRIVATE_GOOGLE_REDIRECT_URI') || 'http://localhost:8030/api/calendar/callback');
 
 export async function GET({ url, cookies }) {
 	try {
