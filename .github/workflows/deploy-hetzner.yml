@@ -89,15 +89,9 @@ jobs:
           # Move new .env.production to .env
           mv /tmp/.env.production .env
 
-          # Sync code (exclude node_modules, .git, dist, .env)
-          rsync -az --delete \
-            --exclude node_modules \
-            --exclude .git \
-            --exclude dist \
-            --exclude .env \
-            --exclude .env.* \
-            ${{ github.server_url }}/${{ github.repository }}/archive/${{ github.ref_name }}.tar.gz \
-            ./code.tar.gz
+          # Download and extract code from GitHub
+          curl -L -o code.tar.gz \
+            ${{ github.server_url }}/${{ github.repository }}/archive/${{ github.ref_name }}.tar.gz
           tar -xzf code.tar.gz --strip-components=1
           rm -f code.tar.gz
 
