@@ -1,4 +1,4 @@
-import { json } from '@sveltejs/kit';
+import { json, type RequestEvent } from '@sveltejs/kit';
 
 import { PRIVATE_GOOGLE_CLIENT_ID, PRIVATE_GOOGLE_CLIENT_SECRET, PRIVATE_GOOGLE_REDIRECT_URI, PRIVATE_GITE_CALENDAR_ID } from '$env/static/private';
 
@@ -8,13 +8,17 @@ const getEnvVar = (name: string): string | undefined => {
 	try {
 		// In Node.js/SvelteKit server context, process.env is available
 		if (typeof globalThis !== 'undefined' && globalThis.process?.env) {
-			return globalThis.process.env[name];
+			const val = globalThis.process.env[name];
+			console.log(`[getEnvVar] ${name}=${val}`);
+			return val;
 		}
 		if (typeof process !== 'undefined' && process.env) {
-			return process.env[name];
+			const val = process.env[name];
+			console.log(`[getEnvVar-process] ${name}=${val}`);
+			return val;
 		}
 	} catch (e) {
-		// silently fail
+		console.error(`[getEnvVar-error] ${name}: ${e}`);
 	}
 	return undefined;
 };
@@ -26,7 +30,7 @@ const CLIENT_ID = PRIVATE_GOOGLE_CLIENT_ID?.trim() || getEnvVar('PRIVATE_GOOGLE_
 const CLIENT_SECRET = PRIVATE_GOOGLE_CLIENT_SECRET?.trim() || getEnvVar('PRIVATE_GOOGLE_CLIENT_SECRET') || '';
 const REDIRECT_URI = (PRIVATE_GOOGLE_REDIRECT_URI?.trim() || getEnvVar('PRIVATE_GOOGLE_REDIRECT_URI') || 'http://localhost:8030/api/calendar/callback');
 
-export async function GET({ url, cookies }) {
+export async function GET({ url, cookies }: RequestEvent) {
 	try {
 		// Vérifier si c'est un callback OAuth2 (code dans URL)
 		const code = url.searchParams.get('code');
@@ -142,6 +146,6 @@ export async function GET({ url, cookies }) {
 }
 
 // POST fallback for OAuth2 callback
-export async function POST({ url, cookies }) {
-	return GET({ url, cookies });
+export async function POST(event: RequestEvent) {
+	return GET(event);
 }

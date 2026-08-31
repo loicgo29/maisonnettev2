@@ -1,8 +1,13 @@
-<script>
+<script lang="ts">
 	import BookingCalendar from '$lib/components/BookingCalendar.svelte';
 	import GoogleCalendar from '$lib/components/GoogleCalendar.svelte';
 
-	const photos = [
+	interface Photo {
+		src: string;
+		alt: string;
+	}
+
+	const photos: Photo[] = [
 		{ src: '/images/IMG_0618.JPG', alt: 'Jardin à gauche' },
 		{ src: '/images/IMG_0627.JPG', alt: 'Vue d\'ensemble' },
 		{ src: '/images/IMG_0632.JPG', alt: 'Maison' },
@@ -14,10 +19,10 @@
 	];
 
 	let lightboxOpen = false;
-	let selectedPhoto = null;
+	let selectedPhoto: Photo | null = null;
 	let showCalendar = false;
 
-	function openLightbox(photo) {
+	function openLightbox(photo: Photo) {
 		selectedPhoto = photo;
 		lightboxOpen = true;
 		document.body.style.overflow = 'hidden';
@@ -38,7 +43,7 @@
 		}
 	}
 
-	function handleKeydown(e) {
+	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Escape') {
 			closeLightbox();
 			if (showCalendar) {
