@@ -65,6 +65,26 @@ jobs:
 
           echo "✅ .env.production generated"
 
+      - name: Verify .env.production integrity
+        run: |
+          echo "✓ Verifying .env.production..."
+          required_vars=(
+            "PRIVATE_GOOGLE_CLIENT_ID"
+            "PRIVATE_GOOGLE_CLIENT_SECRET"
+            "PRIVATE_GOOGLE_REDIRECT_URI"
+            "PRIVATE_GITE_CALENDAR_ID"
+            "DB_PASSWORD"
+            "KC_DB_PASSWORD"
+            "KC_ADMIN_PASSWORD"
+          )
+          for var in "${required_vars[@]}"; do
+            if ! grep -q "^${var}=" .env.production; then
+              echo "❌ Missing: ${var}"
+              exit 1
+            fi
+          done
+          echo "✅ All critical env vars present"
+
       - name: Deploy via SSH
         env:
           DEPLOY_KEY: ${{ secrets.HETZNER_DEPLOY_KEY }}
@@ -83,20 +103,83 @@ jobs:
           set -euo pipefail
           cd /opt/maisonnettev2
 
+          echo "=== PRE-DEPLOYMENT CHECKS ==="
+
+          # Verify .env was transferred
+          if [ ! -f /tmp/.env.production ]; then
+            echo "❌ .env.production transfer failed"
+            exit 1
+          fi
+          echo "✓ .env.production transferred"
+
           # Save current .env if exists (backup)
           [ -f .env ] && cp .env .env.backup || true
 
           # Move new .env.production to .env
           mv /tmp/.env.production .env
 
+          # Verify critical vars are present on production
+          for var in PRIVATE_GOOGLE_CLIENT_ID PRIVATE_GOOGLE_REDIRECT_URI KEYCLOAK_REALM_URL; do
+            if ! grep -q "^${var}=" .env; then
+              echo "❌ Production .env missing: ${var}"
+              exit 1
+            fi
+          done
+          echo "✓ All env vars verified on production"
+
           # Download and extract code from GitHub
           curl -L -o code.tar.gz \
             ${{ github.server_url }}/${{ github.repository }}/archive/${{ github.ref_name }}.tar.gz
           tar -xzf code.tar.gz --strip-components=1
           rm -f code.tar.gz
+          echo "✓ Code synced"
 
-          # Deploy
+          # Deploy WITH NO-CACHE to force rebuild with new env vars
+          echo "=== DEPLOYING (NO-CACHE) ==="
           ./deploy.sh
 
           echo "✅ Deployment complete"
           EOF
+
+      - name: Post-Deployment Healthchecks
+        env:
+          DEPLOY_HOST: ${{ secrets.HETZNER_DEPLOY_HOST }}
+        run: |
+          echo "⏳ Waiting for services to be healthy..."
+          sleep 10
+
+          # Check backend health
+          max_attempts=30
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            if curl -f https://$DEPLOY_HOST/api/health > /dev/null 2>&1; then
+              echo "✅ Backend health check passed"
+              break
+            fi
+            if [ $attempt -eq $max_attempts ]; then
+              echo "❌ Backend health check failed after $max_attempts attempts"
+              exit 1
+            fi
+            echo "⏳ Attempt $attempt/$max_attempts..."
+            sleep 2
+            ((attempt++))
+          done
+
+          # Check Google Calendar OAuth2 configuration
+          echo "✓ Testing Google Calendar OAuth2 configuration..."
+          calendar_response=$(curl -s https://$DEPLOY_HOST/api/calendar)
+          if echo "$calendar_response" | grep -q "authUrl"; then
+            if echo "$calendar_response" | grep -q "$DEPLOY_HOST/api/calendar/callback"; then
+              echo "✅ Google Calendar REDIRECT_URI correctly configured"
+            else
+              echo "⚠️ Warning: REDIRECT_URI may not be correct"
+            fi
+          else
+            echo "❌ Calendar endpoint not responding correctly"
+            exit 1
+          fi
+
+          echo ""
+          echo "========================================="
+          echo "✅ ALL DEPLOYMENT CHECKS PASSED"
+          echo "========================================="
