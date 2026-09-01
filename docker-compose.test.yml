@@ -63,7 +63,7 @@ services:
       NODE_ENV: test
       PORT: 3001
       ALO_ENABLED: 'true'
-      DATABASE_URL: postgresql://logo:postgres_logo_dev@172.19.0.8:5432/logo?schema=public
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}?schema=public
       # Nom de service Docker, pas localhost:8081 : le backend joint le JWKS
       # par le réseau interne, seul le navigateur a besoin du port publié.
       KEYCLOAK_REALM_URL: http://keycloak-test:8080/realms/maisonnettev2/

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import BookingCalendar from '$lib/components/BookingCalendar.svelte';
 	import GoogleCalendar from '$lib/components/GoogleCalendar.svelte';
+	import PublicCalendar from '$lib/components/PublicCalendar.svelte';
 
 	interface Photo {
 		src: string;
@@ -113,8 +114,8 @@
 
 	{#if showCalendar}
 		<section id="calendar-section" class="calendar-section">
-			<h2>📅 Calendrier de Réservation</h2>
-			<div class="calendar-grid">
+			<PublicCalendar />
+			<div class="calendar-grid" style="margin-top: 2rem;">
 				<div class="calendar-main">
 					<BookingCalendar />
 				</div>
