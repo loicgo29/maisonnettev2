@@ -40,10 +40,10 @@
 </script>
 
 <svelte:head>
-	<title>Maisonnette de Bertheaume - Gîte de vacances Côtes d'Armor</title>
-	<meta name="description" content="Maisonnette de Bertheaume: gîte de 45m² pour 6 personnes aux Côtes d'Armor. À 3 min de la plage. Jardin arboré, chauffage, tout confort." />
+	<title>Maisonnette de Bertheaume - Gîte de vacances Finistère</title>
+	<meta name="description" content="Maisonnette de Bertheaume: gîte de 45m² pour 6 personnes aux Finistère. À 3 min de la plage. Jardin arboré, chauffage, tout confort." />
 	<meta name="og:title" content="Maisonnette de Bertheaume - Gîte de vacances" />
-	<meta name="og:description" content="Maisonnette idéale pour vos vacances en famille aux Côtes d'Armor" />
+	<meta name="og:description" content="Maisonnette idéale pour vos vacances en famille aux Finistère" />
 </svelte:head>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -51,7 +51,7 @@
 <div class="page">
 	<section class="hero">
 		<h1>Maisonnette de Bertheaume</h1>
-		<p class="tagline">Maison entière · Côtes d'Armor · 6 personnes · 2 chambres</p>
+		<p class="tagline">Maison entière · Finistère · 6 personnes · 2 chambres</p>
 		<p class="description">
 			Nichée à la pointe de Bertheaume, cette maisonnette et son très grand jardin arboré vous
 			accueillent pour des vacances inoubliables. Récemment rénovée, chaleureuse et tout confort,
