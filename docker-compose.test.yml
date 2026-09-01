@@ -81,14 +81,19 @@ services:
     build:
       context: ./frontend
       args:
+        # PRIVATE_* variables pour SvelteKit compilation au BUILD TIME
+        PRIVATE_GOOGLE_CLIENT_ID: ${PRIVATE_GOOGLE_CLIENT_ID}
+        PRIVATE_GOOGLE_CLIENT_SECRET: ${PRIVATE_GOOGLE_CLIENT_SECRET}
+        PRIVATE_GOOGLE_REDIRECT_URI: ${PRIVATE_GOOGLE_REDIRECT_URI}
+        PRIVATE_GITE_CALENDAR_ID: ${PRIVATE_GITE_CALENDAR_ID}
         # PUBLIC_* est intégré au bundle au moment du build (voir le
         # commentaire dans frontend/Dockerfile) : une variable d'exécution
         # serait ignorée. D'où le bug de redirection cassée constaté le
         # 2026-08-30 quand ce bloc `args` était absent — le bundle partait
         # avec ces valeurs vides.
-        PUBLIC_AUTH_URL: http://localhost:8081
-        PUBLIC_AUTH_REALM: maisonnettev2
-        PUBLIC_AUTH_CLIENT_ID: maisonnettev2-frontend
+        PUBLIC_AUTH_URL: ${PUBLIC_AUTH_URL:-http://localhost:8081}
+        PUBLIC_AUTH_REALM: ${PUBLIC_AUTH_REALM:-maisonnettev2}
+        PUBLIC_AUTH_CLIENT_ID: ${PUBLIC_AUTH_CLIENT_ID:-maisonnettev2-frontend}
     container_name: maisonnette-test-frontend
     depends_on:
       - backend
@@ -101,6 +106,9 @@ services:
       PRIVATE_GOOGLE_CLIENT_SECRET: ${PRIVATE_GOOGLE_CLIENT_SECRET}
       PRIVATE_GOOGLE_REDIRECT_URI: ${PRIVATE_GOOGLE_REDIRECT_URI}
       PRIVATE_GITE_CALENDAR_ID: ${PRIVATE_GITE_CALENDAR_ID}
+      # Google Calendar Public API
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+      PUBLIC_CALENDAR_ID: ${PUBLIC_CALENDAR_ID}
       # Keycloak
       PUBLIC_AUTH_URL: ${PUBLIC_AUTH_URL:-http://localhost:8081}
       PUBLIC_AUTH_REALM: ${PUBLIC_AUTH_REALM:-maisonnettev2}
