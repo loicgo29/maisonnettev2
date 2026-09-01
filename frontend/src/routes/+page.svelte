@@ -1,6 +1,4 @@
 <script lang="ts">
-	import BookingCalendar from '$lib/components/BookingCalendar.svelte';
-	import GoogleCalendar from '$lib/components/GoogleCalendar.svelte';
 	import PublicCalendar from '$lib/components/PublicCalendar.svelte';
 
 	interface Photo {
@@ -21,7 +19,6 @@
 
 	let lightboxOpen = false;
 	let selectedPhoto: Photo | null = null;
-	let showCalendar = false;
 
 	function openLightbox(photo: Photo) {
 		selectedPhoto = photo;
@@ -35,21 +32,9 @@
 		selectedPhoto = null;
 	}
 
-	function toggleCalendar() {
-		showCalendar = !showCalendar;
-		if (showCalendar) {
-			setTimeout(() => {
-				document.getElementById('calendar-section')?.scrollIntoView({ behavior: 'smooth' });
-			}, 100);
-		}
-	}
-
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Escape') {
 			closeLightbox();
-			if (showCalendar) {
-				showCalendar = false;
-			}
 		}
 	}
 </script>
@@ -105,26 +90,9 @@
 		</div>
 	</section>
 
-	<section class="cta">
-		<h2>Prêt pour vos vacances?</h2>
-		<button class="btn-primary" on:click={toggleCalendar}>
-			{showCalendar ? 'Masquer le calendrier' : 'Consulter les disponibilités'}
-		</button>
+	<section class="calendar-section">
+		<PublicCalendar />
 	</section>
-
-	{#if showCalendar}
-		<section id="calendar-section" class="calendar-section">
-			<PublicCalendar />
-			<div class="calendar-grid" style="margin-top: 2rem;">
-				<div class="calendar-main">
-					<BookingCalendar />
-				</div>
-				<div class="calendar-auth">
-					<GoogleCalendar />
-				</div>
-			</div>
-		</section>
-	{/if}
 </div>
 
 {#if lightboxOpen && selectedPhoto}
