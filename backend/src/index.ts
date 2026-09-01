@@ -19,6 +19,7 @@ import calendarRouter from './routes/calendar.js';
 import aloRouter from './routes/alo.js';
 import adminRouter from './routes/admin.js';
 import { errorHandler } from './middleware/error.js';
+import { demarrerPlanificateurMessages } from './jobs/messagesSejour.job.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -77,4 +78,8 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
   console.log(`📚 API documentation: http://localhost:${PORT}/api/docs`);
+
+  // Après l'écoute : un échec de planification ne doit pas empêcher l'API de
+  // servir, et le passage au démarrage a besoin de la base, pas du port.
+  demarrerPlanificateurMessages();
 });
