@@ -7,11 +7,11 @@ export async function GET(event: RequestEvent) {
 	const error = url.searchParams.get('error');
 
 	if (error) {
-		return new Response(JSON.stringify({ error }), { status: 400 });
+		return new Response(JSON.stringify({ error }), { status: 400, headers: { 'Content-Type': 'application/json' } });
 	}
 
 	if (!code) {
-		return new Response(JSON.stringify({ error: 'Missing authorization code' }), { status: 400 });
+		return new Response(JSON.stringify({ error: 'Missing authorization code' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
 	}
 
 	const CLIENT_ID = process.env.PRIVATE_GOOGLE_CLIENT_ID || '';
@@ -40,7 +40,7 @@ export async function GET(event: RequestEvent) {
 		if (!tokenResponse.ok) {
 			const errorData = await tokenResponse.json();
 			console.error('❌ Token error:', errorData);
-			return new Response(JSON.stringify({ error: errorData }), { status: 400 });
+			return new Response(JSON.stringify({ error: errorData }), { status: 400, headers: { 'Content-Type': 'application/json' } });
 		}
 
 		const tokenData = await tokenResponse.json();
