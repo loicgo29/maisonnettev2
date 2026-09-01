@@ -63,6 +63,10 @@
 		}) || null;
 	}
 
+	function isAvailable(day: number | null): boolean {
+		return !hasEvent(day);
+	}
+
 	function prevMonth() {
 		currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1);
 		generateCalendarDays();
@@ -103,7 +107,7 @@
 
 			<div class="days-grid">
 				{#each daysInMonth as day}
-					<div class="day" class:empty={day === null} class:has-event={hasEvent(day)}>
+					<div class="day" class:empty={day === null} class:available={isAvailable(day)} class:unavailable={hasEvent(day)}>
 						{#if day}
 							<div class="day-number">{day}</div>
 							{#if hasEvent(day)}
@@ -213,10 +217,18 @@
 		border: none;
 	}
 
-	.day.has-event {
-		background: #e6f2ff;
-		border-color: #0066cc;
+	.day.available {
+		background: #d4edda;
+		border-color: #28a745;
 		font-weight: bold;
+		color: #155724;
+	}
+
+	.day.unavailable {
+		background: #f8d7da;
+		border-color: #dc3545;
+		font-weight: bold;
+		color: #721c24;
 	}
 
 	.day-number {
@@ -229,7 +241,7 @@
 		right: 2px;
 		width: 6px;
 		height: 6px;
-		background: #0066cc;
+		background: #dc3545;
 		border-radius: 50%;
 	}
 
