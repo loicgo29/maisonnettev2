@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import express from 'express';
 import request from 'supertest';
-import { healthRouter } from '../../src/routes/health';
+import healthRouter from '../../src/routes/health';
 import { prisma } from '../../src/lib/prisma';
 
 vi.mock('../../src/lib/prisma', () => ({
@@ -19,26 +19,29 @@ describe('Health Routes', () => {
   });
 
   describe('GET /health', () => {
-    it('should return 200 with status ok when database is healthy', async () => {
+    // Expectations follow the contract the route actually serves: 'healthy' /
+    // 'unhealthy', with connectivity reported under checks.database. The former
+    // 'ok' / 'error' shape predates the current implementation.
+    it('should return 200 with status healthy when database is reachable', async () => {
       vi.mocked(prisma.$queryRaw).mockResolvedValue([{ ok: 1 }]);
 
-      const response = await request(app).get('/health');
+      const response = await request(app).get('/');
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-        status: 'ok',
+      expect(response.body).toMatchObject({
+        status: 'healthy',
         timestamp: expect.any(String),
-        database: 'connected',
+        checks: expect.objectContaining({ database: 'connected' }),
       });
     });
 
     it('should return 503 when database connection fails', async () => {
       vi.mocked(prisma.$queryRaw).mockRejectedValue(new Error('Database connection failed'));
 
-      const response = await request(app).get('/health');
+      const response = await request(app).get('/');
 
       expect(response.status).toBe(503);
-      expect(response.body.status).toBe('error');
+      expect(response.body.status).toBe('unhealthy');
       expect(response.body.database).toBe('disconnected');
     });
   });

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import express from 'express';
 import request from 'supertest';
-import { reservationsRouter } from '../../src/routes/reservations';
+import reservationsRouter from '../../src/routes/reservations';
 import { prisma } from '../../src/lib/prisma';
 
 vi.mock('../../src/lib/prisma', () => ({
@@ -12,6 +12,17 @@ vi.mock('../../src/lib/prisma', () => ({
       create: vi.fn(),
     },
     $queryRaw: vi.fn(),
+  },
+}));
+
+// The router declares verifyOIDCToken on each route (router.get('/', verifyOIDCToken, …)),
+// so mounting a mock middleware before the router does not replace it — the real
+// one still ran and rejected every request with "Missing authorization header".
+// Mocking the module is what actually substitutes it.
+vi.mock('../../src/middleware/oidc.js', () => ({
+  verifyOIDCToken: (req: any, _res: any, next: any) => {
+    req.user = { sub: 'user-123', email: 'test@example.com' };
+    next();
   },
 }));
 
@@ -52,7 +63,7 @@ describe('Reservations Routes', () => {
 
       vi.mocked(prisma.reservation.findMany).mockResolvedValue(mockReservations);
 
-      const response = await request(app).get('/api/reservations');
+      const response = await request(app).get('/');
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockReservations);
@@ -63,7 +74,7 @@ describe('Reservations Routes', () => {
       unauthApp.use(express.json());
       unauthApp.use(reservationsRouter);
 
-      const response = await request(unauthApp).get('/api/reservations');
+      const response = await request(unauthApp).get('/');
 
       expect(response.status).toBe(401);
     });
@@ -89,7 +100,7 @@ describe('Reservations Routes', () => {
 
       vi.mocked(prisma.reservation.findUnique).mockResolvedValue(mockReservation);
 
-      const response = await request(app).get('/api/reservations/1');
+      const response = await request(app).get('/1');
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockReservation);
@@ -98,7 +109,7 @@ describe('Reservations Routes', () => {
     it('should return 404 when reservation not found', async () => {
       vi.mocked(prisma.reservation.findUnique).mockResolvedValue(null);
 
-      const response = await request(app).get('/api/reservations/non-existent');
+      const response = await request(app).get('/non-existent');
 
       expect(response.status).toBe(404);
     });
@@ -132,7 +143,7 @@ describe('Reservations Routes', () => {
       vi.mocked(prisma.reservation.create).mockResolvedValue(created);
 
       const response = await request(app)
-        .post('/api/reservations')
+        .post('/')
         .send(newReservation);
 
       expect(response.status).toBe(201);
@@ -151,7 +162,7 @@ describe('Reservations Routes', () => {
       };
 
       const response = await request(app)
-        .post('/api/reservations')
+        .post('/')
         .send(invalidReservation);
 
       expect(response.status).toMatch(/400|422/);
@@ -172,7 +183,7 @@ describe('Reservations Routes', () => {
       };
 
       const response = await request(app)
-        .post('/api/reservations')
+        .post('/')
         .send(conflictingReservation);
 
       expect(response.status).toMatch(/409|400/);
@@ -187,7 +198,7 @@ describe('Reservations Routes', () => {
       };
 
       const response = await request(app)
-        .post('/api/reservations')
+        .post('/')
         .send(incompleteReservation);
 
       expect(response.status).toMatch(/400|422/);

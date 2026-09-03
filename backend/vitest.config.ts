@@ -22,6 +22,14 @@ export default defineConfig({
       statements: 70,
     },
     testTimeout: 30000,
+    // src/middleware/oidc.ts throws at import time when KEYCLOAK_REALM_URL is
+    // missing, which made reservations.test.ts fail before a single test ran.
+    // A dummy realm is enough: unit tests mock the auth middleware and never
+    // reach Keycloak. A real value in the environment still takes precedence.
+    env: {
+      KEYCLOAK_REALM_URL:
+        process.env.KEYCLOAK_REALM_URL ?? 'http://localhost:8080/realms/test',
+    },
   },
   resolve: {
     alias: {

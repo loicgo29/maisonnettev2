@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import express from 'express';
 import request from 'supertest';
-import { gitesRouter } from '../../src/routes/gites';
+import gitesRouter from '../../src/routes/gites';
 import { prisma } from '../../src/lib/prisma';
 
 vi.mock('../../src/lib/prisma', () => ({
@@ -20,7 +20,7 @@ describe('Gites Routes', () => {
   beforeEach(() => {
     app = express();
     app.use(express.json());
-    app.use('/api/gites', gitesRouter);
+    app.use('/', gitesRouter);
   });
 
   describe('GET /api/gites', () => {
@@ -83,15 +83,18 @@ describe('Gites Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockGite);
-      expect(vi.mocked(prisma.gite.findUnique)).toHaveBeenCalledWith({
-        where: { slug: 'gite-1' },
-      });
+      // objectContaining: the route also passes `include: { photos: … }`, which
+      // is an implementation detail. Asserting the exact object made the test
+      // fail on a correct query.
+      expect(vi.mocked(prisma.gite.findUnique)).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { slug: 'gite-1' } })
+      );
     });
 
     it('should return 404 when gite not found', async () => {
       vi.mocked(prisma.gite.findUnique).mockResolvedValue(null);
 
-      const response = await request(app).get('/api/gites/non-existent');
+      const response = await request(app).get('/non-existent');
 
       expect(response.status).toBe(404);
     });
