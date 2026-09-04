@@ -158,11 +158,11 @@ jobs:
           echo "⏳ Waiting for services to be healthy..."
           sleep 10
 
-          # Check backend health
+          # Check backend health (via Caddy on port 8030, HTTP not HTTPS)
           max_attempts=30
           attempt=1
           while [ $attempt -le $max_attempts ]; do
-            if curl -f https://$DEPLOY_HOST/api/health > /dev/null 2>&1; then
+            if curl -f http://$DEPLOY_HOST:8030/api/health > /dev/null 2>&1; then
               echo "✅ Backend health check passed"
               break
             fi
@@ -175,9 +175,9 @@ jobs:
             ((attempt++))
           done
 
-          # Check Google Calendar OAuth2 configuration
+          # Check Google Calendar OAuth2 configuration (via Caddy on port 8030)
           echo "✓ Testing Google Calendar OAuth2 configuration..."
-          calendar_response=$(curl -s https://$DEPLOY_HOST/api/calendar)
+          calendar_response=$(curl -s http://$DEPLOY_HOST:8030/api/calendar)
           if echo "$calendar_response" | grep -q "authUrl"; then
             if echo "$calendar_response" | grep -q "$DEPLOY_HOST/api/calendar/callback"; then
               echo "✅ Google Calendar REDIRECT_URI correctly configured"
