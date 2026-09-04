@@ -5,7 +5,16 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['**/*.test.ts', '**/*.spec.ts'],
+    // Unit tests only (mocked) — Integration, E2E, and production tests require services running
+    include: ['tests/unit/**/*.test.ts'],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      'src/routes/**/*.test.ts', // Integration tests (use real Prisma)
+      'tests/integration/**',
+      'tests/oauth2-production.test.ts',
+      '**/e2e-*.test.ts',
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],

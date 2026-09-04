@@ -10,7 +10,9 @@ describe('verifyOIDCToken Middleware', () => {
   let statusMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     jsonMock = vi.fn().mockReturnValue({ json: undefined } as any);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     statusMock = vi.fn().mockReturnValue({ json: jsonMock } as any);
 
     mockReq = {
@@ -18,7 +20,9 @@ describe('verifyOIDCToken Middleware', () => {
     };
 
     mockRes = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       status: statusMock as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       json: jsonMock as any,
     };
 

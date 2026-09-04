@@ -19,26 +19,41 @@ vi.mock('../../src/lib/prisma', () => ({
 // so mounting a mock middleware before the router does not replace it — the real
 // one still ran and rejected every request with "Missing authorization header".
 // Mocking the module is what actually substitutes it.
+
+// Configurable mock: by default authenticated, but can be told to reject.
+let authConfiguredToReject = false;
+
 vi.mock('../../src/middleware/oidc.js', () => ({
-  verifyOIDCToken: (req: any, _res: any, next: any) => {
+  verifyOIDCToken: (req: any, res: any, next: any) => {
+    if (authConfiguredToReject) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
     req.user = { sub: 'user-123', email: 'test@example.com' };
     next();
   },
 }));
 
-const mockAuthMiddleware = (req: any, res: any, next: any) => {
-  req.user = { sub: 'user-123', email: 'test@example.com' };
-  next();
+const createAuthenticatedApp = () => {
+  authConfiguredToReject = false;
+  const app = express();
+  app.use(express.json());
+  app.use(reservationsRouter);
+  return app;
+};
+
+const createUnauthenticatedApp = () => {
+  authConfiguredToReject = true;
+  const app = express();
+  app.use(express.json());
+  app.use(reservationsRouter);
+  return app;
 };
 
 describe('Reservations Routes', () => {
   let app: express.Application;
 
   beforeEach(() => {
-    app = express();
-    app.use(express.json());
-    app.use(mockAuthMiddleware);
-    app.use(reservationsRouter);
+    app = createAuthenticatedApp();
   });
 
   describe('GET /api/reservations', () => {
@@ -66,13 +81,20 @@ describe('Reservations Routes', () => {
       const response = await request(app).get('/');
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockReservations);
+      // Date objects are serialized to ISO strings in HTTP/JSON responses
+      expect(response.body).toMatchObject(
+        mockReservations.map((r) => ({
+          ...r,
+          createdAt: r.createdAt.toISOString(),
+          updatedAt: r.updatedAt.toISOString(),
+          dateDebut: r.dateDebut.toISOString(),
+          dateFin: r.dateFin.toISOString(),
+        }))
+      );
     });
 
     it('should return 401 without authentication', async () => {
-      const unauthApp = express();
-      unauthApp.use(express.json());
-      unauthApp.use(reservationsRouter);
+      const unauthApp = createUnauthenticatedApp();
 
       const response = await request(unauthApp).get('/');
 
@@ -103,7 +125,13 @@ describe('Reservations Routes', () => {
       const response = await request(app).get('/1');
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockReservation);
+      expect(response.body).toMatchObject({
+        ...mockReservation,
+        createdAt: mockReservation.createdAt.toISOString(),
+        updatedAt: mockReservation.updatedAt.toISOString(),
+        dateDebut: mockReservation.dateDebut.toISOString(),
+        dateFin: mockReservation.dateFin.toISOString(),
+      });
     });
 
     it('should return 404 when reservation not found', async () => {
@@ -147,8 +175,12 @@ describe('Reservations Routes', () => {
         .send(newReservation);
 
       expect(response.status).toBe(201);
-      expect(response.body.id).toEqual('2');
-      expect(response.body.statut).toBe('PENDING');
+      expect(response.body).toMatchObject({
+        id: '2',
+        statut: 'PENDING',
+        giteId: 'gite-1',
+        montantTotal: 600,
+      });
     });
 
     it('should validate date range', async () => {
@@ -165,7 +197,7 @@ describe('Reservations Routes', () => {
         .post('/')
         .send(invalidReservation);
 
-      expect(response.status).toMatch(/400|422/);
+      expect([400, 422]).toContain(response.status);
     });
 
     it('should check for date conflicts', async () => {
@@ -186,7 +218,7 @@ describe('Reservations Routes', () => {
         .post('/')
         .send(conflictingReservation);
 
-      expect(response.status).toMatch(/409|400/);
+      expect([400, 409]).toContain(response.status);
     });
 
     it('should validate required fields', async () => {
@@ -201,7 +233,7 @@ describe('Reservations Routes', () => {
         .post('/')
         .send(incompleteReservation);
 
-      expect(response.status).toMatch(/400|422/);
+      expect([400, 422]).toContain(response.status);
     });
   });
 });

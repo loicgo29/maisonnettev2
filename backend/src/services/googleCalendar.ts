@@ -5,7 +5,9 @@ import { prisma } from '../lib/prisma.js';
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 
 class GoogleCalendarService {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private auth: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private calendar: any;
 
   async initialize() {
@@ -52,6 +54,7 @@ class GoogleCalendarService {
 
       return {
         available,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         busySlots: busySlots.map((slot: any) => ({
           start: new Date(slot.start),
           end: new Date(slot.end),

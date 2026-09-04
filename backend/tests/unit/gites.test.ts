@@ -14,13 +14,39 @@ vi.mock('../../src/lib/prisma', () => ({
   },
 }));
 
+let authConfiguredToReject = false;
+
+vi.mock('../../src/middleware/oidc.js', () => ({
+  verifyOIDCToken: (req: any, res: any, next: any) => {
+    if (authConfiguredToReject) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    req.user = { sub: 'user-123', email: 'test@example.com' };
+    next();
+  },
+}));
+
+const createAuthenticatedApp = () => {
+  authConfiguredToReject = false;
+  const app = express();
+  app.use(express.json());
+  app.use('/', gitesRouter);
+  return app;
+};
+
+const createUnauthenticatedApp = () => {
+  authConfiguredToReject = true;
+  const app = express();
+  app.use(express.json());
+  app.use('/', gitesRouter);
+  return app;
+};
+
 describe('Gites Routes', () => {
   let app: express.Application;
 
   beforeEach(() => {
-    app = express();
-    app.use(express.json());
-    app.use('/', gitesRouter);
+    app = createAuthenticatedApp();
   });
 
   describe('GET /api/gites', () => {
@@ -102,7 +128,8 @@ describe('Gites Routes', () => {
 
   describe('POST /api/gites (protected)', () => {
     it('should require authentication', async () => {
-      const response = await request(app)
+      const unauthApp = createUnauthenticatedApp();
+      const response = await request(unauthApp)
         .post('/')
         .send({ nom: 'New Gite', slug: 'new-gite' });
 
@@ -115,7 +142,7 @@ describe('Gites Routes', () => {
         .set('Authorization', 'Bearer mock-token')
         .send({ nom: 'New Gite' }); // Missing slug
 
-      expect(response.status).toMatch(/400|422/);
+      expect([400, 422]).toContain(response.status);
     });
 
     it('should create a new gite with valid data', async () => {

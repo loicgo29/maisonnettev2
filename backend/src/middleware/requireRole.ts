@@ -15,10 +15,12 @@ import type { AuthRequest } from './oidc.js';
  * deux : le royaume est configuré avec un rôle `admin` global, mais un projet
  * pourrait le porter au niveau du client.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function rolesDuJeton(user: Record<string, any> | undefined): string[] {
   if (!user) return [];
   const duRoyaume: string[] = user.realm_access?.roles ?? [];
   const desClients: string[] = Object.values(user.resource_access ?? {}).flatMap(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (acces: any) => acces?.roles ?? []
   );
   return [...duRoyaume, ...desClients];

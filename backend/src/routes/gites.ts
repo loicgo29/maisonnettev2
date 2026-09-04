@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../lib/prisma.js';
+import { verifyOIDCToken, AuthRequest } from '../middleware/oidc.js';
 
 const router = Router();
 
@@ -117,8 +118,7 @@ router.get('/:slug', async (req: Request, res: Response) => {
  *       400:
  *         description: Données invalides
  */
-router.post('/', async (req: Request, res: Response) => {
-  // TODO: vérifier que l'utilisateur est admin (via token OIDC)
+router.post('/', verifyOIDCToken, async (req: AuthRequest, res: Response) => {
   try {
     const { slug, nom, description, adresse, capacite, prixNuit, googleCalendarId } = req.body;
 

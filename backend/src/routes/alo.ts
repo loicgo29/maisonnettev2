@@ -10,7 +10,7 @@ router.get('/accounts', async (_req: Request, res: Response): Promise<void> => {
       orderBy: { id: 'asc' }
     });
     res.json(accounts);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch accounts' });
   }
 });
@@ -27,7 +27,7 @@ router.get('/accounts/:id', async (req: Request, res: Response): Promise<void> =
       return;
     }
     res.json(account);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch account' });
   }
 });
@@ -56,7 +56,7 @@ router.post('/expenses', async (req: Request, res: Response): Promise<void> => {
     });
 
     res.status(201).json(expense);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to create expense' });
   }
 });
@@ -72,7 +72,7 @@ router.get('/expenses', async (req: Request, res: Response): Promise<void> => {
     });
 
     res.json(expenses);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch expenses' });
   }
 });
@@ -89,7 +89,7 @@ router.get('/expenses/:id', async (req: Request, res: Response): Promise<void> =
       return;
     }
     res.json(expense);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch expense' });
   }
 });
@@ -112,7 +112,7 @@ router.put('/expenses/:id', async (req: Request, res: Response): Promise<void> =
     });
 
     res.json(expense);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to update expense' });
   }
 });
@@ -125,7 +125,7 @@ router.delete('/expenses/:id', async (req: Request, res: Response): Promise<void
       where: { id: parseInt(id) }
     });
     res.status(204).send();
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to delete expense' });
   }
 });
@@ -137,7 +137,7 @@ router.get('/periods', async (_req: Request, res: Response): Promise<void> => {
       orderBy: { startDate: 'desc' }
     });
     res.json(periods);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch periods' });
   }
 });
@@ -163,7 +163,7 @@ router.post('/periods', async (req: Request, res: Response): Promise<void> => {
     });
 
     res.status(201).json(period);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to create period' });
   }
 });

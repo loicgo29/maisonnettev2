@@ -47,7 +47,7 @@ router.get('/dashboard', async (_req: AuthRequest, res: Response): Promise<void>
       // on croirait les messages partis alors qu'ils attendent un clic.
       envoiAutomatique: process.env.MESSAGES_AUTO === 'true',
     });
-  } catch (erreur) {
+  } catch {
     res.status(500).json({ error: 'Impossible de charger le tableau de bord' });
   }
 });

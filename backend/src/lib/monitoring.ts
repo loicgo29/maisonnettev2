@@ -45,6 +45,7 @@ export const logger = pino(
 );
 
 // Capture errors in Sentry + structured log
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function captureError(error: Error | unknown, context?: Record<string, any>) {
   const err = error instanceof Error ? error : new Error(String(error));
 
@@ -65,9 +66,11 @@ export function captureError(error: Error | unknown, context?: Record<string, an
 }
 
 // Capture important events
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function captureEvent(
   event: string,
   level: 'info' | 'warn' | 'error' = 'info',
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: Record<string, any>
 ) {
   if (level === 'error') {

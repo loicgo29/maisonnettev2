@@ -6,6 +6,7 @@ interface AuthRequest extends Request {
     sub: string; // Subject (user ID from Authentik)
     email?: string;
     name?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   };
 }
@@ -65,6 +66,7 @@ export async function verifyOIDCToken(req: AuthRequest, res: Response, next: Nex
       console.log('[OIDC] Token verified successfully:', { sub: verified.payload.sub });
 
       // Attach decoded token payload to request
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       req.user = verified.payload as any;
       return next();
     } catch (err) {
