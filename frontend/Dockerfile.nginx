@@ -4,7 +4,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-RUN npm run build
+# SvelteKit needs PUBLIC_* vars at build time (static site generation)
+RUN PUBLIC_AUTH_URL=${PUBLIC_AUTH_URL:-http://localhost:9001} \
+    PUBLIC_AUTH_REALM=${PUBLIC_AUTH_REALM:-master} \
+    PUBLIC_AUTH_CLIENT_ID=${PUBLIC_AUTH_CLIENT_ID:-maisonnettev2-frontend} \
+    npm run build
 
 # Serve with Node.js
 FROM node:20-alpine
