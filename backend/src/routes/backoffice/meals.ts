@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import { readFileSync, appendFileSync, existsSync, mkdirSync } from 'fs'
 import { join, dirname } from 'path'
-import { verifyOIDCToken } from '../../middleware/oidc'
+import { verifyOIDCToken } from '../../middleware/oidc.js'
 
 const router = express.Router()
 
