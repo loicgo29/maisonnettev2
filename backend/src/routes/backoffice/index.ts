@@ -1,5 +1,5 @@
 import express from 'express'
-import mealsRouter from './meals'
+import mealsRouter from './meals.js'
 
 const router = express.Router()
 
