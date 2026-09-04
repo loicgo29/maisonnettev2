@@ -16,7 +16,7 @@
 	encode gzip zstd
 
 	handle /api/calendar* {
-		reverse_proxy frontend:5173
+		reverse_proxy frontend:3000
 	}
 
 	handle /api/* {
@@ -29,7 +29,7 @@
 	}
 
 	handle {
-		reverse_proxy frontend:5173
+		reverse_proxy frontend:3000
 	}
 
 	header {
