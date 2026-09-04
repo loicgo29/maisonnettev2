@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Request, Response, NextFunction } from 'express';
-import { verifyOIDCToken } from './oidc';
+import { verifyOIDCToken } from './oidc.js';
 
 describe('verifyOIDCToken Middleware', () => {
   let mockReq: Partial<Request>;
