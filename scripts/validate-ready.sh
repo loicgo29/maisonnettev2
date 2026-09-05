@@ -21,10 +21,12 @@ fi
 
 # 2. TypeScript
 echo "2️⃣ TypeScript compilation..."
-if cd backend && npm run build > /dev/null 2>&1 && cd ..; then
+if cd backend && npm run build 2>&1 | tee /tmp/ts-build.log && cd ..; then
   echo "✅ TypeScript PASS"
 else
   echo "❌ TypeScript FAIL"
+  echo "   Error output:"
+  tail -20 /tmp/ts-build.log | sed 's/^/   /'
   FAILED=$((FAILED+1))
 fi
 
