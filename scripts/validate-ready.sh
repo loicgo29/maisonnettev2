@@ -62,6 +62,16 @@ else
   FAILED=$((FAILED+1))
 fi
 
+# 6b. Calendar endpoint (FEATURE TEST)
+echo "6b️⃣ Calendar endpoint returns valid response..."
+CALENDAR_RESPONSE=$(curl -s http://localhost:3001/api/calendar)
+if echo "$CALENDAR_RESPONSE" | grep -q "authUrl\|error"; then
+  echo "✅ Calendar endpoint PASS"
+else
+  echo "❌ Calendar endpoint FAIL (invalid response: $CALENDAR_RESPONSE)"
+  FAILED=$((FAILED+1))
+fi
+
 # 7. Production test
 echo "7️⃣ Production endpoint (Hetzner)..."
 if ssh -i ~/.ssh/maisonnettev2_hetzner deploy@maisonnette-pecheur-bertheaume.fr "curl -s http://localhost:8030/api/backoffice/meals/accounts" | grep -q "gourmich" 2>/dev/null; then
