@@ -1,11 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
 	let isAuthenticated = false;
 	let loading = true;
 
 	onMount(async () => {
+		// NE PAS rediriger si on est sur /backoffice/login
+		if ($page.url.pathname === '/backoffice/login') {
+			loading = false;
+			return;
+		}
+
 		// Vérifie si token existe dans localStorage
 		const token = typeof window !== 'undefined' ? localStorage.getItem('backoffice_token') : null;
 
