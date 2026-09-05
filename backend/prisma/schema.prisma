@@ -121,6 +121,23 @@ model Reservation {
   @@index([dateDebut, dateFin])
 }
 
+// Backoffice Users — Simple authentication (username + bcrypt hash)
+model BackofficeUser {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  hash      String   // bcrypt hash of password
+  email     String?
+  role      String   @default("staff") // staff | admin
+  active    Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lastLogin DateTime?
+
+  @@schema("public")
+  @@index([username])
+}
+
 // ALO Module Tables
 model aloAccounts {
   id              Int                @id

@@ -1,4 +1,4 @@
--- CreateTable for backoffice users (simple auth, not OAuth)
+-- CreateTable for backoffice users (simple auth, username + bcrypt hash)
 CREATE TABLE IF NOT EXISTS "BackofficeUser" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "username" TEXT NOT NULL UNIQUE,
@@ -13,8 +13,3 @@ CREATE TABLE IF NOT EXISTS "BackofficeUser" (
 
 -- Create index for fast lookups
 CREATE UNIQUE INDEX "BackofficeUser_username_key" ON "BackofficeUser"("username");
-
--- Insert default admin user (password hash should be set via seed script)
--- To generate password hash: npx bcrypt-cli -c 10 '<your-password>'
--- Then update the passwordHash column via backend seed or manual SQL
--- This ensures production passwords are never in git history

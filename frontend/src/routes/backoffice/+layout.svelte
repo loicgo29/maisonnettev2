@@ -1,51 +1,93 @@
 <script lang="ts">
-	import { estConnecte, demarrerConnexion, deconnexion } from '../../lib/auth';
-	import { jeton, chargeUtile, aLeRoleAdmin } from '../../lib/auth';
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
-	let isConnected = estConnecte();
-	let isAdmin = false;
+	let isAuthenticated = false;
+	let loading = true;
 
-	$: if (isConnected) {
-		const token = jeton();
-		isAdmin = token ? aLeRoleAdmin(token) : false;
-		if (!isAdmin) {
-			// Rediriger vers la page d'accueil si pas admin
-			window.location.href = '/';
+	onMount(async () => {
+		// Vérifie si token existe dans localStorage
+		const token = typeof window !== 'undefined' ? localStorage.getItem('backoffice_token') : null;
+
+		if (!token) {
+			// Pas de token → rediriger au login
+			await goto('/backoffice/login');
+			return;
 		}
-	}
 
-	function handleLogin() {
-		demarrerConnexion('/backoffice/meals');
-	}
+		// Vérifie que le token est valide auprès du backend
+		try {
+			const response = await fetch('/api/backoffice/auth/verify', {
+				method: 'POST',
+				headers: {
+					'Authorization': `Bearer ${token}`,
+					'Content-Type': 'application/json',
+				},
+			});
+
+			if (response.ok) {
+				isAuthenticated = true;
+				loading = false;
+			} else {
+				// Token invalide ou expiré
+				localStorage.removeItem('backoffice_token');
+				localStorage.removeItem('backoffice_user');
+				await goto('/backoffice/login');
+			}
+		} catch (error) {
+			console.error('Auth verification failed:', error);
+			localStorage.removeItem('backoffice_token');
+			await goto('/backoffice/login');
+		}
+	});
 
 	function handleLogout() {
-		deconnexion();
+		localStorage.removeItem('backoffice_token');
+		localStorage.removeItem('backoffice_user');
+		goto('/backoffice/login');
 	}
 </script>
 
-<nav class="backoffice-nav">
-	<div class="nav-brand">🏠 Backoffice</div>
-	<div class="nav-menu">
-		<a href="/backoffice/meals" class="nav-link">🍽️ Repas</a>
-		<!-- Futurs modules backoffice ici -->
-	</div>
-	<div class="nav-auth">
-		{#if isConnected}
-			<span class="user-info">Connecté</span>
+{#if loading}
+	<div class="loading">Vérification de l'authentification...</div>
+{:else if isAuthenticated}
+	<nav class="backoffice-nav">
+		<div class="nav-brand">🏠 Backoffice</div>
+		<div class="nav-menu">
+			<a href="/backoffice/meals" class="nav-link">🍽️ Repas</a>
+			<!-- Futurs modules backoffice ici -->
+		</div>
+		<div class="nav-auth">
+			<span class="user-info">Authentifié</span>
 			<button on:click={handleLogout} class="btn-logout">Se déconnecter</button>
-		{:else}
-			<button on:click={handleLogin} class="btn-login">Se connecter</button>
-		{/if}
-	</div>
-</nav>
+		</div>
+	</nav>
 
-<slot />
+	<slot />
+{:else}
+	<div class="auth-error">Redirection vers la connexion...</div>
+{/if}
 
 <style>
 	:global(body) {
 		margin: 0;
 		padding: 0;
 		background-color: #fafafa;
+	}
+
+	.loading,
+	.auth-error {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		font-size: 1.1em;
+		color: #666;
+	}
+
+	.auth-error {
+		background-color: #fff3cd;
+		color: #856404;
 	}
 
 	.backoffice-nav {
