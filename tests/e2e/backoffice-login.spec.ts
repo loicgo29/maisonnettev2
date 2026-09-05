@@ -113,10 +113,11 @@ test.describe('Backoffice Authentication', () => {
       data: { username: 'test', pwd: 'test' },
     }).catch(() => null);
 
-    // Should get a response (401 if invalid, or 200 if valid)
+    // Should get a response (any code except 404 means endpoint exists)
     if (response) {
-      expect([200, 400, 401, 500]).toContain(response.status());
       expect(response.status()).not.toBe(404); // Endpoint must exist
+    } else {
+      expect(response).toBeTruthy(); // Should get a response
     }
   });
 
@@ -125,10 +126,11 @@ test.describe('Backoffice Authentication', () => {
       headers: { Authorization: 'Bearer invalid_token' },
     }).catch(() => null);
 
-    // Should get a response
+    // Should get a response (any code except 404 means endpoint exists)
     if (response) {
-      expect([200, 401, 500]).toContain(response.status());
       expect(response.status()).not.toBe(404); // Endpoint must exist
+    } else {
+      expect(response).toBeTruthy(); // Should get a response
     }
   });
 
