@@ -1,4 +1,6 @@
 -- CreateTable for backoffice users (simple auth, username + bcrypt hash)
+-- NOTE: PostgreSQL auto-creates unique index from UNIQUE constraint,
+-- so we do NOT create it again manually.
 CREATE TABLE IF NOT EXISTS "BackofficeUser" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "username" TEXT NOT NULL UNIQUE,
@@ -10,6 +12,3 @@ CREATE TABLE IF NOT EXISTS "BackofficeUser" (
     "updatedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "lastLogin" TIMESTAMP
 );
-
--- Create index for fast lookups
-CREATE UNIQUE INDEX "BackofficeUser_username_key" ON "BackofficeUser"("username");

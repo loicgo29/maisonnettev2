@@ -29,7 +29,7 @@ test.describe('Maisonnettev2 Validator — REAL Feature Tests', () => {
 
     // SHOULD show auth button or events
     const hasAuth = await page.locator('text=Se connecter avec Google').isVisible().catch(() => false);
-    const hasEvents = await page.locator('[data-testid="event"]').count().then(c => c > 0);
+    const hasEvents = await page.locator('.event').count().then(c => c > 0);
 
     expect(hasAuth || hasEvents, 'Should show auth button or events').toBe(true);
   });
