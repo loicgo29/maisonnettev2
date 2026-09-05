@@ -6,9 +6,9 @@ CREATE TABLE IF NOT EXISTS "BackofficeUser" (
     "email" TEXT,
     "role" TEXT NOT NULL DEFAULT 'staff',
     "active" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    "lastLogin" DATETIME
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "lastLogin" TIMESTAMP
 );
 
 -- Create index for fast lookups
