@@ -2,21 +2,19 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Maisonnettev2 Validator — REAL Feature Tests', () => {
   test('HOME PAGE: Calendar component shows NO ERROR (critical)', async ({ page }) => {
-    // This is the REAL test users care about
+    // Fresh navigation (no cache clearing needed - test detects what user sees)
     await page.goto('http://localhost:5173/', { waitUntil: 'networkidle' });
+    await page.waitForTimeout(3000); // Wait for async component
 
-    // WAIT for the component to load (not just page load)
-    await page.waitForTimeout(2000);
-
-    // CRITICAL: Page should NOT show "Erreur: Failed to fetch calendar"
+    // THIS IS THE REAL TEST: Does the error appear?
     const errorText = await page.locator('text=Erreur: Failed to fetch calendar').isVisible().catch(() => false);
-    expect(errorText, '❌ REAL BUG: "Erreur: Failed to fetch calendar" visible on home page').toBe(false);
 
-    // SHOULD show either loading OR auth button
-    const hasAuthButton = await page.locator('text=Se connecter avec Google').isVisible({ timeout: 5000 }).catch(() => false);
-    const hasLoading = await page.locator('text=/Chargement|Loading/i').isVisible().catch(() => false);
+    // If error shows, something is broken
+    expect(errorText, '❌ CRITICAL BUG: "Erreur: Failed to fetch calendar" appears on page').toBe(false);
 
-    expect(hasAuthButton || hasLoading, 'Calendar should show auth button or loading state').toBe(true);
+    // Should show auth button
+    const hasAuthButton = await page.locator('button:has-text("Se connecter")').isVisible({ timeout: 5000 }).catch(() => false);
+    expect(hasAuthButton, 'Should show "Se connecter avec Google" button').toBe(true);
   });
 
   test('CALENDAR PAGE: Component displays (no error)', async ({ page }) => {
