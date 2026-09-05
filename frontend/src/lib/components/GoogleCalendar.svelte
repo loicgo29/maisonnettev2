@@ -12,8 +12,8 @@
 			const controller = new AbortController();
 			const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-			console.log('[Calendar] Fetching /api/calendar');
-			const response = await fetch('/api/calendar', { signal: controller.signal });
+			console.log('[Calendar] Fetching /api/calendar/public');
+			const response = await fetch('/api/calendar/public', { signal: controller.signal });
 			clearTimeout(timeoutId);
 
 			console.log('[Calendar] Response status:', response.status);
