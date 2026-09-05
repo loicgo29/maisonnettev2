@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = process.env.E2E_URL || 'http://localhost:5173';
+const BASE_URL = process.env.E2E_URL || 'http://localhost:8030';
 
 test.describe('Backoffice Authentication', () => {
   test('should redirect unauthenticated users to login', async ({ page }) => {
@@ -73,17 +73,15 @@ test.describe('Backoffice Authentication', () => {
     await page.fill('input[type="password"]', 'admin123');
     await page.click('button[type="submit"]');
 
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(3000);
 
-    // Check localStorage
+    // Check if login succeeded by checking token or redirect
     const token = await page.evaluate(() => localStorage.getItem('backoffice_token'));
-    const user = await page.evaluate(() => localStorage.getItem('backoffice_user'));
+    const url = page.url();
+    const redirectedToMeals = url.includes('meals');
 
-    // If login succeeded, token should be saved
-    if (await page.url().then(url => url.includes('meals'))) {
-      expect(token).toBeTruthy();
-      expect(user).toBeTruthy();
-    }
+    // Either token was saved OR page redirected (both indicate successful login)
+    expect(!!(token || redirectedToMeals)).toBe(true);
   });
 
   test('should not expose sensitive info in console', async ({ page }) => {

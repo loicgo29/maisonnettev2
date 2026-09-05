@@ -36,7 +36,7 @@ router.get('/public', async (_req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const data = await response.json() as { items?: any[]; summary?: string };
+    const data = await response.json() as { items?: unknown[]; summary?: string };
     console.log(`✅ Fetched ${data.items?.length || 0} events from public calendar`);
 
     res.json({

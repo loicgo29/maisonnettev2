@@ -21,15 +21,15 @@ ENV PRIVATE_GITE_CALENDAR_ID=$PRIVATE_GITE_CALENDAR_ID
 
 WORKDIR /app
 
-# Create .env AND .env.production for SvelteKit
-RUN echo "PRIVATE_GOOGLE_CLIENT_ID=$PRIVATE_GOOGLE_CLIENT_ID" > .env && \
-    echo "PRIVATE_GOOGLE_CLIENT_SECRET=$PRIVATE_GOOGLE_CLIENT_SECRET" >> .env && \
-    echo "PRIVATE_GOOGLE_REDIRECT_URI=$PRIVATE_GOOGLE_REDIRECT_URI" >> .env && \
-    echo "PRIVATE_GITE_CALENDAR_ID=$PRIVATE_GITE_CALENDAR_ID" >> .env && \
-    echo "PUBLIC_AUTH_URL=$PUBLIC_AUTH_URL" >> .env && \
-    echo "PUBLIC_AUTH_REALM=$PUBLIC_AUTH_REALM" >> .env && \
-    echo "PUBLIC_AUTH_CLIENT_ID=$PUBLIC_AUTH_CLIENT_ID" >> .env && \
-    cp .env .env.production && \
+# Create .env.production for Vite/SvelteKit (used at build time)
+RUN echo "PRIVATE_GOOGLE_CLIENT_ID=$PRIVATE_GOOGLE_CLIENT_ID" > .env.production && \
+    echo "PRIVATE_GOOGLE_CLIENT_SECRET=$PRIVATE_GOOGLE_CLIENT_SECRET" >> .env.production && \
+    echo "PRIVATE_GOOGLE_REDIRECT_URI=$PRIVATE_GOOGLE_REDIRECT_URI" >> .env.production && \
+    echo "PRIVATE_GITE_CALENDAR_ID=$PRIVATE_GITE_CALENDAR_ID" >> .env.production && \
+    echo "PUBLIC_AUTH_URL=$PUBLIC_AUTH_URL" >> .env.production && \
+    echo "PUBLIC_AUTH_REALM=$PUBLIC_AUTH_REALM" >> .env.production && \
+    echo "PUBLIC_AUTH_CLIENT_ID=$PUBLIC_AUTH_CLIENT_ID" >> .env.production && \
+    cp .env.production .env && \
     cat .env
 
 COPY package*.json ./
@@ -57,6 +57,7 @@ ENV HOST=0.0.0.0
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/.svelte-kit ./.svelte-kit
+COPY --from=builder /app/src ./src
 COPY --from=builder /app/vite.config.ts ./vite.config.ts
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/static ./static

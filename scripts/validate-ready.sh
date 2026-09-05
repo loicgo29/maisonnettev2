@@ -65,8 +65,16 @@ fi
 # 6b. Calendar endpoint (FEATURE TEST)
 echo "6b️⃣ Calendar endpoint returns valid response..."
 CALENDAR_RESPONSE=$(curl -s http://localhost:3001/api/calendar)
-if echo "$CALENDAR_RESPONSE" | grep -q "authUrl\|error"; then
-  echo "✅ Calendar endpoint PASS"
+if echo "$CALENDAR_RESPONSE" | grep -q '"authUrl"'; then
+  echo "✅ Calendar endpoint PASS (authUrl provided)"
+elif echo "$CALENDAR_RESPONSE" | grep -q '"error":"Configuration Google Calendar manquante"'; then
+  echo "⚠️ Calendar endpoint WARNING: Google Calendar not configured"
+  echo "   Set: PRIVATE_GOOGLE_CLIENT_ID, PRIVATE_GOOGLE_CLIENT_SECRET, PRIVATE_GOOGLE_REDIRECT_URI"
+  FAILED=$((FAILED+1))
+elif echo "$CALENDAR_RESPONSE" | grep -q '"error"'; then
+  ERROR_MSG=$(echo "$CALENDAR_RESPONSE" | grep -o '"error":"[^"]*"')
+  echo "❌ Calendar endpoint FAIL: $ERROR_MSG"
+  FAILED=$((FAILED+1))
 else
   echo "❌ Calendar endpoint FAIL (invalid response: $CALENDAR_RESPONSE)"
   FAILED=$((FAILED+1))

@@ -1,10 +1,10 @@
 import type { LayoutServerLoad } from './$types';
 
-export const load: LayoutServerLoad = async ({ cookies }) => {
-	// En dev, le token est en localStorage (côté client)
-	// En prod, il devrait être en secure HTTP-only cookies
-	// Pour l'instant, on le transmet via data
+export const load: LayoutServerLoad = async ({ cookies, url }) => {
+	const token = cookies.get('backoffice_token');
+	console.log('[Layout.server] URL:', url.pathname);
+	console.log('[Layout.server] Token from cookie:', token ? 'YES' : 'NO');
 	return {
-		backofficeToken: null, // TODO: récupérer du cookie si existe
+		backofficeToken: token || null,
 	};
 };

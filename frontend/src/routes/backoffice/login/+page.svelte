@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 
 	let username = '';
@@ -13,13 +13,16 @@
 		error = '';
 
 		try {
+			console.log('[Login] Sending POST to /api/backoffice/auth/login');
 			const response = await fetch('/api/backoffice/auth/login', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ username, pwd }),
 			});
 
+			console.log('[Login] Response status:', response.status);
 			const data = await response.json();
+			console.log('[Login] Response data:', data);
 
 			if (!response.ok) {
 				error = data.error || 'Login failed';
@@ -27,15 +30,24 @@
 				return;
 			}
 
-			// Save token
+			console.log('[Login] Saving token to cookie');
+			// Save token to cookie (server-readable)
+			document.cookie = `backoffice_token=${data.token}; path=/; max-age=${24 * 60 * 60}`;
+
+			// Also save to localStorage for UI
 			if (typeof window !== 'undefined') {
-				localStorage.setItem('backoffice_token', data.token);
 				localStorage.setItem('backoffice_user', JSON.stringify(data.user));
 			}
 
+			console.log('[Login] Invalidating all data (force server re-load)');
+			await invalidateAll();
+
+			console.log('[Login] Redirecting to /backoffice/meals');
 			// Redirect to meals
-			goto('/backoffice/meals');
+			await goto('/backoffice/meals');
+			console.log('[Login] Redirect complete');
 		} catch (err) {
+			console.error('[Login] Error:', err);
 			error = 'Connection error: ' + (err instanceof Error ? err.message : 'Unknown error');
 			loading = false;
 		}

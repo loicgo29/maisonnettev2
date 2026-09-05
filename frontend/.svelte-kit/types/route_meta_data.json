@@ -21,8 +21,25 @@
 	"/api/calendar/callback": [
 		"src/routes/api/calendar/callback/+server.ts"
 	],
+	"/api/calendar/public": [
+		"src/routes/api/calendar/public/+server.ts"
+	],
 	"/api/test": [
 		"src/routes/api/test/+server.ts"
+	],
+	"/backoffice": [
+		"src/routes/backoffice/+layout.ts",
+		"src/routes/backoffice/+layout.server.ts"
+	],
+	"/backoffice/login": [
+		"src/routes/backoffice/+layout.ts",
+		"src/routes/backoffice/+layout.server.ts",
+		"src/routes/backoffice/+layout.ts",
+		"src/routes/backoffice/+layout.server.ts"
+	],
+	"/backoffice/meals": [
+		"src/routes/backoffice/+layout.ts",
+		"src/routes/backoffice/+layout.server.ts"
 	],
 	"/calendar": [],
 	"/contact": [],

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { jeton, estConnecte, demarrerConnexion } from '../../../lib/auth';
 
 	interface AccountConfig {
 		[key: string]: string[];
@@ -56,11 +55,7 @@
 				account: selectedAccount,
 			});
 
-			const res = await fetch(`${API_BASE}/backoffice/meals/range?${params}`, {
-				headers: {
-					Authorization: `Bearer ${jeton()}`,
-				},
-			});
+			const res = await fetch(`${API_BASE}/backoffice/meals/range?${params}`);
 
 			if (!res.ok) {
 				throw new Error(`HTTP ${res.status}`);
@@ -82,8 +77,7 @@
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${jeton()}`,
-				},
+									},
 				body: JSON.stringify({
 					date: dateStr,
 					person,
@@ -108,8 +102,7 @@
 			isExporting = true;
 			const res = await fetch(`${API_BASE}/backoffice/meals/export`, {
 				headers: {
-					Authorization: `Bearer ${jeton()}`,
-				},
+									},
 			});
 
 			if (!res.ok) {
@@ -167,11 +160,8 @@
 	}
 
 	onMount(() => {
-		if (!estConnecte()) {
-			demarrerConnexion('/backoffice/meals');
-		} else {
-			loadAccountsConfig();
-		}
+		// Auth check is done by +layout.server.ts (redirects to login if no token)
+		loadAccountsConfig();
 	});
 
 	$: if (startDate && endDate) {
@@ -201,15 +191,12 @@
 <div class="container">
 	<h1>🍽️ Repas</h1>
 
-	{#if !estConnecte()}
-		<div class="error">Veuillez vous connecter pour accéder aux repas.</div>
-	{:else}
-		{#if error}
-			<div class="error">{error}</div>
-		{/if}
+	{#if error}
+		<div class="error">{error}</div>
+	{/if}
 
-		<!-- Sélecteurs -->
-		<div class="controls">
+	<!-- Sélecteurs -->
+	<div class="controls">
 			<div>
 				<label>
 					Depuis
@@ -333,7 +320,6 @@
 				</tbody>
 			</table>
 		{/if}
-	{/if}
 </div>
 
 <style>

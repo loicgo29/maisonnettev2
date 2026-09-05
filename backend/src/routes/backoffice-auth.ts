@@ -112,7 +112,7 @@ router.post('/verify', (req: Request, res: Response): void => {
 
     const decoded = jwt.verify(token, JWT_SECRET);
     res.json({ valid: true, user: decoded });
-  } catch (error) {
+  } catch {
     res.status(401).json({ valid: false });
   }
 });
