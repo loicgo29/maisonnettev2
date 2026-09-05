@@ -12,9 +12,9 @@ test.describe('Maisonnettev2 Validator — REAL Feature Tests', () => {
     // If error shows, something is broken
     expect(errorText, '❌ CRITICAL BUG: "Erreur: Failed to fetch calendar" appears on page').toBe(false);
 
-    // Should show auth button
-    const hasAuthButton = await page.locator('button:has-text("Se connecter")').isVisible({ timeout: 5000 }).catch(() => false);
-    expect(hasAuthButton, 'Should show "Se connecter avec Google" button').toBe(true);
+    // Should show calendar (either events or empty state, NOT an error)
+    const hasCalendar = await page.locator('.public-calendar, .calendar-container').isVisible({ timeout: 5000 }).catch(() => false);
+    expect(hasCalendar, 'Should show calendar component').toBe(true);
   });
 
   test('CALENDAR PAGE: Component displays (no error)', async ({ page }) => {

@@ -30,13 +30,13 @@ router.get('/public', async (_req: Request, res: Response): Promise<void> => {
     );
 
     if (!response.ok) {
-      const error = await response.json();
-      console.error('❌ Google Calendar API error:', error);
-      res.status(response.status).json({ error: error.error || 'Failed to fetch calendar' });
+      const errorData = await response.json() as { error?: { message?: string } };
+      console.error('❌ Google Calendar API error:', errorData);
+      res.status(response.status).json({ error: (errorData.error?.message) || 'Failed to fetch calendar' });
       return;
     }
 
-    const data = await response.json();
+    const data = await response.json() as { items?: any[]; summary?: string };
     console.log(`✅ Fetched ${data.items?.length || 0} events from public calendar`);
 
     res.json({
