@@ -22,4 +22,11 @@ else
   exit 1
 fi
 
+echo "🌱 Seeding données par défaut..."
+if tsx prisma/seed.ts; then
+  echo "✅ Seed appliqué"
+else
+  echo "⚠️  Seed failed but continuing (may already exist)"
+fi
+
 exec "$@"
