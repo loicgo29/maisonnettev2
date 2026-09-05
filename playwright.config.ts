@@ -17,7 +17,7 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
-  webServer: [
+  webServer: process.env.SKIP_WEBSERVER ? [] : [
     {
       command: 'npm run preview',
       url: 'http://localhost:8030',
