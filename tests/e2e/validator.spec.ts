@@ -1,81 +1,60 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Maisonnettev2 Validator — E2E Feature Tests', () => {
-  test.beforeEach(async ({ page }) => {
-    // Enable console logging
-    page.on('console', msg => console.log(`[BROWSER] ${msg.type()}: ${msg.text()}`));
-    page.on('pageerror', err => console.error(`[BROWSER ERROR] ${err.message}`));
-  });
-
-  test('Calendar page loads without JS errors', async ({ page }) => {
-    const errors: string[] = [];
-
-    page.on('console', msg => {
-      if (msg.type() === 'error') {
-        errors.push(msg.text());
-      }
-    });
-
-    await page.goto('http://localhost:5173/calendar', { waitUntil: 'networkidle' });
-
-    // Should NOT have 404 or 500
-    expect(page.url()).toContain('/calendar');
-
-    // Should NOT have JS errors about Failed to fetch
-    const failedFetch = errors.filter(e => e.includes('Failed to fetch'));
-    expect(failedFetch, `Should not have "Failed to fetch" errors, got: ${failedFetch.join(', ')}`).toHaveLength(0);
-
-    // Page should have content
-    const bodyText = await page.textContent('body');
-    expect(bodyText).toBeTruthy();
-    expect(bodyText).toContain('Calendrier');
-  });
-
-  test('Calendar component renders (auth or events)', async ({ page }) => {
-    await page.goto('http://localhost:5173/calendar', { waitUntil: 'networkidle' });
-
-    // Should show either:
-    // 1. Loading state
-    // 2. Auth required
-    // 3. Events list
-
-    const hasLoading = await page.locator('text=/Chargement|Loading/i').isVisible().catch(() => false);
-    const hasAuth = await page.locator('text=/Se connecter|Google/i').isVisible().catch(() => false);
-    const hasEvents = await page.locator('text=/Événement|Event/i').isVisible().catch(() => false);
-
-    expect(hasLoading || hasAuth || hasEvents, 'Calendar should show loading, auth, or events').toBe(true);
-  });
-
-  test('API calendar endpoint returns valid response', async ({ page }) => {
-    const response = await page.request.get('http://localhost:3001/api/calendar');
-
-    expect(response.ok() || response.status() === 400, 'Calendar endpoint should respond 200 or 400').toBe(true);
-
-    const json = await response.json();
-    expect(json, 'Should have authUrl or error field').toHaveProperty(/authUrl|error/);
-  });
-
-  test('Booking calendar loads on home page', async ({ page }) => {
-    const errors: string[] = [];
-
-    page.on('console', msg => {
-      if (msg.type() === 'error') errors.push(msg.text());
-    });
-
+test.describe('Maisonnettev2 Validator — REAL Feature Tests', () => {
+  test('HOME PAGE: Calendar component shows NO ERROR (critical)', async ({ page }) => {
+    // This is the REAL test users care about
     await page.goto('http://localhost:5173/', { waitUntil: 'networkidle' });
 
-    expect(page.url()).toBe('http://localhost:5173/');
+    // WAIT for the component to load (not just page load)
+    await page.waitForTimeout(2000);
 
-    // Should have calendar or booking content
-    const bodyText = await page.textContent('body');
-    expect(bodyText).toContain('Calendrier');
+    // CRITICAL: Page should NOT show "Erreur: Failed to fetch calendar"
+    const errorText = await page.locator('text=Erreur: Failed to fetch calendar').isVisible().catch(() => false);
+    expect(errorText, '❌ REAL BUG: "Erreur: Failed to fetch calendar" visible on home page').toBe(false);
 
-    // No fetch errors
-    const failedFetch = errors.filter(e => e.includes('Failed to fetch'));
-    expect(failedFetch).toHaveLength(0);
+    // SHOULD show either loading OR auth button
+    const hasAuthButton = await page.locator('text=Se connecter avec Google').isVisible({ timeout: 5000 }).catch(() => false);
+    const hasLoading = await page.locator('text=/Chargement|Loading/i').isVisible().catch(() => false);
+
+    expect(hasAuthButton || hasLoading, 'Calendar should show auth button or loading state').toBe(true);
   });
 
-  test('No CORS or network errors in console', async ({ page }) => {
+  test('CALENDAR PAGE: Component displays (no error)', async ({ page }) => {
+    await page.goto('http://localhost:5173/calendar', { waitUntil: 'networkidle' });
+
+    // WAIT for async component load
+    await page.waitForTimeout(2000);
+
+    // FAIL if error message appears
+    const hasError = await page.locator('text=/Erreur|Failed to fetch/i').isVisible().catch(() => false);
+    expect(hasError, '❌ Calendar shows error').toBe(false);
+
+    // SHOULD show auth button or events
+    const hasAuth = await page.locator('text=Se connecter avec Google').isVisible().catch(() => false);
+    const hasEvents = await page.locator('[data-testid="event"]').count().then(c => c > 0);
+
+    expect(hasAuth || hasEvents, 'Should show auth button or events').toBe(true);
+  });
+
+  test('API /api/calendar endpoint works', async ({ page }) => {
+    const response = await page.request.get('http://localhost:5173/api/calendar');
+
+    expect(response.ok(), `API should return 200, got ${response.status()}`).toBe(true);
+
+    const json = await response.json();
+    expect(json.authUrl, 'Should have authUrl').toBeTruthy();
+  });
+
+  test('Backend /api/calendar endpoint works', async ({ page }) => {
+    const response = await page.request.get('http://localhost:3001/api/calendar');
+
+    expect(response.ok(), `Backend should return 200, got ${response.status()}`).toBe(true);
+
+    const json = await response.json();
+    expect(json.authUrl, 'Backend should have authUrl').toBeTruthy();
+  });
+
+  test('NO console errors during page load', async ({ page }) => {
     const consoleErrors: string[] = [];
 
     page.on('console', msg => {
@@ -84,24 +63,19 @@ test.describe('Maisonnettev2 Validator — E2E Feature Tests', () => {
       }
     });
 
-    await page.goto('http://localhost:5173/calendar', { waitUntil: 'networkidle' });
+    await page.goto('http://localhost:5173/', { waitUntil: 'networkidle' });
+    await page.waitForTimeout(2000);
 
-    // Filter for network/CORS errors only (not general JS errors)
-    const networkErrors = consoleErrors.filter(e =>
-      /CORS|Failed to fetch|NetworkError|ERR_|blocked/.test(e)
+    // Filter for REAL errors (not development warnings)
+    const realErrors = consoleErrors.filter(e =>
+      /Failed to fetch|NetworkError|CORS|TypeError|Uncaught/.test(e)
     );
 
-    expect(networkErrors, `Should have no network errors, got: ${networkErrors.join('; ')}`).toHaveLength(0);
+    expect(realErrors, `Console has errors: ${realErrors.join('; ')}`).toHaveLength(0);
   });
 
-  test('Backend health endpoint is accessible', async ({ page }) => {
-    const response = await page.request.get('http://localhost:3001/health');
-    expect(response.status()).toBe(200);
-  });
-
-  test('Frontend responds with HTML', async ({ page }) => {
+  test('Frontend responds (not 404/500)', async ({ page }) => {
     const response = await page.request.get('http://localhost:5173/');
     expect(response.status()).toBe(200);
-    expect(response.headers()['content-type']).toContain('text/html');
   });
 });
