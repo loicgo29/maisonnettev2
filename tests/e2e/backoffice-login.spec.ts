@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = process.env.E2E_URL || 'http://localhost:8030';
+const BASE_URL = 'http://localhost:8030'; // Via Caddy reverse proxy (not 5173 direct)
 
 test.describe('Backoffice Authentication', () => {
   test('should redirect unauthenticated users to login', async ({ page }) => {

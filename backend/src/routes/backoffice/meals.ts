@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import { readFileSync, appendFileSync, existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
-import { verifyOIDCToken } from '../../middleware/oidc.js'
+import { verifyBackofficeToken } from '../../middleware/backoffice-jwt.js'
 
 const router = express.Router()
 
@@ -35,7 +35,7 @@ interface MealRecord {
  * POST /api/backoffice/meals/record
  * Enregistrer un repas (append-only dans meals.jsonl)
  */
-router.post('/record', verifyOIDCToken, async (req: Request, res: Response): Promise<void> => {
+router.post('/record', verifyBackofficeToken, async (req: Request, res: Response): Promise<void> => {
   try {
     const { date, person, meal, account } = req.body
 
@@ -91,7 +91,7 @@ router.post('/record', verifyOIDCToken, async (req: Request, res: Response): Pro
  * Récupérer les repas d'une plage de dates
  * Query params: startDate, endDate, account
  */
-router.get('/range', verifyOIDCToken, async (req: Request, res: Response): Promise<void> => {
+router.get('/range', verifyBackofficeToken, async (req: Request, res: Response): Promise<void> => {
   try {
     const { startDate, endDate, account } = req.query
 
@@ -144,7 +144,7 @@ router.get('/range', verifyOIDCToken, async (req: Request, res: Response): Promi
  * GET /api/backoffice/meals/export
  * Télécharger le fichier meals.jsonl complet (pour import Mac Mini)
  */
-router.get('/export', verifyOIDCToken, async (req: Request, res: Response): Promise<void> => {
+router.get('/export', verifyBackofficeToken, async (req: Request, res: Response): Promise<void> => {
   try {
     ensureMealsDir()
 

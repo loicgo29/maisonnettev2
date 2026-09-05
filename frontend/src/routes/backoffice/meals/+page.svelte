@@ -2,6 +2,8 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 
+	export let data: { backofficeToken?: string } = {};
+
 	interface AccountConfig {
 		[key: string]: string[];
 	}
@@ -55,7 +57,8 @@
 				account: selectedAccount,
 			});
 
-			const res = await fetch(`${API_BASE}/backoffice/meals/range?${params}`);
+			const headers = data.backofficeToken ? { Authorization: `Bearer ${data.backofficeToken}` } : {};
+			const res = await fetch(`${API_BASE}/backoffice/meals/range?${params}`, { headers });
 
 			if (!res.ok) {
 				throw new Error(`HTTP ${res.status}`);
@@ -77,7 +80,8 @@
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-									},
+					...(data.backofficeToken && { Authorization: `Bearer ${data.backofficeToken}` }),
+				},
 				body: JSON.stringify({
 					date: dateStr,
 					person,
@@ -101,8 +105,7 @@
 		try {
 			isExporting = true;
 			const res = await fetch(`${API_BASE}/backoffice/meals/export`, {
-				headers: {
-									},
+				headers: data.backofficeToken ? { Authorization: `Bearer ${data.backofficeToken}` } : {},
 			});
 
 			if (!res.ok) {

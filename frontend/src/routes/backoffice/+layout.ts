@@ -8,7 +8,7 @@ export const load: LayoutLoad = async ({ url, data }) => {
 	// NE PAS rediriger si on est sur /backoffice/login
 	if (url.pathname === '/backoffice/login') {
 		console.log('[Layout] On login page, allowing');
-		return {};
+		return { ...data };
 	}
 
 	// Vérifier le token au NIVEAU DU SERVEUR (hook), pas en onMount()
@@ -23,6 +23,7 @@ export const load: LayoutLoad = async ({ url, data }) => {
 
 	console.log('[Layout] Token found, allowing access');
 	return {
+		...data,
 		isAuthenticated: !!token,
 	};
 };
