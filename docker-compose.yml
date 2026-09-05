@@ -61,6 +61,11 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.nginx
     container_name: maisonnettev2-frontend
+    environment:
+      PRIVATE_GITE_CALENDAR_ID: ${PRIVATE_GITE_CALENDAR_ID}
+      PRIVATE_GOOGLE_CLIENT_ID: ${PRIVATE_GOOGLE_CLIENT_ID}
+      PRIVATE_GOOGLE_CLIENT_SECRET: ${PRIVATE_GOOGLE_CLIENT_SECRET}
+      PRIVATE_GOOGLE_REDIRECT_URI: ${PRIVATE_GOOGLE_REDIRECT_URI}
     ports:
       - "5173:5173"
     depends_on:
