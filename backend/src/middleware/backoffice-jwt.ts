@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'test-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'development-key-insecure';
 
 export const verifyBackofficeToken = (req: Request, res: Response, next: NextFunction): void => {
   const token = req.headers.authorization?.replace('Bearer ', '') || req.cookies?.backoffice_token;
