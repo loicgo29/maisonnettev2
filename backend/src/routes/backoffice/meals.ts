@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express'
 import { readFileSync, appendFileSync, existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
+import { z } from 'zod'
 import { verifyBackofficeToken } from '../../middleware/backoffice-jwt.js'
 
 const router = express.Router()
@@ -10,6 +11,23 @@ const ACCOUNTS_CONFIG = {
   gourmich: ['Loïc', 'Mahaut', 'Alban', 'Ilan'],
   tigresse: ['Alice', 'Adèle', 'Joséphine', 'Albert', 'Oscar'],
 }
+
+// Zod schemas for input validation
+const MealRecordSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD format'),
+  person: z.enum(['Loïc', 'Mahaut', 'Alban', 'Ilan', 'Alice', 'Adèle', 'Joséphine', 'Albert', 'Oscar']),
+  meal: z.number().int().min(0).max(4, 'Meal must be between 0 and 4'),
+  account: z.enum(['gourmich', 'tigresse']),
+})
+
+const MealRangeSchema = z.object({
+  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Start date must be YYYY-MM-DD format'),
+  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'End date must be YYYY-MM-DD format'),
+  account: z.enum(['gourmich', 'tigresse']),
+}).refine(
+  (data) => new Date(data.startDate) <= new Date(data.endDate),
+  { message: 'End date must be after or equal to start date', path: ['endDate'] }
+)
 
 // Répertoire de stockage
 const MEALS_DIR = process.env.MEALS_DATA_DIR || '/data/backoffice'
@@ -37,34 +55,17 @@ interface MealRecord {
  */
 router.post('/record', verifyBackofficeToken, async (req: Request, res: Response): Promise<void> => {
   try {
-    const { date, person, meal, account } = req.body
-
-    // Validations
-    if (!date || !person || meal === undefined || !account) {
+    // Validate request body with Zod schema
+    const parsed = MealRecordSchema.safeParse(req.body)
+    if (!parsed.success) {
       res.status(400).json({
-        error: 'Missing required fields: date, person, meal, account',
+        error: 'Invalid meal record',
+        issues: parsed.error.flatten().fieldErrors,
       })
       return
     }
 
-    if (!Object.keys(ACCOUNTS_CONFIG).includes(account)) {
-      res.status(400).json({ error: `Invalid account: ${account}` })
-      return
-    }
-
-    if (
-      !ACCOUNTS_CONFIG[account as keyof typeof ACCOUNTS_CONFIG].includes(person)
-    ) {
-      res.status(400).json({
-        error: `Person ${person} not in account ${account}`,
-      })
-      return
-    }
-
-    if (typeof meal !== 'number' || meal < 0 || meal > 4) {
-      res.status(400).json({ error: 'meal must be between 0 and 4' })
-      return
-    }
+    const { date, person, meal, account } = parsed.data
 
     // Créer l'enregistrement
     const record: MealRecord = {
@@ -93,22 +94,19 @@ router.post('/record', verifyBackofficeToken, async (req: Request, res: Response
  */
 router.get('/range', verifyBackofficeToken, async (req: Request, res: Response): Promise<void> => {
   try {
-    const { startDate, endDate, account } = req.query
-
-    if (!startDate || !endDate || !account) {
+    // Validate query parameters with Zod schema
+    const parsed = MealRangeSchema.safeParse(req.query)
+    if (!parsed.success) {
       res.status(400).json({
-        error: 'Missing query params: startDate, endDate, account',
+        error: 'Invalid query parameters',
+        issues: parsed.error.flatten().fieldErrors,
       })
       return
     }
 
-    const start = new Date(startDate as string).getTime()
-    const end = new Date(endDate as string).getTime()
-
-    if (Number.isNaN(start) || Number.isNaN(end)) {
-      res.status(400).json({ error: 'Invalid date format' })
-      return
-    }
+    const { startDate, endDate, account } = parsed.data
+    const start = new Date(startDate).getTime()
+    const end = new Date(endDate).getTime()
 
     // Lire le fichier JSONL
     ensureMealsDir()

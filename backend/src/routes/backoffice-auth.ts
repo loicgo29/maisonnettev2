@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
 
 const router = express.Router();
@@ -14,10 +15,13 @@ if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
 const JWT_SECRET_VALUE = JWT_SECRET || 'development-key-insecure';
 const JWT_EXPIRY = '24h';
 
-interface LoginRequest {
-  username: string;
-  pwd: string;
-}
+// Zod schema for login request validation
+const LoginSchema = z.object({
+  username: z.string().min(1, 'Username required').max(100).trim(),
+  pwd: z.string().min(4, 'Password must be at least 4 characters').max(256),
+});
+
+type LoginRequest = z.infer<typeof LoginSchema>;
 
 interface AuthResponse {
   success: boolean;
@@ -32,15 +36,18 @@ interface AuthResponse {
  */
 router.post('/login', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { username, pwd } = req.body as LoginRequest;
-
-    if (!username || !pwd) {
+    // Validate request body with Zod schema
+    const parsed = LoginSchema.safeParse(req.body);
+    if (!parsed.success) {
       res.status(400).json({
         success: false,
-        error: 'Username and secret required',
+        error: 'Invalid username or password format',
+        issues: parsed.error.flatten().fieldErrors,
       } as AuthResponse);
       return;
     }
+
+    const { username, pwd } = parsed.data;
 
     // Find user
     const user = await prisma.backofficeUser.findUnique({
