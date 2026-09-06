@@ -21,6 +21,7 @@ jobs:
           PRIVATE_GOOGLE_REDIRECT_URI: ${{ secrets.PRIVATE_GOOGLE_REDIRECT_URI }}
           PRIVATE_GITE_CALENDAR_ID: ${{ secrets.PRIVATE_GITE_CALENDAR_ID }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
           KC_DB_PASSWORD: ${{ secrets.KC_DB_PASSWORD }}
           KC_ADMIN_PASSWORD: ${{ secrets.KC_ADMIN_PASSWORD }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
@@ -29,6 +30,9 @@ jobs:
           DB_USER=maisonnettev2
           DB_PASSWORD=${{ env.DB_PASSWORD }}
           DB_NAME=maisonnettev2
+          # Sans JWT_SECRET, src/middleware/backoffice-jwt.ts interrompt le
+          # démarrage en production et le backend boucle sur un redémarrage.
+          JWT_SECRET=${{ env.JWT_SECRET }}
           NODE_ENV=production
           PORT=3001
           VITE_API_URL=https://maisonnette-pecheur-bertheaume.fr
@@ -74,8 +78,12 @@ jobs:
             "PRIVATE_GOOGLE_REDIRECT_URI"
             "PRIVATE_GITE_CALENDAR_ID"
             "DB_PASSWORD"
+            "JWT_SECRET"
             "KC_DB_PASSWORD"
             "KC_ADMIN_PASSWORD"
+            "KEYCLOAK_REALM_URL"
+            "DOMAIN"
+            "ACME_EMAIL"
           )
           for var in "${required_vars[@]}"; do
             if ! grep -q "^${var}=" .env.production; then

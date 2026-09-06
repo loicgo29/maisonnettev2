@@ -23,7 +23,11 @@ else
 fi
 
 echo "🌱 Seeding données par défaut..."
-if tsx prisma/seed.ts; then
+# `node dist/seed.js` et non `tsx` : tsx est une dépendance de développement,
+# absente de l'image de production. L'appeler échouait sur « tsx: not found »,
+# donc aucun compte backoffice n'était créé et la connexion à l'administration
+# était impossible sur une base neuve.
+if node dist/seed.js; then
   echo "✅ Seed appliqué"
 else
   echo "⚠️  Seed failed but continuing (may already exist)"
