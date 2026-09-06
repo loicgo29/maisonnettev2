@@ -1,170 +1,83 @@
-# Caddyfile — Hetzner Deployment (Two-Domain Setup)
+# Configuration Caddy pour maisonnette.fr — Déploiement Hetzner
 #
 # Architecture:
-# 1. maisonnette.fr → Static public site (HTML, no auth)
-# 2. backoffice.maisonnette.fr → Backoffice (SvelteKit + auth)
-# 3. /api/* → Backend (Express) — protected routes require JWT
+# 1. maisonnette.fr → Site public statique (ouvert à tous)
+# 2. backoffice.maisonnette.fr → Backoffice privé (Tailscale VPN UNIQUEMENT)
+# 3. /api/backoffice/* → Endpoints protégés JWT + restriction IP Tailscale
 #
-# Let's Encrypt HTTPS is automatic via Caddy.
+# Let's Encrypt HTTPS automatique via Caddy.
+# Restrict backoffice access to Tailscale network only (100.64.0.0/10)
 
-# Global configuration
 {
-    # Allow auto HTTPS
-    auto_https on
-
-    # Log to stdout (Docker logging)
-    log {
-        output stdout
-        format json
-    }
+	email {$ACME_EMAIL}
 }
 
 # ========================================================================
-# PUBLIC SITE: maisonnette.fr
-# Static HTML only — zero injection risk
+# SITE PUBLIC: maisonnette.fr, www.maisonnette.fr
+# Accessible à tous — site statique (zéro risque d'injection)
 # ========================================================================
-maisonnette.fr, www.maisonnette.fr {
-    # Reverse proxy to public site nginx container
-    reverse_proxy public:80 {
-        header_uri / Host {http.request.host}
-        header_uri / X-Forwarded-For {http.request.remote}
-        header_uri / X-Forwarded-Proto {http.request.proto}
-    }
+{$DOMAIN}, www.{$DOMAIN} {
+	encode gzip zstd
 
-    # Security headers for public site
-    header {
-        # Strict CSP for static HTML (no inline scripts)
-        Content-Security-Policy "default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'"
+	# Route /backoffice vers backoffice MAIS bloque les accès non-Tailscale
+	@backoffice path /backoffice*
+	handle @backoffice {
+		# Vérifier que le client vient de Tailscale (plage 100.64.0.0/10)
+		@tailscale_only remote_ip 100.0.0.0/8
+		handle @tailscale_only {
+			# Autoriser Tailscale
+			reverse_proxy frontend:5173
+		}
+		handle {
+			# Bloquer les autres avec 403
+			respond "Accès interdit - VPN Tailscale requis" 403
+		}
+	}
 
-        # Frame options
-        X-Frame-Options "SAMEORIGIN"
-        X-Content-Type-Options "nosniff"
-        X-XSS-Protection "1; mode=block"
+	# API backoffice - aussi sécurisé
+	@api_backoffice path /api/backoffice*
+	handle @api_backoffice {
+		@tailscale_only remote_ip 100.0.0.0/8
+		handle @tailscale_only {
+			reverse_proxy backend:3001
+		}
+		handle {
+			respond "Accès interdit - VPN Tailscale requis" 403
+		}
+	}
 
-        # Prevent access to backoffice from public domain
-        # (defense-in-depth: even if /api/backoffice/* is exposed)
-        -Set-Cookie
-    }
+	# Health check (public)
+	handle /health {
+		reverse_proxy backend:3001
+	}
 
-    # Deny access to /api/backoffice/* from public domain
-    @backoffice_api path /api/backoffice/*
-    handle @backoffice_api {
-        respond "Forbidden" 403
-    }
+	# Uploads (public)
+	handle /uploads/* {
+		reverse_proxy backend:3001
+	}
 
-    # Log requests
-    log {
-        output stdout
-        format json
-    }
-}
+	# API public (calendar, etc)
+	handle /api/* {
+		reverse_proxy backend:3001
+	}
 
-# ========================================================================
-# BACKOFFICE: backoffice.maisonnette.fr
-# Private dashboard with JWT authentication
-# ========================================================================
-backoffice.maisonnette.fr {
-    # Reverse proxy to backoffice SvelteKit container
-    reverse_proxy backoffice:5173 {
-        header_uri / Host {http.request.host}
-        header_uri / X-Forwarded-For {http.request.remote}
-        header_uri / X-Forwarded-Proto {http.request.proto}
+	# Tout le reste → frontend (public)
+	handle {
+		reverse_proxy frontend:5173
+	}
 
-        # SvelteKit requires these headers
-        header_up X-Real-IP {http.request.remote}
-        header_up X-Forwarded-For {http.request.remote}
-    }
+	# Security headers
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
 
-    # API routes go to backend
-    @api path /api/*
-    handle @api {
-        reverse_proxy backend:3001 {
-            header_uri / X-Forwarded-For {http.request.remote}
-            header_uri / X-Forwarded-Proto {http.request.proto}
-        }
-    }
-
-    # Rate limiting on login endpoint (prevent brute force)
-    @login path /api/backoffice/auth/login
-    handle @login {
-        # Allow 5 requests per 15 minutes
-        rate_limit @login {
-            key "{http.request.remote}"
-            rate 5r/15m
-            burst 2
-        }
-    }
-
-    # Security headers for backoffice
-    header {
-        # Strict CSP (no unsafe-inline or unsafe-eval)
-        # SvelteKit works fine without these
-        Content-Security-Policy "default-src 'self'; img-src 'self' data: https:; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https: ws: wss:"
-
-        # Frame options
-        X-Frame-Options "DENY"
-        X-Content-Type-Options "nosniff"
-        X-XSS-Protection "1; mode=block"
-        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-    }
-
-    # CORS for API calls from backoffice
-    header /api* {
-        Access-Control-Allow-Origin "{http.request.origin}"
-        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-        Access-Control-Allow-Headers "Content-Type, Authorization"
-        Access-Control-Allow-Credentials "true"
-    }
-
-    # Log backoffice requests
-    log {
-        output stdout
-        format json
-    }
-}
-
-# ========================================================================
-# API ENDPOINTS (Primary Backend)
-# Routes /api/* to Express backend on all domains
-# ========================================================================
-# This is optional — routes are usually per-domain above, but adding as fallback
-:8031 {
-    # Serve /api/* to backend
-    @api path /api/*
-    handle @api {
-        reverse_proxy backend:3001 {
-            header_uri / X-Forwarded-For {http.request.remote}
-            header_uri / X-Forwarded-Proto {http.request.proto}
-        }
-    }
-
-    # Deny public access to backoffice API
-    @backoffice_api path /api/backoffice/*
-    handle @backoffice_api {
-        # Require authorization header (JWT token)
-        # For now, simple IP allowlist or require auth header
-        respond "Unauthorized" 401
-    }
-
-    handle {
-        respond "Not Found" 404
-    }
-
-    log {
-        output stdout
-        format json
-    }
-}
-
-# ========================================================================
-# Health Check Endpoint (internal)
-# ========================================================================
-:8000 {
-    handle /health {
-        respond "OK" 200
-    }
-
-    handle {
-        respond "Not Found" 404
-    }
+	log {
+		output file /data/access.log {
+			roll_size 10MB
+			roll_keep 5
+		}
+	}
 }
