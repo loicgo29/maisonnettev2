@@ -195,6 +195,7 @@
 
 	onMount(async () => {
 		// Auth check is done by +layout.server.ts (redirects to login if no token)
+		console.log('🔑 Token disponible:', data.backofficeToken ? 'OUI' : 'NON');
 		await loadAccountsConfig();
 		// Charge les données initiales
 		await loadMeals();
