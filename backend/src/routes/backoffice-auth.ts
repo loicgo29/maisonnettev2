@@ -119,10 +119,10 @@ router.post('/verify', (req: Request, res: Response): void => {
 
 /**
  * POST /api/backoffice/auth/logout
- * Logout (token invalidation on frontend)
+ * Logout (clear token cookie on backend)
  */
 router.post('/logout', (_req: Request, res: Response): void => {
-  // Token invalidation happens on frontend by clearing localStorage
+  res.clearCookie('backoffice_token', { path: '/' });
   res.json({ success: true });
 });
 

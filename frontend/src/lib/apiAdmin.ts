@@ -27,11 +27,6 @@ async function appel(chemin: string, options: RequestInit = {}): Promise<any> {
     throw new ErreurAccesRefuse(401, 'Redirection vers la connexion');
   }
 
-  console.log('[API] Sending request with token:', {
-    chemin,
-    tokenLength: t.length,
-    tokenStart: t.substring(0, 20) + '...',
-  });
 
   const reponse = await fetch(`${BASE}${chemin}`, {
     ...options,

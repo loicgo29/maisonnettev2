@@ -13,16 +13,13 @@
 		error = '';
 
 		try {
-			console.log('[Login] Sending POST to /api/backoffice/auth/login');
 			const response = await fetch('/api/backoffice/auth/login', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ username, pwd }),
 			});
 
-			console.log('[Login] Response status:', response.status);
 			const data = await response.json();
-			console.log('[Login] Response data:', data);
 
 			if (!response.ok) {
 				error = data.error || 'Login failed';
@@ -30,22 +27,16 @@
 				return;
 			}
 
-			console.log('[Login] Saving token to cookie');
-			// Save token to cookie (server-readable)
-			document.cookie = `backoffice_token=${data.token}; path=/; max-age=${24 * 60 * 60}`;
+			// Save token to cookie (server-readable) with secure flags
+			document.cookie = `backoffice_token=${data.token}; path=/; max-age=${24 * 60 * 60}; SameSite=Strict`;
 
 			// Also save to localStorage for UI
 			if (typeof window !== 'undefined') {
 				localStorage.setItem('backoffice_user', JSON.stringify(data.user));
 			}
 
-			console.log('[Login] Invalidating all data (force server re-load)');
 			await invalidateAll();
-
-			console.log('[Login] Redirecting to /backoffice/meals');
-			// Redirect to meals
 			await goto('/backoffice/meals');
-			console.log('[Login] Redirect complete');
 		} catch (err) {
 			console.error('[Login] Error:', err);
 			error = 'Connection error: ' + (err instanceof Error ? err.message : 'Unknown error');

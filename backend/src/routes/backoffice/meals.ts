@@ -171,7 +171,7 @@ router.get('/export', verifyBackofficeToken, async (req: Request, res: Response)
  * GET /api/backoffice/meals/accounts
  * Lister les comptes et personnes disponibles
  */
-router.get('/accounts', (_req: Request, res: Response) => {
+router.get('/accounts', verifyBackofficeToken, (_req: Request, res: Response) => {
   res.json(ACCOUNTS_CONFIG)
 })
 
