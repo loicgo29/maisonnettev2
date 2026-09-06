@@ -94,6 +94,11 @@ services:
       - frontend
     networks:
       - maisonnettev2-net
+      # alo tourne dans son propre compose, sur le réseau partagé de
+      # l'écosystème. Caddy l'y rejoint pour le servir derrière
+      # l'authentification du backoffice, plutôt que d'en dupliquer les
+      # conteneurs : alo garde ainsi la maîtrise de son cycle de vie.
+      - nas-network
     volumes:
       - maisonnettev2_caddy_data:/data
       - maisonnettev2_caddy_config:/config
@@ -128,3 +133,6 @@ volumes:
 networks:
   maisonnettev2-net:
     driver: bridge
+  # Créé par l'écosystème (alo, immich…), pas par ce projet : d'où `external`.
+  nas-network:
+    external: true

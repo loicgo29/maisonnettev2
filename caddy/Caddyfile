@@ -12,6 +12,49 @@
 	auto_https off
 }
 
+# ---------------------------------------------------------------------------
+# alo — comptabilité familiale, servie derrière l'authentification du backoffice
+#
+# alo n'a aucune authentification propre : c'était Tailscale qui lui tenait lieu
+# de serrure. `forward_auth` la lui apporte sans toucher à son code — Caddy
+# demande au backoffice si la requête est authentifiée, et ne sert la page qu'en
+# cas de réponse 200.
+#
+# Sous-domaine et non chemin `/alo` : le nginx interne d'alo proxifie déjà
+# `/api` vers son backend, et sous un chemin ces appels entreraient en
+# collision avec l'API de maisonnettev2.
+#
+# En développement on passe par `maisonnette.localhost` plutôt que `localhost` :
+# tout ce qui se termine par `.localhost` résout en 127.0.0.1 sans configuration
+# (RFC 6761), mais `localhost` est un domaine de premier niveau, et les
+# navigateurs refusent d'y attacher un cookie de domaine — le jeton resterait
+# host-only et n'atteindrait jamais alo. `maisonnette.localhost` a deux niveaux,
+# il accepte donc `Domain=`, et le développement reproduit fidèlement la
+# production.
+# ---------------------------------------------------------------------------
+http://alo.maisonnette.localhost, http://alo.localhost {
+	forward_auth backend:3001 {
+		uri /api/backoffice/auth/verify
+
+		# Sans session, renvoyer vers le formulaire de connexion plutôt que
+		# d'afficher un 401 brut : le cookie porte le domaine parent, donc se
+		# connecter là rend aussi l'accès à ce sous-domaine.
+		@refuse status 401 403
+		handle_response @refuse {
+			redir * http://maisonnette.localhost:8030/backoffice/login 302
+		}
+	}
+
+	reverse_proxy alo-frontend:80
+
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+}
+
 :80 {
 	encode gzip zstd
 

@@ -7,6 +7,42 @@
 	let error = '';
 	let loading = false;
 
+	const DUREE_SESSION_SECONDES = 24 * 60 * 60;
+
+	/**
+	 * Construit l'en-tête du cookie de session.
+	 *
+	 * L'attribut Domain est posé dès qu'on est sur un nom — `localhost` compris,
+	 * qui couvre alors `alo.localhost` et rend le développement identique à la
+	 * production. Seules les adresses IP en sont exclues : la spécification
+	 * n'autorise pas d'y attacher un domaine, et le cookie serait rejeté en
+	 * silence — la connexion semblerait réussir, puis chaque page reviendrait au
+	 * formulaire sans le moindre message.
+	 */
+	function construireCookieSession(token: string): string {
+		const hote = location.hostname;
+		const estAdresseIP = /^[\d.]+$/.test(hote) || hote.includes(':');
+		const estNomDeDomaine = !estAdresseIP;
+
+		const morceaux = [
+			`backoffice_token=${token}`,
+			'path=/',
+			`max-age=${DUREE_SESSION_SECONDES}`,
+			'SameSite=Strict',
+		];
+
+		if (estNomDeDomaine) {
+			// Le préfixe www ne fait pas partie du domaine à couvrir : le poser
+			// exclurait les autres sous-domaines, alo compris.
+			morceaux.push(`Domain=${hote.replace(/^www\./, '')}`);
+		}
+
+		// Sans Secure en clair : le cookie serait refusé sur http://localhost.
+		if (location.protocol === 'https:') morceaux.push('Secure');
+
+		return morceaux.join('; ');
+	}
+
 	async function handleLogin(e: SubmitEvent) {
 		e.preventDefault();
 		loading = true;
@@ -27,8 +63,15 @@
 				return;
 			}
 
-			// Save token to cookie (server-readable) with secure flags
-			document.cookie = `backoffice_token=${data.token}; path=/; max-age=${24 * 60 * 60}; SameSite=Strict`;
+			// Le jeton doit accompagner les requêtes vers les sous-domaines, alo
+			// en particulier : sans attribut Domain le cookie est host-only et
+			// n'est jamais envoyé à alo.<domaine>, ce qui s'y traduirait par une
+			// redirection vers la connexion en boucle, sans message d'erreur.
+			//
+			// SameSite=Strict reste valable : le rattachement se fait sur le
+			// domaine enregistrable, donc le domaine et ses sous-domaines sont
+			// « same-site ».
+			document.cookie = construireCookieSession(data.token);
 
 			// Also save to localStorage for UI
 			if (typeof window !== 'undefined') {

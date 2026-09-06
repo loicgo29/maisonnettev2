@@ -108,6 +108,35 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
 });
 
 /**
+ * GET /api/backoffice/auth/verify
+ *
+ * Point de contrôle interrogé par la directive `forward_auth` de Caddy pour
+ * protéger les applications qui n'ont pas d'authentification propre — alo en
+ * premier lieu. Caddy rejoue la requête entrante ici : le jeton arrive donc par
+ * cookie, pas par en-tête Authorization, d'où la lecture des deux sources.
+ *
+ * La réponse ne porte volontairement aucune donnée : Caddy ne regarde que le
+ * code, et renvoyer le contenu du jeton l'exposerait à toute application placée
+ * derrière ce contrôle.
+ */
+router.get('/verify', (req: Request, res: Response): void => {
+  const token =
+    req.headers.authorization?.replace('Bearer ', '') || req.cookies?.backoffice_token;
+
+  if (!token) {
+    res.status(401).end();
+    return;
+  }
+
+  try {
+    jwt.verify(token, JWT_SECRET_VALUE);
+    res.status(200).end();
+  } catch {
+    res.status(401).end();
+  }
+});
+
+/**
  * POST /api/backoffice/auth/verify
  * Verify if JWT token is valid
  */
@@ -131,8 +160,22 @@ router.post('/verify', (req: Request, res: Response): void => {
  * POST /api/backoffice/auth/logout
  * Logout (clear token cookie on backend)
  */
-router.post('/logout', (_req: Request, res: Response): void => {
+router.post('/logout', (req: Request, res: Response): void => {
+  // Le cookie est posé avec un attribut Domain pour couvrir les sous-domaines
+  // (alo). Un clearCookie sans ce même Domain ne l'efface pas : le navigateur
+  // conserverait la session et la déconnexion ne déconnecterait rien.
+  // On efface donc les deux variantes, celle avec domaine et celle sans, pour
+  // couvrir aussi les sessions ouvertes avant ce changement.
   res.clearCookie('backoffice_token', { path: '/' });
+
+  const hote = req.hostname;
+  if (hote && !/^[\d.]+$/.test(hote) && !hote.includes(':')) {
+    res.clearCookie('backoffice_token', {
+      path: '/',
+      domain: hote.replace(/^www\./, ''),
+    });
+  }
+
   res.json({ success: true });
 });
 
