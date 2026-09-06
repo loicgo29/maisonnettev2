@@ -24,8 +24,14 @@
 	let activePeriod: { name: string; start: string; end: string } | null = null;
 
 	let selectedAccount: 'gourmich' | 'tigresse' = 'gourmich';
-	let startDate = '';
-	let endDate = new Date().toISOString().split('T')[0];
+
+	// Initialise les dates par défaut
+	const today = new Date();
+	const defaultStartDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`;
+	const defaultEndDate = today.toISOString().split('T')[0];
+
+	let startDate = defaultStartDate;
+	let endDate = defaultEndDate;
 	let isExporting = false;
 
 	const API_BASE = '/api';
@@ -36,9 +42,6 @@
 			const res = await fetch(`${API_BASE}/backoffice/meals/accounts`);
 			if (res.ok) {
 				accountsConfig = await res.json();
-				// Initialiser startDate avec le premier jour du mois actuel
-				const today = new Date();
-				startDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`;
 			}
 		} catch (err) {
 			console.error('Erreur chargement config:', err);
@@ -181,9 +184,11 @@
 		return Object.keys(mealData).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		// Auth check is done by +layout.server.ts (redirects to login if no token)
-		loadAccountsConfig();
+		await loadAccountsConfig();
+		// Charge les données initiales
+		await loadMeals();
 	});
 
 	$: if (startDate && endDate) {
