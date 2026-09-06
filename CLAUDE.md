@@ -41,28 +41,39 @@ The validator agent:
 
 ### Simple Username + Password (Backoffice Only)
 
-No OAuth/Keycloak for backoffice. Simple bcrypt + JWT:
+No OAuth/Keycloak for backoffice. Simple bcrypt + JWT with server-side validation:
 
-- **Login endpoint:** `POST /api/backoffice/auth/login`
-- **Body:** `{ username, pwd }`
-- **Response:** `{ token, user: { id, username, role } }`
-- **Token storage:** `localStorage.backoffice_token`
-- **Token expiry:** 24 hours
+**Token storage:**
+- Cookie: `backoffice_token` (HttpOnly-ready, SameSite=Strict)
+- Server validates via middleware on protected routes
+
+**Token lifecycle:**
+- Issued by: `POST /api/backoffice/auth/login`
+- Validated by: `verifyBackofficeToken` middleware
+- Revoked via: `POST /api/backoffice/auth/logout` (clears cookie)
+- Expiry: 24 hours
+
+**Security:**
+- JWT_SECRET from `.env` (random per deployment, never hardcoded)
+- Token NOT logged to console
+- Cookie: `path=/; max-age=86400; SameSite=Strict`
 
 **Default credentials (dev only):**
 - Username: `admin`
 - Password: `admin123`
 
-⚠️ **Change in production!** Set via `JWT_SECRET` and seed script.
+⚠️ **Production:** Change `JWT_SECRET` in `.env` and admin password in database seed.
 
 ### Protected Routes
 
-Routes requiring auth (check token on page load):
+Routes requiring auth (server-side guard in `+layout.server.ts`):
 - `/backoffice/meals` — Meal management
-- `/backoffice/settings` — Admin settings
+- `/backoffice/logout` — Logout (clears auth cookie + localStorage)
+- `/api/backoffice/meals/*` — All meals API endpoints
+- `/api/backoffice/meals/accounts` — Account list (protected as of Sept 6)
 
-Unprotected:
-- `/backoffice/login` — Public login form
+Public routes (no auth required):
+- `/backoffice/login` — Login form
 - `/` — Public homepage
 - `/calendar` — Public availability calendar
 
@@ -264,6 +275,43 @@ Agent will:
 | `ENOENT: no such file or directory, open '.env'` | Run `./setup-env.sh` from root |
 | Tests timeout | Increase Playwright timeout or reduce parallel browsers |
 | Port 5173 already in use | Kill existing process: `lsof -ti:5173 \| xargs kill -9` |
+
+---
+
+## Security Checklist (2026-09-06 Update)
+
+Backoffice authentication now follows security best practices:
+
+- ✅ **JWT_SECRET** stored in `.env` (not hardcoded)
+  - Each deployment gets unique random secret
+  - Never appears in source code
+  - Passed via docker-compose environment
+
+- ✅ **Token storage** secure
+  - Cookie with `SameSite=Strict` flag
+  - No sensitive token data in console logs
+  - Server-side validation on all protected routes
+
+- ✅ **Logout implementation**
+  - Page at `/backoffice/logout` clears all auth state
+  - Backend clears cookie via `Set-Cookie` header
+  - Frontend clears localStorage on logout
+
+- ✅ **Protected endpoints**
+  - All `/api/backoffice/meals/*` routes require auth
+  - `/api/backoffice/meals/accounts` now protected (was public)
+  - Middleware returns 401 for missing/invalid tokens
+
+- ✅ **Testing**
+  - E2E tests validate login → meals → logout flow
+  - Token exposure in console checked
+  - Cookie security flags verified
+
+⚠️ **Before production deployment:**
+1. Change `JWT_SECRET` in `.env` to new random value
+2. Change `admin` password in database seed
+3. Enable Caddy HTTPS (TLS cert)
+4. Set `NODE_ENV=production`
 
 ---
 
