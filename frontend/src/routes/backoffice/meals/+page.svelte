@@ -21,6 +21,7 @@
 		gourmich: [],
 		tigresse: [],
 	};
+	let activePeriod: { name: string; start: string; end: string } | null = null;
 
 	let selectedAccount: 'gourmich' | 'tigresse' = 'gourmich';
 	let startDate = '';
@@ -44,6 +45,23 @@
 		}
 	}
 
+	// Formater la date pour affichage (ex: "24/05/2026")
+	function formatDateFR(dateStr: string): string {
+		const [year, month, day] = dateStr.split('-');
+		return `${day}/${month}/${year}`;
+	}
+
+	// Mettre à jour la période active affichée
+	function updateActivePeriod() {
+		if (startDate && endDate) {
+			activePeriod = {
+				name: 'Période sélectionnée',
+				start: formatDateFR(startDate),
+				end: formatDateFR(endDate),
+			};
+		}
+	}
+
 	// Charger les repas
 	async function loadMeals() {
 		if (!startDate || !endDate) return;
@@ -51,6 +69,7 @@
 		try {
 			loading = true;
 			error = null;
+			updateActivePeriod();
 			const params = new URLSearchParams({
 				startDate,
 				endDate,
@@ -196,6 +215,13 @@
 
 	{#if error}
 		<div class="error">{error}</div>
+	{/if}
+
+	{#if activePeriod}
+		<div class="active-period">
+			<strong>Période active :</strong>
+			{activePeriod.name} ({activePeriod.start} → {activePeriod.end})
+		</div>
 	{/if}
 
 	<!-- Sélecteurs -->
@@ -346,6 +372,16 @@
 		margin-bottom: 20px;
 	}
 
+	.active-period {
+		background-color: #e3f2fd;
+		color: #1976d2;
+		padding: 12px;
+		border-radius: 4px;
+		margin-bottom: 20px;
+		border-left: 4px solid #1976d2;
+		font-size: 0.95em;
+	}
+
 	.controls {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -438,11 +474,13 @@
 		background: white;
 		border: 1px solid #ddd;
 		border-radius: 4px;
-		overflow: hidden;
+		overflow-x: auto;
 	}
 
 	.meals-table thead {
 		background-color: #f5f5f5;
+		position: sticky;
+		top: 0;
 	}
 
 	.meals-table th,
@@ -468,21 +506,36 @@
 		background-color: #f0f0f0;
 	}
 
-	.meal-input {
-		width: 60px;
-		padding: 4px;
-		text-align: center;
-		border: 1px solid #ddd;
-		border-radius: 4px;
-		font-size: 0.9em;
+	/* Alternance de couleurs (rose/blanc comme ALO) */
+	.meals-table tbody tr:nth-child(odd) {
+		background-color: #fce4ec;
+	}
+
+	.meals-table tbody tr:nth-child(even) {
+		background-color: white;
 	}
 
 	.totals-row {
-		background-color: #f0f0f0;
+		background-color: #f0f0f0 !important;
 		font-weight: bold;
+		border-top: 2px solid #ddd;
+		border-bottom: 2px solid #ddd;
 	}
 
-	.totals-row td {
-		border-bottom: 2px solid #ddd;
+	.meal-input {
+		width: 50px;
+		padding: 6px 4px;
+		text-align: center;
+		border: 1px solid #ccc;
+		border-radius: 3px;
+		font-size: 0.9em;
+		background-color: white;
+		transition: border-color 0.2s;
+	}
+
+	.meal-input:focus {
+		outline: none;
+		border-color: #1976d2;
+		box-shadow: 0 0 4px rgba(25, 118, 210, 0.2);
 	}
 </style>
