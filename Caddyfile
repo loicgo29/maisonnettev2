@@ -84,10 +84,22 @@ backoffice.maisonnette.fr {
         }
     }
 
+    # Rate limiting on login endpoint (prevent brute force)
+    @login path /api/backoffice/auth/login
+    handle @login {
+        # Allow 5 requests per 15 minutes
+        rate_limit @login {
+            key "{http.request.remote}"
+            rate 5r/15m
+            burst 2
+        }
+    }
+
     # Security headers for backoffice
     header {
-        # Strict CSP
-        Content-Security-Policy "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' https:"
+        # Strict CSP (no unsafe-inline or unsafe-eval)
+        # SvelteKit works fine without these
+        Content-Security-Policy "default-src 'self'; img-src 'self' data: https:; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https: ws: wss:"
 
         # Frame options
         X-Frame-Options "DENY"

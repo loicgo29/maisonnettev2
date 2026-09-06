@@ -88,6 +88,32 @@ services:
       retries: 3
     networks: [maisonnette]
 
+  backup:
+    image: postgres:16-alpine
+    container_name: maisonnette-backup
+    restart: daily
+    environment:
+      PGPASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./backups:/backups
+      - postgres_data:/data:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: |
+      sh -c 'mkdir -p /backups && exec 2>/backups/backup.log
+      while true; do
+        echo "[$(date)] Starting backup..."
+        pg_dump -h postgres -U ${DB_USER:-maisonnettev2} ${DB_NAME:-maisonnettev2} 2>/backups/backup.log | gzip > /backups/db-$(date +%Y%m%d-%H%M%S).sql.gz
+        echo "[$(date)] Backup complete. Cleaning old backups (>7 days)..."
+        find /backups -name "db-*.sql.gz" -mtime +7 -delete
+        echo "[$(date)] Sleeping 24 hours until next backup..."
+        sleep 86400
+      done'
+    networks: [maisonnette]
+    profiles:
+      - backup
+
   caddy:
     image: caddy:latest
     container_name: maisonnette-caddy
@@ -99,6 +125,7 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
+      - ./logs:/var/log/caddy
     environment:
       ACME_AGREE: 'true'
     depends_on:
@@ -111,6 +138,7 @@ volumes:
   postgres_data:
   caddy_data:
   caddy_config:
+  maisonnettev2_logs:
 
 networks:
   maisonnette:
