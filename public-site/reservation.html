@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservation - Maisonnette de Bertheaume</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f9f9f9;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        nav {
+            background: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #764ba2;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            background: white;
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        section h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background: #764ba2;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📧 Réservation</h1>
+        <p>Demandez votre séjour à la Maisonnette</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="/">Accueil</a></li>
+            <li><a href="/#description">Description</a></li>
+            <li><a href="/#tarifs">Tarifs</a></li>
+            <li><a href="/#disponibilites">Disponibilités</a></li>
+            <li><a href="#reservation" style="color: #764ba2; font-weight: bold;">Réservation</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <section>
+            <div class="info-box">
+                <strong>ℹ️ Mode de réservation</strong><br>
+                Remplissez le formulaire ci-dessous. Nous vous recontacterons sous 24h pour confirmer votre demande et les tarifs exacts.
+            </div>
+
+            <form id="reservationForm" method="POST" action="/api/reservations/request">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">Prénom *</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Nom *</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Téléphone</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="checkIn">Date d'arrivée *</label>
+                        <input type="date" id="checkIn" name="checkIn" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="checkOut">Date de départ *</label>
+                        <input type="date" id="checkOut" name="checkOut" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="guests">Nombre de personnes *</label>
+                        <select id="guests" name="guests" required>
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="1">1 personne</option>
+                            <option value="2">2 personnes</option>
+                            <option value="3">3 personnes</option>
+                            <option value="4">4 personnes</option>
+                            <option value="5">5 personnes</option>
+                            <option value="6">6 personnes</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="children">Enfants (< 12 ans)</label>
+                        <select id="children" name="children">
+                            <option value="0">Aucun</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message ou demandes spéciales</label>
+                    <textarea id="message" name="message" rows="4" placeholder="Allergies, équipements spéciaux, etc."></textarea>
+                </div>
+
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label style="display: flex; align-items: center; font-weight: normal; gap: 0.5rem;">
+                        <input type="checkbox" name="newsletter" style="width: auto;">
+                        Me tenir au courant des nouvelles disponibilités
+                    </label>
+                </div>
+
+                <button type="submit" class="btn">📤 Envoyer ma demande</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Questions fréquentes</h2>
+
+            <div style="margin: 1.5rem 0;">
+                <h3 style="color: #667eea; margin-top: 1rem;">Quel est le délai de confirmation ?</h3>
+                <p>Nous confirmons les réservations dans les 24 heures. Vous recevrez un email de confirmation avec les tarifs et les modalités de paiement.</p>
+            </div>
+
+            <div style="margin: 1.5rem 0;">
+                <h3 style="color: #667eea; margin-top: 1rem;">Quels sont les frais supplémentaires ?</h3>
+                <p>Le tarif indiqué inclut l'accès à la maison et au jardin. Les frais de nettoyage (50€ TTC) s'ajoutent en fin de séjour.</p>
+            </div>
+
+            <div style="margin: 1.5rem 0;">
+                <h3 style="color: #667eea; margin-top: 1rem;">Peut-on amener des animaux ?</h3>
+                <p>Non, les animaux ne sont pas autorisés dans la maisonnette. Exceptions possibles sur demande préalable (contact).</p>
+            </div>
+
+            <div style="margin: 1.5rem 0;">
+                <h3 style="color: #667eea; margin-top: 1rem;">Y a-t-il un minimum de nuits ?</h3>
+                <p>Non minimum imposé en basse saison. Haute saison (juil-août) : 3 nuits minimum.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>📞 Nous contacter</h2>
+            <p>Des questions avant de réserver ?</p>
+            <p style="margin-top: 1rem;">
+                <strong>Téléphone :</strong> <a href="tel:+33781103889">+33 7 81 10 38 89</a><br>
+                <strong>Email :</strong> <a href="mailto:contact@maisonnette-bertheaume.fr">contact@maisonnette-bertheaume.fr</a>
+            </p>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Maisonnette de Bertheaume. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        document.getElementById('reservationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+
+            try {
+                const res = await fetch('/api/reservations/request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    alert('✅ Demande envoyée ! Nous vous recontacterons bientôt.');
+                    e.target.reset();
+                } else {
+                    alert('❌ Erreur lors de l\'envoi. Veuillez réessayer.');
+                }
+            } catch (err) {
+                alert('❌ Erreur de connexion. Veuillez réessayer.');
+            }
+        });
+    </script>
+</body>
+</html>

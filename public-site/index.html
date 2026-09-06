@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maisonnette de Bertheaume - Gîte de vacances Finistère</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f9f9f9;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        nav {
+            background: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #764ba2;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            background: white;
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        section h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .gallery-item {
+            background: #f0f0f0;
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: center;
+            padding: 1rem;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .feature h3 {
+            color: #667eea;
+            margin: 0.5rem 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+            margin: 1rem 0.5rem;
+        }
+
+        .cta-button:hover {
+            background: #764ba2;
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .calendar-section {
+            background: #f0f7ff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .calendar-placeholder {
+            background: white;
+            padding: 1rem;
+            border-radius: 4px;
+            text-align: center;
+            color: #999;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🏡 Maisonnette de Bertheaume</h1>
+        <p>Gîte de vacances 45m² • Finistère • 6 personnes</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#accueil">Accueil</a></li>
+            <li><a href="#description">Description</a></li>
+            <li><a href="#tarifs">Tarifs</a></li>
+            <li><a href="#disponibilites">Disponibilités</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <section id="accueil">
+            <h2>Bienvenue</h2>
+            <p>Nichée à la pointe de Bertheaume, cette maisonnette et son très grand jardin arboré vous accueillent pour des vacances inoubliables. Récemment rénovée, chaleureuse et tout confort, la maison offre 45 m² fonctionnels pour 6 personnes.</p>
+            <p style="margin-top: 1rem;">À seulement 3 minutes à pied de la plage de sable fin.</p>
+        </section>
+
+        <section id="description">
+            <h2>📋 Description</h2>
+
+            <h3>Caractéristiques</h3>
+            <div class="features">
+                <div class="feature">
+                    <h3>🏖️ Localisation</h3>
+                    <p>3 min à pied de la plage</p>
+                </div>
+                <div class="feature">
+                    <h3>🛏️ Chambres</h3>
+                    <p>2 chambres + canapé convertible</p>
+                </div>
+                <div class="feature">
+                    <h3>👥 Capacité</h3>
+                    <p>6 personnes</p>
+                </div>
+                <div class="feature">
+                    <h3>📏 Surface</h3>
+                    <p>45 m² aménagés</p>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 2rem;">Galerie photos</h3>
+            <div class="gallery">
+                <div class="gallery-item">Photo 1: Jardin à gauche</div>
+                <div class="gallery-item">Photo 2: Vue d'ensemble</div>
+                <div class="gallery-item">Photo 3: Maison</div>
+                <div class="gallery-item">Photo 4: Terrasse</div>
+                <div class="gallery-item">Photo 5: Extérieur</div>
+                <div class="gallery-item">Photo 6: Jardin</div>
+            </div>
+        </section>
+
+        <section id="tarifs">
+            <h2>💰 Tarifs</h2>
+            <table style="width: 100%; border-collapse: collapse; margin: 1rem 0;">
+                <thead>
+                    <tr style="background: #f0f0f0;">
+                        <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Période</th>
+                        <th style="padding: 0.75rem; text-align: right; border-bottom: 2px solid #ddd;">Prix/nuit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 0.75rem; border-bottom: 1px solid #ddd;">Basse saison (sept-juin)</td>
+                        <td style="padding: 0.75rem; text-align: right; border-bottom: 1px solid #ddd;">€ --</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.75rem; border-bottom: 1px solid #ddd;">Haute saison (juil-août)</td>
+                        <td style="padding: 0.75rem; text-align: right; border-bottom: 1px solid #ddd;">€ --</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><em>Tarifs à confirmer. Contactez-nous pour un devis personnalisé.</em></p>
+        </section>
+
+        <section id="disponibilites">
+            <h2>📅 Disponibilités</h2>
+            <div class="calendar-section">
+                <h3>Calendrier en temps réel</h3>
+                <div class="calendar-placeholder">
+                    ⏳ Calendrier en cours de chargement...
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">Le calendrier se met à jour automatiquement. Les dates en vert sont disponibles.</p>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>📞 Contact</h2>
+            <p><strong>Téléphone :</strong> <a href="tel:+33781103889">+33 7 81 10 38 89</a></p>
+            <p><strong>Email :</strong> <a href="mailto:contact@maisonnette-bertheaume.fr">contact@maisonnette-bertheaume.fr</a></p>
+
+            <h3 style="margin-top: 1.5rem;">Réserver</h3>
+            <div style="text-align: center;">
+                <a href="/reservation.html" class="cta-button">📧 Demander une réservation</a>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Maisonnette de Bertheaume. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>
