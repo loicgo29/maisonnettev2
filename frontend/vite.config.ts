@@ -33,6 +33,28 @@ export default defineConfig({
 	preview: {
 		host: '0.0.0.0',
 		port: 5173,
+		proxy: {
+			'/api/gites': {
+				target: 'http://localhost:3001',
+				changeOrigin: true
+			},
+			'/api/reservations': {
+				target: 'http://localhost:3001',
+				changeOrigin: true
+			},
+			'/api/admin': {
+				target: 'http://localhost:3001',
+				changeOrigin: true
+			},
+			'/api/backoffice': {
+				target: 'http://localhost:3001',
+				changeOrigin: true
+			},
+			'/uploads': {
+				target: 'http://localhost:3001',
+				changeOrigin: true
+			}
+		},
 		allowedHosts: [
 			'localhost',
 			'127.0.0.1',
