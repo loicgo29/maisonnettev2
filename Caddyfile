@@ -15,18 +15,23 @@
 
 # ========================================================================
 # BACKOFFICE SUBDOMAIN: backoffice.maisonnette-pecheur-bertheaume.fr
-# Tailscale VPN ONLY — restreint à 100.0.0.0/8
+# Protégé par JWT authentication (vrai protection au lieu de IP restriction)
 # ========================================================================
 backoffice.{$DOMAIN} {
-	# Vérifier que le client vient de Tailscale
-	@tailscale_only remote_ip 100.0.0.0/8
-	handle @tailscale_only {
-		# Autoriser Tailscale
-		reverse_proxy frontend:5173
+	# Reverse proxy to backoffice frontend
+	reverse_proxy frontend:5173 {
+		header_uri / Host {http.request.host}
+		header_uri / X-Forwarded-For {http.request.remote}
+		header_uri / X-Forwarded-Proto {http.request.proto}
 	}
-	handle {
-		# Bloquer les autres avec 403
-		respond "Accès interdit - VPN Tailscale requis" 403
+
+	# API routes go to backend
+	@api path /api/*
+	handle @api {
+		reverse_proxy backend:3001 {
+			header_uri / X-Forwarded-For {http.request.remote}
+			header_uri / X-Forwarded-Proto {http.request.proto}
+		}
 	}
 
 	# Security headers
@@ -52,30 +57,22 @@ backoffice.{$DOMAIN} {
 {$DOMAIN}, www.{$DOMAIN} {
 	encode gzip zstd
 
-	# Route /backoffice vers backoffice MAIS bloque les accès non-Tailscale
+	# Route /backoffice vers frontend (protégé par JWT dans SvelteKit)
 	@backoffice path /backoffice*
 	handle @backoffice {
-		# Vérifier que le client vient de Tailscale
-		@tailscale_only remote_ip 100.0.0.0/8
-		handle @tailscale_only {
-			# Autoriser Tailscale
-			reverse_proxy frontend:5173
-		}
-		handle {
-			# Bloquer les autres avec 403
-			respond "Accès interdit - VPN Tailscale requis" 403
+		reverse_proxy frontend:5173 {
+			header_uri / Host {http.request.host}
+			header_uri / X-Forwarded-For {http.request.remote}
+			header_uri / X-Forwarded-Proto {http.request.proto}
 		}
 	}
 
-	# API backoffice - aussi sécurisé
+	# API backoffice - protégé par JWT middleware au backend
 	@api_backoffice path /api/backoffice*
 	handle @api_backoffice {
-		@tailscale_only remote_ip 100.0.0.0/8
-		handle @tailscale_only {
-			reverse_proxy backend:3001
-		}
-		handle {
-			respond "Accès interdit - VPN Tailscale requis" 403
+		reverse_proxy backend:3001 {
+			header_uri / X-Forwarded-For {http.request.remote}
+			header_uri / X-Forwarded-Proto {http.request.proto}
 		}
 	}
 
