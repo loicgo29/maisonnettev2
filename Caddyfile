@@ -1,36 +1,37 @@
-# Configuration Caddy pour maisonnette-pecheur-bertheaume.fr
+# Reverse proxy de production — maisonnette-pecheur-bertheaume.fr
 #
-# Architecture:
-# 1. maisonnette-pecheur-bertheaume.fr → Site public (ouvert à tous)
-# 2. backoffice.maisonnette-pecheur-bertheaume.fr → Sous-domaine backoffice
-# 3. /backoffice sur domaine principal → Chemin backoffice
-# 4. JWT authentication protège le backoffice
+# Deux volets nettement séparés (cf. docker-compose.prod.yml) :
+#   public     nginx servant public-site/, du HTML statique sans exécution
+#              côté serveur : c'est la seule chose exposée à un visiteur anonyme.
+#   backoffice SvelteKit, protégé par JWT, atteint via /backoffice ou le
+#              sous-domaine dédié.
+#   backend    Express, seule brique parlant à PostgreSQL.
 #
-# Let's Encrypt HTTPS automatique via Caddy.
+# Caddy obtient et renouvelle les certificats Let's Encrypt tout seul ; DOMAIN
+# et ACME_EMAIL viennent de docker-compose.prod.yml.
 
 {
 	email {$ACME_EMAIL}
 }
 
 # ========================================================================
-# BACKOFFICE SUBDOMAIN: backoffice.maisonnette-pecheur-bertheaume.fr
-# Protégé par JWT authentication dans SvelteKit
+# SOUS-DOMAINE BACKOFFICE — backoffice.<domaine>
 # ========================================================================
 backoffice.{$DOMAIN} {
 	encode gzip zstd
 
-	# API routes → backend
-	@api path /api/*
-	handle @api {
+	handle /api/* {
 		reverse_proxy backend:3001
 	}
 
-	# Tout le reste → frontend (SvelteKit)
-	handle {
-		reverse_proxy frontend:5173
+	handle /uploads/* {
+		reverse_proxy backend:3001
 	}
 
-	# Security headers
+	handle {
+		reverse_proxy backoffice:5173
+	}
+
 	header {
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "DENY"
@@ -48,45 +49,40 @@ backoffice.{$DOMAIN} {
 }
 
 # ========================================================================
-# SITE PUBLIC: maisonnette-pecheur-bertheaume.fr
-# Accessible à tous — site statique + backoffice via /backoffice
+# SITE PUBLIC — <domaine> et www.<domaine>
 # ========================================================================
 {$DOMAIN}, www.{$DOMAIN} {
 	encode gzip zstd
 
-	# Route /backoffice vers frontend (protégé par JWT dans SvelteKit)
-	@backoffice path /backoffice*
-	handle @backoffice {
-		reverse_proxy frontend:5173
+	# Backoffice accessible aussi depuis le domaine principal.
+	handle /backoffice* {
+		reverse_proxy backoffice:5173
 	}
 
-	# API backoffice - protégé par JWT middleware au backend
-	@api_backoffice path /api/backoffice*
-	handle @api_backoffice {
-		reverse_proxy backend:3001
+	# Ressources internes de SvelteKit : servies depuis le même conteneur,
+	# sinon les pages du backoffice arrivent sans style ni JavaScript.
+	handle /_app/* {
+		reverse_proxy backoffice:5173
 	}
 
-	# Health check (public)
-	handle /health {
-		reverse_proxy backend:3001
-	}
-
-	# Uploads (public)
-	handle /uploads/* {
-		reverse_proxy backend:3001
-	}
-
-	# API public (calendar, etc)
 	handle /api/* {
 		reverse_proxy backend:3001
 	}
 
-	# Tout le reste → frontend (public)
-	handle {
-		reverse_proxy frontend:5173
+	handle /health {
+		reverse_proxy backend:3001
 	}
 
-	# Security headers
+	# Photos des gîtes, servies par express.static du backend.
+	handle /uploads/* {
+		reverse_proxy backend:3001
+	}
+
+	# Tout le reste : le site statique.
+	handle {
+		reverse_proxy public:80
+	}
+
 	header {
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "SAMEORIGIN"

@@ -138,15 +138,29 @@ jobs:
           echo "=== DEPLOYING (NO-CACHE, WITH --env-file) ==="
 
           # CRITICAL: Rebuild with --env-file (MUST come before -f)
-          echo "🔨 Rebuilding frontend with environment variables..."
+          # `backoffice` et `backend` sont les deux seuls services construits
+          # ici : `public` part de l'image nginx officielle et ne monte que
+          # public-site/. Le service `frontend` n'existe plus depuis la
+          # séparation site public / backoffice, et le nommer faisait échouer
+          # le déploiement sur « no such service ».
+          echo "🔨 Rebuilding backend + backoffice with environment variables..."
           docker compose \
             --env-file .env \
             -f docker-compose.prod.yml \
-            build --no-cache frontend
+            build --no-cache backend backoffice
 
           echo ""
           echo "🚀 Starting services..."
-          docker compose --env-file .env -f docker-compose.prod.yml up -d
+          # --remove-orphans retire les conteneurs des anciennes révisions du
+          # compose (maisonnette-frontend, maisonnette-db). Les données ne sont
+          # pas concernées : elles vivent dans le volume nommé
+          # maisonnettev2_postgres_data, que le service postgres réutilise.
+          docker compose --env-file .env -f docker-compose.prod.yml up -d --remove-orphans
+
+          echo ""
+          echo "🗄️ Applying database migrations..."
+          docker compose --env-file .env -f docker-compose.prod.yml \
+            exec -T backend npx prisma migrate deploy
 
           echo "✅ Deployment complete"
           EOF
@@ -158,11 +172,15 @@ jobs:
           echo "⏳ Waiting for services to be healthy..."
           sleep 10
 
-          # Check backend health (via Caddy on port 8030, HTTP not HTTPS)
+          # Caddy de production n'écoute que 80/443 : interroger le port 8030
+          # échouait systématiquement. On passe par le domaine, seule façon
+          # d'obtenir le bon site (Caddy route sur l'en-tête Host).
+          SITE="https://maisonnette-pecheur-bertheaume.fr"
+
           max_attempts=30
           attempt=1
           while [ $attempt -le $max_attempts ]; do
-            if curl -f http://$DEPLOY_HOST:8030/api/health > /dev/null 2>&1; then
+            if curl -fsS "$SITE/api/health" > /dev/null 2>&1; then
               echo "✅ Backend health check passed"
               break
             fi
@@ -175,9 +193,19 @@ jobs:
             ((attempt++))
           done
 
-          # Check Google Calendar OAuth2 configuration (via Caddy on port 8030)
+          # Le backoffice doit répondre, sinon le site public est en ligne mais
+          # l'administration est inaccessible sans que rien ne le signale.
+          echo "✓ Testing backoffice login page..."
+          if curl -fsS "$SITE/backoffice/login" | grep -q "Backoffice Login"; then
+            echo "✅ Backoffice login page served"
+          else
+            echo "❌ Backoffice login page unreachable"
+            exit 1
+          fi
+
+          # Check Google Calendar OAuth2 configuration
           echo "✓ Testing Google Calendar OAuth2 configuration..."
-          calendar_response=$(curl -s http://$DEPLOY_HOST:8030/api/calendar)
+          calendar_response=$(curl -s "$SITE/api/calendar")
           if echo "$calendar_response" | grep -q "authUrl"; then
             if echo "$calendar_response" | grep -q "$DEPLOY_HOST/api/calendar/callback"; then
               echo "✅ Google Calendar REDIRECT_URI correctly configured"
