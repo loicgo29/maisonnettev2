@@ -1,19 +1,52 @@
 # Configuration Caddy pour maisonnette.fr — Déploiement Hetzner
 #
 # Architecture:
-# 1. maisonnette.fr → Site public statique (ouvert à tous)
-# 2. backoffice.maisonnette.fr → Backoffice privé (Tailscale VPN UNIQUEMENT)
-# 3. /api/backoffice/* → Endpoints protégés JWT + restriction IP Tailscale
+# 1. maisonnette-pecheur-bertheaume.fr → Site public (ouvert à tous)
+# 2. backoffice.maisonnette-pecheur-bertheaume.fr → Sous-domaine Tailscale
+# 3. /backoffice sur domaine principal → Aussi restreint Tailscale
+# 4. /api/backoffice/* → Endpoints protégés JWT + restriction IP Tailscale
 #
 # Let's Encrypt HTTPS automatique via Caddy.
-# Restrict backoffice access to Tailscale network only (100.64.0.0/10)
+# Restrict backoffice access to Tailscale network only (100.0.0.0/8)
 
 {
 	email {$ACME_EMAIL}
 }
 
 # ========================================================================
-# SITE PUBLIC: maisonnette.fr, www.maisonnette.fr
+# BACKOFFICE SUBDOMAIN: backoffice.maisonnette-pecheur-bertheaume.fr
+# Tailscale VPN ONLY — restreint à 100.0.0.0/8
+# ========================================================================
+backoffice.{$DOMAIN} {
+	# Vérifier que le client vient de Tailscale
+	@tailscale_only remote_ip 100.0.0.0/8
+	handle @tailscale_only {
+		# Autoriser Tailscale
+		reverse_proxy frontend:5173
+	}
+	handle {
+		# Bloquer les autres avec 403
+		respond "Accès interdit - VPN Tailscale requis" 403
+	}
+
+	# Security headers
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	log {
+		output file /data/access.log {
+			roll_size 10MB
+			roll_keep 5
+		}
+	}
+}
+
+# ========================================================================
+# SITE PUBLIC: maisonnette-pecheur-bertheaume.fr
 # Accessible à tous — site statique (zéro risque d'injection)
 # ========================================================================
 {$DOMAIN}, www.{$DOMAIN} {
@@ -22,7 +55,7 @@
 	# Route /backoffice vers backoffice MAIS bloque les accès non-Tailscale
 	@backoffice path /backoffice*
 	handle @backoffice {
-		# Vérifier que le client vient de Tailscale (plage 100.64.0.0/10)
+		# Vérifier que le client vient de Tailscale
 		@tailscale_only remote_ip 100.0.0.0/8
 		handle @tailscale_only {
 			# Autoriser Tailscale
