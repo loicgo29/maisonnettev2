@@ -99,7 +99,15 @@ jobs:
           # Transfer .env.production to server
           scp -i ~/.ssh/deploy_key .env.production "$DEPLOY_USER@$DEPLOY_HOST:/tmp/.env.production"
 
-          ssh -i ~/.ssh/deploy_key "$DEPLOY_USER@$DEPLOY_HOST" << 'EOF'
+          # Les options de keepalive ne sont pas décoratives : la construction
+          # des images occupe les deux cœurs du serveur pendant plusieurs
+          # minutes sans rien écrire sur le canal, et la session tombait en
+          # « Broken pipe » avant la fin, laissant le déploiement à moitié fait.
+          ssh -i ~/.ssh/deploy_key \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=240 \
+            -o TCPKeepAlive=yes \
+            "$DEPLOY_USER@$DEPLOY_HOST" << 'EOF'
           set -euo pipefail
           cd /opt/maisonnettev2
 
@@ -143,11 +151,15 @@ jobs:
           # public-site/. Le service `frontend` n'existe plus depuis la
           # séparation site public / backoffice, et le nommer faisait échouer
           # le déploiement sur « no such service ».
+          # Pas de --no-cache : le serveur n'a que deux cœurs et reconstruire
+          # les deux images de zéro le saturait (load > 90) au point de couper
+          # la session SSH. Docker invalide déjà les couches concernées dès que
+          # les sources ou les variables de construction changent.
           echo "🔨 Rebuilding backend + backoffice with environment variables..."
           docker compose \
             --env-file .env \
             -f docker-compose.prod.yml \
-            build --no-cache backend backoffice
+            build backend backoffice
 
           echo ""
           echo "🚀 Starting services..."
