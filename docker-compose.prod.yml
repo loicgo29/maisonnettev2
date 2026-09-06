@@ -45,6 +45,17 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       OWNER_EMAIL: ${OWNER_EMAIL}
       OWNER_PHONE: ${OWNER_PHONE}
+      # src/middleware/oidc.ts refuse de se charger sans cette URL — le
+      # conteneur repartait en boucle sur « KEYCLOAK_REALM_URL est absente ».
+      # Elle est produite par le workflow dans .env.production.
+      KEYCLOAK_REALM_URL: ${KEYCLOAK_REALM_URL}
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN}
+      MESSAGES_AUTO: ${MESSAGES_AUTO:-false}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      PRIVATE_GOOGLE_CLIENT_ID: ${PRIVATE_GOOGLE_CLIENT_ID:-}
+      PRIVATE_GOOGLE_CLIENT_SECRET: ${PRIVATE_GOOGLE_CLIENT_SECRET:-}
+      PRIVATE_GOOGLE_REDIRECT_URI: ${PRIVATE_GOOGLE_REDIRECT_URI:-}
+      PRIVATE_GITE_CALENDAR_ID: ${PRIVATE_GITE_CALENDAR_ID:-}
     ports:
       - '127.0.0.1:3001:3001'
     healthcheck:
@@ -128,6 +139,11 @@ services:
       - ./logs:/var/log/caddy
     environment:
       ACME_AGREE: 'true'
+      # Le Caddyfile lit {$DOMAIN} et {$ACME_EMAIL}. Sans ces deux lignes, la
+      # substitution donne une directive `email` sans argument et Caddy refuse
+      # de démarrer, laissant le site entier injoignable.
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
     depends_on:
       - backend
       - backoffice
