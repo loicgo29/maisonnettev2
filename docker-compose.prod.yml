@@ -80,7 +80,10 @@ services:
       # wget et non curl : l'image du backoffice n'embarque pas curl, et le
       # test tombait sur « executable file not found », marquant en permanence
       # un service parfaitement fonctionnel comme unhealthy.
-      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:5173/']
+      # 127.0.0.1 et non localhost : le serveur n'écoute qu'en IPv4
+      # (0.0.0.0:5173) alors que localhost résout d'abord ::1, d'où un
+      # « Connection refused » trompeur.
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://127.0.0.1:5173/']
       interval: 30s
       timeout: 5s
       retries: 3
