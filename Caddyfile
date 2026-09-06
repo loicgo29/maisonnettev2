@@ -1,13 +1,12 @@
-# Configuration Caddy pour maisonnette.fr — Déploiement Hetzner
+# Configuration Caddy pour maisonnette-pecheur-bertheaume.fr
 #
 # Architecture:
 # 1. maisonnette-pecheur-bertheaume.fr → Site public (ouvert à tous)
-# 2. backoffice.maisonnette-pecheur-bertheaume.fr → Sous-domaine Tailscale
-# 3. /backoffice sur domaine principal → Aussi restreint Tailscale
-# 4. /api/backoffice/* → Endpoints protégés JWT + restriction IP Tailscale
+# 2. backoffice.maisonnette-pecheur-bertheaume.fr → Sous-domaine backoffice
+# 3. /backoffice sur domaine principal → Chemin backoffice
+# 4. JWT authentication protège le backoffice
 #
 # Let's Encrypt HTTPS automatique via Caddy.
-# Restrict backoffice access to Tailscale network only (100.0.0.0/8)
 
 {
 	email {$ACME_EMAIL}
@@ -15,23 +14,20 @@
 
 # ========================================================================
 # BACKOFFICE SUBDOMAIN: backoffice.maisonnette-pecheur-bertheaume.fr
-# Protégé par JWT authentication (vrai protection au lieu de IP restriction)
+# Protégé par JWT authentication dans SvelteKit
 # ========================================================================
 backoffice.{$DOMAIN} {
-	# Reverse proxy to backoffice frontend
-	reverse_proxy frontend:5173 {
-		header_uri / Host {http.request.host}
-		header_uri / X-Forwarded-For {http.request.remote}
-		header_uri / X-Forwarded-Proto {http.request.proto}
-	}
+	encode gzip zstd
 
-	# API routes go to backend
+	# API routes → backend
 	@api path /api/*
 	handle @api {
-		reverse_proxy backend:3001 {
-			header_uri / X-Forwarded-For {http.request.remote}
-			header_uri / X-Forwarded-Proto {http.request.proto}
-		}
+		reverse_proxy backend:3001
+	}
+
+	# Tout le reste → frontend (SvelteKit)
+	handle {
+		reverse_proxy frontend:5173
 	}
 
 	# Security headers
@@ -39,6 +35,7 @@ backoffice.{$DOMAIN} {
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "DENY"
 		Referrer-Policy "strict-origin-when-cross-origin"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		-Server
 	}
 
@@ -52,7 +49,7 @@ backoffice.{$DOMAIN} {
 
 # ========================================================================
 # SITE PUBLIC: maisonnette-pecheur-bertheaume.fr
-# Accessible à tous — site statique (zéro risque d'injection)
+# Accessible à tous — site statique + backoffice via /backoffice
 # ========================================================================
 {$DOMAIN}, www.{$DOMAIN} {
 	encode gzip zstd
@@ -60,20 +57,13 @@ backoffice.{$DOMAIN} {
 	# Route /backoffice vers frontend (protégé par JWT dans SvelteKit)
 	@backoffice path /backoffice*
 	handle @backoffice {
-		reverse_proxy frontend:5173 {
-			header_uri / Host {http.request.host}
-			header_uri / X-Forwarded-For {http.request.remote}
-			header_uri / X-Forwarded-Proto {http.request.proto}
-		}
+		reverse_proxy frontend:5173
 	}
 
 	# API backoffice - protégé par JWT middleware au backend
 	@api_backoffice path /api/backoffice*
 	handle @api_backoffice {
-		reverse_proxy backend:3001 {
-			header_uri / X-Forwarded-For {http.request.remote}
-			header_uri / X-Forwarded-Proto {http.request.proto}
-		}
+		reverse_proxy backend:3001
 	}
 
 	# Health check (public)
@@ -101,6 +91,7 @@ backoffice.{$DOMAIN} {
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "SAMEORIGIN"
 		Referrer-Policy "strict-origin-when-cross-origin"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		-Server
 	}
 
