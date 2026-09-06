@@ -8,6 +8,7 @@ import express from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swagger.js';
@@ -29,6 +30,11 @@ const PORT = process.env.PORT || 3001;
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// Le middleware backoffice accepte le jeton via cookie `backoffice_token` en
+// plus de l'en-tête Authorization : le navigateur n'envoie que le cookie après
+// login, donc sans ce parseur `req.cookies` reste indéfini et toutes les pages
+// du backoffice tombaient en 401 juste après s'être connectées.
+app.use(cookieParser());
 app.use(cors());
 
 // Photos des gîtes.

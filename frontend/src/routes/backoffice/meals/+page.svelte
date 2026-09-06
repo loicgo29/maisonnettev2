@@ -225,7 +225,7 @@
 	const getPersonColor = (person: string) => personColors[person] || '#9E9E9E';
 </script>
 
-<div class="container">
+<main class="container">
 	<h1>🍽️ Repas</h1>
 
 	{#if error}
@@ -364,7 +364,7 @@
 				</tbody>
 			</table>
 		{/if}
-</div>
+</main>
 
 <style>
 	.container {

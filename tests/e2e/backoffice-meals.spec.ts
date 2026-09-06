@@ -1,20 +1,29 @@
 import { test, expect } from '@playwright/test';
 
+// Port 8030 (Caddy) et non 5173 : le serveur du frontend ne route pas /api,
+// donc un login lancé depuis 5173 retombe en 404 et la session n'est jamais
+// ouverte.
 const BACKOFFICE_MEALS_URL = process.env.E2E_URL
   ? `${process.env.E2E_URL}/backoffice/meals`
-  : 'http://localhost:5173/backoffice/meals';
+  : 'http://localhost:8030/backoffice/meals';
 
 const API_MEALS_URL = process.env.E2E_API_URL
   ? `${process.env.E2E_API_URL}/api/backoffice/meals`
   : 'http://localhost:3001/api/backoffice/meals';
 
+const BACKOFFICE_LOGIN_URL = BACKOFFICE_MEALS_URL.replace('/meals', '/login');
+
 test.describe('Backoffice Meals Management', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to backoffice meals
-    await page.goto(BACKOFFICE_MEALS_URL);
-
-    // Wait for page to load (either redirect to login or show content)
-    await page.waitForTimeout(2000);
+    // Se connecter d'abord : /backoffice/meals est protégé, et sans login la
+    // page renvoyée est le formulaire de connexion — les assertions portant sur
+    // le contenu des repas échouaient alors sans qu'aucun bug n'existe.
+    await page.goto(BACKOFFICE_LOGIN_URL);
+    await page.fill('#username', 'admin');
+    await page.fill('#pwd', 'admin123');
+    await page.click('button[type="submit"]');
+    await page.waitForURL('**/backoffice/meals', { timeout: 15000 });
+    await page.waitForLoadState('networkidle');
   });
 
   test('should load backoffice meals page', async ({ page }) => {
