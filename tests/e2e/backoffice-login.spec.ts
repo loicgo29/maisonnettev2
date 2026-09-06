@@ -142,19 +142,20 @@ test.describe('Backoffice Authentication', () => {
     await page.fill('input[type="password"]', 'admin123');
     await page.click('button[type="submit"]');
 
-    // Step 3: Wait for redirect or token
+    // Step 3: Wait for redirect to meals
     await page.waitForTimeout(3000);
     const afterLogin = page.url();
+    expect(afterLogin).toContain('meals');
 
-    // Step 4: Clear token (logout)
-    await page.evaluate(() => localStorage.removeItem('backoffice_token'));
+    // Step 4: Navigate to logout page (clears cookie + localStorage)
+    await page.goto(`${BASE_URL}/backoffice/logout`);
+    await page.waitForTimeout(2000);
 
-    // Step 5: Navigate back to meals
-    await page.goto(`${BASE_URL}/backoffice/meals`);
-    await page.waitForTimeout(1000);
+    // Step 5: Try to access meals (should redirect to login)
+    await page.goto(`${BASE_URL}/backoffice/meals`, { waitUntil: 'networkidle' });
 
-    // Should be redirected to login or show auth message
+    // Should be redirected to login
     const afterLogout = page.url();
-    expect(afterLogout.includes('login') || !afterLogin.includes('meals')).toBe(true);
+    expect(afterLogout).toContain('login');
   });
 });

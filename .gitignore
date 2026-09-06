@@ -53,3 +53,4 @@ TEST_RESULTS.md
 tests/OAUTH2_TESTS.md
 debug-redirect.mjs
 debug-*.mjs
+.env.bak

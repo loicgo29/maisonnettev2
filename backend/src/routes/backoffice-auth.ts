@@ -6,9 +6,12 @@ import { PrismaClient } from '@prisma/client';
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// JWT_SECRET must be set in environment variables for production
-// For dev: set JWT_SECRET in .env file
-const JWT_SECRET = process.env.JWT_SECRET || 'development-key-insecure';
+// JWT_SECRET must be set in environment variables
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('JWT_SECRET environment variable is required in production');
+}
+const JWT_SECRET_VALUE = JWT_SECRET || 'development-key-insecure';
 const JWT_EXPIRY = '24h';
 
 interface LoginRequest {
@@ -75,7 +78,7 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
         username: user.username,
         role: user.role,
       },
-      JWT_SECRET,
+      JWT_SECRET_VALUE,
       { expiresIn: JWT_EXPIRY }
     );
 
@@ -110,7 +113,7 @@ router.post('/verify', (req: Request, res: Response): void => {
       return;
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET_VALUE);
     res.json({ valid: true, user: decoded });
   } catch {
     res.status(401).json({ valid: false });
