@@ -77,7 +77,10 @@ services:
     ports:
       - '127.0.0.1:5173:5173'
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:5173/']
+      # wget et non curl : l'image du backoffice n'embarque pas curl, et le
+      # test tombait sur « executable file not found », marquant en permanence
+      # un service parfaitement fonctionnel comme unhealthy.
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:5173/']
       interval: 30s
       timeout: 5s
       retries: 3

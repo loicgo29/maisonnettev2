@@ -13,7 +13,10 @@ export default defineConfig({
     ['list'],
   ],
   use: {
-    baseURL: 'http://localhost:8030',
+    // E2E_URL permet de rejouer la même suite contre la production sans
+    // toucher aux tests ; sans cela `page.goto('/…')` visait toujours la pile
+    // locale, y compris quand on croyait valider le serveur distant.
+    baseURL: process.env.E2E_URL || 'http://localhost:8030',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
