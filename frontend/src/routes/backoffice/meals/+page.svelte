@@ -65,7 +65,7 @@
 		}
 	}
 
-	// Charger les repas
+	// Charger les repas avec timeout
 	async function loadMeals() {
 		if (!startDate || !endDate) return;
 
@@ -80,15 +80,24 @@
 			});
 
 			const headers = data.backofficeToken ? { Authorization: `Bearer ${data.backofficeToken}` } : {};
-			const res = await fetch(`${API_BASE}/backoffice/meals/range?${params}`, { headers });
+
+			const controller = new AbortController();
+			const timeout = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+			const res = await fetch(`${API_BASE}/backoffice/meals/range?${params}`, { headers, signal: controller.signal });
+			clearTimeout(timeout);
 
 			if (!res.ok) {
-				throw new Error(`HTTP ${res.status}`);
+				throw new Error(`HTTP ${res.status}: ${res.statusText}`);
 			}
 
 			mealData = await res.json();
 		} catch (err: any) {
-			error = `Erreur chargement: ${err.message}`;
+			if (err.name === 'AbortError') {
+				error = 'Timeout: le serveur a mis trop de temps à répondre';
+			} else {
+				error = `Erreur chargement: ${err.message}`;
+			}
 			console.error('Error loading meals:', err);
 		} finally {
 			loading = false;
