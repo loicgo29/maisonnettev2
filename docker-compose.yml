@@ -36,7 +36,15 @@ services:
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
-      KEYCLOAK_REALM_URL: ${KEYCLOAK_REALM_URL:-http://localhost:9000/application/o/maisonnettev2/}
+      # Keycloak, et non Authentik : la valeur par défaut décrivait jusqu'ici un
+      # chemin Authentik (/application/o/…) sur le port 9000, alors que le
+      # projet idp/ fait tourner Keycloak sur 9001. Aucun jeton n'aurait pu être
+      # vérifié — et oidc.ts échoue en silence dans ce cas, rejetant tous les
+      # jetons sans distinguer un valide d'un invalide.
+      # `host.docker.internal` et non le nom du conteneur : Keycloak vit dans le
+      # compose du projet idp, sur un autre réseau Docker, donc `idp-keycloak`
+      # ne se résout pas d'ici.
+      KEYCLOAK_REALM_URL: ${KEYCLOAK_REALM_URL:-http://host.docker.internal:9001/realms/maisonnettev2}
       GOOGLE_SERVICE_ACCOUNT_KEY_PATH: ${GOOGLE_SERVICE_ACCOUNT_KEY_PATH}
       GOOGLE_API_KEY: ${GOOGLE_API_KEY}
       PRIVATE_GOOGLE_CLIENT_ID: ${PRIVATE_GOOGLE_CLIENT_ID}
