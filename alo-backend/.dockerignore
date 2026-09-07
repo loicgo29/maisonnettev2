@@ -1,0 +1,11 @@
+.venv/
+venv/
+data/*.db
+data/exports/
+.pytest_cache/
+alo_session.session
+*.log
+.git/
+__pycache__/
+*.pyc
+.DS_Store

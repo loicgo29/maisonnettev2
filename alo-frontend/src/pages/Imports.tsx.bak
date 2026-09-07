@@ -1,0 +1,265 @@
+import React, { useState } from 'react';
+import {
+  Container,
+  Paper,
+  Tabs,
+  TabList,
+  TabPanel,
+  Button,
+  TextField,
+  CircularProgress,
+  Alert,
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Grid,
+} from '@mui/material';
+import { Tab } from '@mui/base/Tab';
+import axios from 'axios';
+
+interface ImportResult {
+  created: number;
+  skipped: number;
+  filtered?: number;
+  total?: number;
+}
+
+export default function Imports() {
+  const [tab, setTab] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<ImportResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // Telegram state
+  const [telegramStartDate, setTelegramStartDate] = useState('');
+  const [telegramEndDate, setTelegramEndDate] = useState('');
+
+  // Fortuneo state
+  const [fortuneoFile, setFortuneFile] = useState<File | null>(null);
+  const [fortuneoAccount, setFortuneAccount] = useState('5');
+
+  const handleTelegramImport = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setResult(null);
+
+      const params = new URLSearchParams();
+      if (telegramStartDate) params.append('start_date', telegramStartDate);
+      if (telegramEndDate) params.append('end_date', telegramEndDate);
+
+      const response = await axios.post(
+        `/api/imports/telegram${params.toString() ? '?' + params.toString() : ''}`,
+        {}
+      );
+
+      setResult(response.data);
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Erreur lors de l\'import Telegram');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFortuneImport = async () => {
+    if (!fortuneoFile) {
+      setError('Veuillez sélectionner un fichier CSV');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      setResult(null);
+
+      const formData = new FormData();
+      formData.append('file', fortuneoFile);
+      formData.append('account_id', fortuneoAccount);
+
+      const response = await axios.post('/api/imports/csv', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      setResult(response.data);
+      setFortuneFile(null);
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Erreur lors de l\'import Fortuneo');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Typography variant="h3" component="h1" sx={{ mb: 4, textAlign: 'center' }}>
+        📥 Imports de Dépenses
+      </Typography>
+
+      <Paper>
+        <Tabs value={tab} onChange={(_, newValue) => setTab(newValue)}>
+          <Tab label="📱 Telegram" />
+          <Tab label="🏦 Fortuneo (CSV)" />
+        </Tabs>
+
+        {/* Telegram Tab */}
+        <TabPanel value={tab} index={0}>
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Importer depuis Telegram
+            </Typography>
+
+            <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+              <TextField
+                label="Date de début (YYYY-MM-DD)"
+                type="date"
+                value={telegramStartDate}
+                onChange={(e) => setTelegramStartDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                sx={{ flex: 1, minWidth: 200 }}
+              />
+              <TextField
+                label="Date de fin (YYYY-MM-DD)"
+                type="date"
+                value={telegramEndDate}
+                onChange={(e) => setTelegramEndDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                sx={{ flex: 1, minWidth: 200 }}
+              />
+            </Box>
+
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={handleTelegramImport}
+                disabled={loading}
+                sx={{ flex: 1 }}
+              >
+                {loading ? <CircularProgress size={24} /> : '🚀 Lancer l\'import'}
+              </Button>
+            </Box>
+
+            <Typography variant="caption" sx={{ display: 'block', mt: 2, color: 'gray' }}>
+              💡 Laissez vides pour importer tout l'historique
+            </Typography>
+          </Box>
+        </TabPanel>
+
+        {/* Fortuneo Tab */}
+        <TabPanel value={tab} index={1}>
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Importer depuis Fortuneo (CSV)
+            </Typography>
+
+            <Box sx={{ mb: 3 }}>
+              <input
+                type="file"
+                accept=".csv"
+                onChange={(e) => setFortuneo File(e.target.files?.[0] || null)}
+                style={{ marginBottom: 16 }}
+              />
+              {fortuneoFile && (
+                <Typography variant="body2" sx={{ color: 'green' }}>
+                  ✅ Fichier sélectionné: {fortuneoFile.name}
+                </Typography>
+              )}
+            </Box>
+
+            <TextField
+              label="Compte ALO"
+              select
+              value={fortuneoAccount}
+              onChange={(e) => setFortuneo Account(e.target.value)}
+              sx={{ mb: 3, minWidth: 200 }}
+            >
+              <option value="5">Fortuneo (Loïc & Alice)</option>
+              <option value="1">Loïc</option>
+              <option value="2">Alice</option>
+            </TextField>
+
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={handleFortuneo Import}
+                disabled={loading || !fortuneoFile}
+                sx={{ flex: 1 }}
+              >
+                {loading ? <CircularProgress size={24} /> : '🚀 Importer CSV'}
+              </Button>
+            </Box>
+          </Box>
+        </TabPanel>
+      </Paper>
+
+      {/* Results */}
+      {error && (
+        <Alert severity="error" sx={{ mt: 3 }}>
+          {error}
+        </Alert>
+      )}
+
+      {result && (
+        <Grid container spacing={2} sx={{ mt: 3 }}>
+          <Grid item xs={12} sm={6}>
+            <Card>
+              <CardContent>
+                <Typography color="textSecondary" gutterBottom>
+                  ✅ Créées
+                </Typography>
+                <Typography variant="h3" sx={{ color: 'green' }}>
+                  {result.created}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <Card>
+              <CardContent>
+                <Typography color="textSecondary" gutterBottom>
+                  ⏭️ Ignorées
+                </Typography>
+                <Typography variant="h3" sx={{ color: 'orange' }}>
+                  {result.skipped}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {result.filtered !== undefined && (
+            <Grid item xs={12} sm={6}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary" gutterBottom>
+                    🔚 Hors plage
+                  </Typography>
+                  <Typography variant="h3">
+                    {result.filtered}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+
+          {result.total !== undefined && (
+            <Grid item xs={12} sm={6}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary" gutterBottom>
+                    📊 Total traité
+                  </Typography>
+                  <Typography variant="h3">
+                    {result.total}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+        </Grid>
+      )}
+    </Container>
+  );
+}

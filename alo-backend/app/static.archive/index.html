@@ -1,0 +1,2631 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALO - Gestion des dépenses familiales</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-alice: #9C27B0;
+            --color-loic: #4CAF50;
+            --color-quotepart: #FFC107;
+            --color-5050: #8BC34A;
+            --color-dette: #E91E63;
+            --color-telegram: #2196F3;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background: white;
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav button:hover {
+            background: #f0f0f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .section {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        details {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+
+        details summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #667eea;
+            user-select: none;
+        }
+
+        details summary:hover {
+            color: #764ba2;
+        }
+
+        details[open] summary {
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button[type="submit"],
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button[type="submit"]:hover,
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.9em;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .expenses-list,
+        .periods-list {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background: #f0f0f0;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #ddd;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .badge.draft {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge.frozen {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .amount {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .actions {
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            min-height: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal-buttons .btn-danger {
+            flex: 1;
+        }
+
+        .modal-buttons .btn-secondary {
+            background: #6c757d;
+            color: white;
+            flex: 1;
+        }
+
+        .modal-buttons .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .meals-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .meal-account {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .meal-account h3 {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .meal-account.gourmich h3 {
+            color: #ff6b6b;
+        }
+
+        .meal-account.tigresse h3 {
+            color: #4ecdc4;
+        }
+
+        .meal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+
+        .meal-table th {
+            background: #f0f0f0;
+            padding: 8px;
+            text-align: center;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .meal-table th.jour {
+            text-align: left;
+        }
+
+        .meal-table td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        .meal-table td.jour {
+            text-align: left;
+            font-weight: 600;
+            background: #fafafa;
+            min-width: 90px;
+        }
+
+        .meal-table input[type="number"] {
+            width: 45px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 0.85em;
+        }
+
+        .meal-table input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        }
+
+        .meal-table tr:hover td {
+            background: #f9f9f9;
+        }
+
+        .meal-table tr:hover td.jour {
+            background: #f0f0f0;
+        }
+
+        .meal-weekend {
+            background: #fff9e6;
+        }
+
+        .meal-weekend.jour {
+            background: #fff3cd;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .stat-label {
+            font-weight: 600;
+        }
+
+        .stat-value {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        @media (max-width: 1200px) {
+            .meals-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation de sauvegarde */
+        .saving {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .save-feedback {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            animation: slideInUp 0.3s ease, slideOutDown 0.3s ease 2.7s forwards;
+            z-index: 1000;
+        }
+
+        .save-feedback.success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .save-feedback.error {
+            background: #f44336;
+            color: white;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutDown {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+        }
+
+        .row-highlight {
+            animation: highlightFlash 0.5s ease;
+        }
+
+        @keyframes highlightFlash {
+            0% {
+                background-color: #fff9c4;
+            }
+            50% {
+                background-color: #fff9c4;
+            }
+            100% {
+                background-color: transparent;
+            }
+        }
+
+        .spinner-inline {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Tri des colonnes */
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        th.sortable:hover {
+            background-color: #e8eaf6 !important;
+        }
+
+        th.sortable::after {
+            content: ' ⇅';
+            opacity: 0.4;
+            font-size: 0.9em;
+        }
+
+        th.sort-asc::after {
+            content: ' ↑';
+            opacity: 1;
+            color: #667eea;
+        }
+
+        th.sort-desc::after {
+            content: ' ↓';
+            opacity: 1;
+            color: #667eea;
+        }
+        /* Rééquilibrage styles */
+        .main-table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .quote-part-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .period-info {
+            display: flex;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-top: 5px;
+        }
+
+        .clickable {
+            cursor: pointer;
+            color: #667eea;
+            text-decoration: underline;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .clickable:hover {
+            color: #764ba2;
+        }
+
+        .amount {
+            text-align: right;
+            font-weight: 600;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .amount.positive {
+            color: #4caf50;
+        }
+
+        .amount.negative {
+            color: #f44336;
+        }
+
+        .conclusion {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .conclusion h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .conclusion p {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .list-item-left {
+            flex: 1;
+        }
+
+        .list-item-date {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .list-item-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .list-item-amount {
+            text-align: right;
+            font-weight: 600;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .empty-message {
+            padding: 30px;
+            text-align: center;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 ALO - Gestion des dépenses familiales</h1>
+            <p>Centralise, partage et analyse tes dépenses en famille</p>
+        </header>
+
+        <div class="nav">
+            <button class="active" onclick="showSection('expenses')">💸 Dépenses</button>
+            <button onclick="showSection('periods')">📅 Périodes</button>
+            <button onclick="showSection('meals')">🍽️ Repas</button>
+            <button onclick="showSection('reequilibrage')">⚖️ Rééquilibrage</button>
+        </div>
+
+        <!-- Section: Dépenses -->
+        <div id="expenses" class="section active">
+            <h2>Gestion des dépenses</h2>
+            <div id="expenses-message" class="message"></div>
+
+            <details>
+                <summary>➕ Ajouter une nouvelle dépense</summary>
+                <form id="expense-form" onsubmit="submitExpense(event)">
+                    <div class="form-group">
+                        <label for="exp-date">Date *</label>
+                        <input type="date" id="exp-date" name="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exp-label">Libellé *</label>
+                        <input type="text" id="exp-label" name="label" placeholder="ex: Lidl, Carburant..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exp-amount">Montant (€) *</label>
+                        <input type="number" id="exp-amount" name="amount" placeholder="47.50" step="0.01" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exp-category">Catégorie</label>
+                        <select id="exp-category" name="category">
+                            <option value="50/50">50/50 (défaut)</option>
+                            <option value="quotepart">Quote-part</option>
+                            <option value="brico">Brico</option>
+                            <option value="dette">Dette</option>
+                            <option value="virement">Virement</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exp-comment">Commentaire</label>
+                        <textarea id="exp-comment" name="comment" placeholder="Détails supplémentaires..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Enregistrer la dépense</button>
+                </form>
+            </details>
+
+            <div class="controls">
+                <label for="filter-account">Compte :</label>
+                <select id="filter-account" onchange="loadExpenses()">
+                    <option value="">Tous les comptes</option>
+                    <option value="1">Loïc</option>
+                    <option value="2">Alice</option>
+                    <option value="5">Fortuneo</option>
+                </select>
+
+                <label for="filter-source" style="margin-left: 20px;">Source :</label>
+                <select id="filter-source" onchange="loadExpenses()">
+                    <option value="">Toutes les sources</option>
+                    <option value="telegram">🤖 Telegram</option>
+                    <option value="csv_import">📊 Fortuneo</option>
+                    <option value="manuel">📝 Manuel</option>
+                    <option value="bankin">🏦 Bankin</option>
+                </select>
+
+                <label for="filter-category" style="margin-left: 20px;">Catégorie :</label>
+                <select id="filter-category" onchange="loadExpenses()">
+                    <option value="">Toutes</option>
+                    <option value="quotepart">Quote-part</option>
+                    <option value="50/50">50/50</option>
+                    <option value="brico">Brico</option>
+                    <option value="dette">Dette</option>
+                    <option value="virement">Virement</option>
+                </select>
+
+                <label for="filter-label" style="margin-left: 20px;">Libellé :</label>
+                <input type="text" id="filter-label" placeholder="Rechercher..." oninput="loadExpenses()" style="width: 150px; padding: 8px;">
+
+                <label for="filter-amount-min" style="margin-left: 20px;">Montant :</label>
+                <input type="number" id="filter-amount-min" placeholder="Min" oninput="loadExpenses()" style="width: 80px; padding: 8px;">
+                <span style="margin: 0 5px;">-</span>
+                <input type="number" id="filter-amount-max" placeholder="Max" oninput="loadExpenses()" style="width: 80px; padding: 8px;">
+
+                <label for="filter-date-from" style="margin-left: 20px;">Date :</label>
+                <input type="date" id="filter-date-from" onchange="loadExpenses()" style="padding: 8px;">
+                <span style="margin: 0 5px;">à</span>
+                <input type="date" id="filter-date-to" onchange="loadExpenses()" style="padding: 8px;">
+
+                <button onclick="resetFilters()" style="margin-left: 20px; padding: 8px 12px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">✕ Reset</button>
+            </div>
+
+            <div id="expenses-content" class="expenses-list">
+                <p class="loading">Chargement des dépenses...</p>
+            </div>
+        </div>
+
+        <!-- Section: Périodes -->
+        <div id="periods" class="section">
+            <h2>Gestion des périodes</h2>
+            <div id="periods-message" class="message"></div>
+
+            <details>
+                <summary>➕ Créer une nouvelle période</summary>
+                <form id="period-form" onsubmit="submitPeriod(event)">
+                    <div class="form-group">
+                        <label for="period-name">Nom de la période *</label>
+                        <input type="text" id="period-name" name="name" placeholder="ex: Mai 2026" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="period-start">Date de début *</label>
+                        <input type="date" id="period-start" name="start_date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="period-end">Date de fin *</label>
+                        <input type="date" id="period-end" name="end_date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="period-notes">Notes</label>
+                        <textarea id="period-notes" name="notes" placeholder="Remarques..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Créer la période</button>
+                </form>
+            </details>
+
+            <div id="periods-content" class="periods-list">
+                <p class="loading">Chargement des périodes...</p>
+            </div>
+
+            <!-- Rééquilibrage Page Complète -->
+            <div id="reequilibrage-result" style="display: none; margin-top: 40px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2 style="color: #667eea; margin: 0;">📊 Synthèse du rééquilibrage</h2>
+                    <button onclick="document.getElementById('reequilibrage-result').style.display = 'none'" style="padding: 8px 16px; background: #ddd; border: none; border-radius: 4px; cursor: pointer;">✕ Fermer</button>
+                </div>
+
+                <!-- Période -->
+                <div style="padding: 15px; background: white; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                    <p style="margin: 0; color: #666;"><strong id="reequilibrage-period-name"></strong></p>
+                    <p style="margin: 5px 0 0 0; color: #999; font-size: 0.9em;" id="reequilibrage-period-dates"></p>
+                </div>
+
+                <!-- Détail des calculs -->
+                <div style="background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="margin-top: 0; color: #667eea; font-size: 1.1em;">📈 Détail des calculs</h3>
+
+                    <!-- Charges théoriques -->
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="margin-top: 0; margin-bottom: 10px; color: #555;">1️⃣ Charges théoriques (ce que chacun devrait payer)</h4>
+                        <div id="reequilibrage-charges-detail" style="padding: 10px; background: #f9f9f9; border-radius: 4px; border-left: 3px solid #4ecdc4;"></div>
+                    </div>
+
+                    <!-- Financement réel -->
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="margin-top: 0; margin-bottom: 10px; color: #555;">2️⃣ Financement réel (ce que chacun a mis dans le pot)</h4>
+                        <div id="reequilibrage-financement-detail" style="padding: 10px; background: #f9f9f9; border-radius: 4px; border-left: 3px solid #f1a208;"></div>
+                    </div>
+
+                    <!-- Quote-part -->
+                    <div style="margin-bottom: 0;">
+                        <h4 style="margin-top: 0; margin-bottom: 10px; color: #555;">📊 Quote-part de la période</h4>
+                        <div id="reequilibrage-quotepart-detail" style="padding: 10px; background: #f9f9f9; border-radius: 4px; border-left: 3px solid #95e1d3;"></div>
+                    </div>
+                </div>
+
+                <!-- Synthèse finale -->
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; padding: 25px; margin-bottom: 20px;">
+                    <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 1.2em;">💰 Synthèse finale</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left; padding: 12px; border-bottom: 2px solid rgba(255,255,255,0.3);">Élément</th>
+                                <th style="text-align: right; padding: 12px; border-bottom: 2px solid rgba(255,255,255,0.3);">loic</th>
+                                <th style="text-align: right; padding: 12px; border-bottom: 2px solid rgba(255,255,255,0.3);">alice</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reequilibrage-table-body">
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Conclusion -->
+                <div id="reequilibrage-conclusion" style="padding: 20px; background: white; border-radius: 8px; font-size: 1.2em; font-weight: 600; color: #667eea; border: 3px solid #667eea; text-align: center; margin-bottom: 20px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Repas -->
+        <div id="meals" class="section">
+            <h2>📅 Calendrier des Repas</h2>
+            <p style="margin-bottom: 15px; color: #666;">Trackez les repas par personne et par compte</p>
+
+            <div style="margin-bottom: 20px;">
+                <label for="month-select" style="margin-right: 10px; font-weight: 600;">Mois :</label>
+                <select id="month-select" onchange="changeMonth()" style="padding: 8px 12px; border-radius: 4px; border: 1px solid #ddd;">
+                    <option value="1">Janvier</option>
+                    <option value="2">Février</option>
+                    <option value="3">Mars</option>
+                    <option value="4">Avril</option>
+                    <option value="5">Mai</option>
+                    <option value="6">Juin</option>
+                    <option value="7">Juillet</option>
+                    <option value="8">Août</option>
+                    <option value="9">Septembre</option>
+                    <option value="10">Octobre</option>
+                    <option value="11">Novembre</option>
+                    <option value="12">Décembre</option>
+                </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #ff6b6b; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #eee;">🍽️ Gourmich (4 personnes)</h3>
+                    <div id="gourmich-loading" class="loading">Chargement...</div>
+                    <table id="gourmich-table" class="meal-table" style="display:none;">
+                    </table>
+                    <div class="stats" id="gourmich-stats" style="display:none; background: #f0f0f0; padding: 15px; border-radius: 4px; margin-top: 15px; font-size: 0.9em;"></div>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #4ecdc4; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #eee;">🐯 Tigresse (5 personnes)</h3>
+                    <div id="tigresse-loading" class="loading">Chargement...</div>
+                    <table id="tigresse-table" class="meal-table" style="display:none;">
+                    </table>
+                    <div class="stats" id="tigresse-stats" style="display:none; background: #f0f0f0; padding: 15px; border-radius: 4px; margin-top: 15px; font-size: 0.9em;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Confirmation</h3>
+            <p id="modal-message">Êtes-vous sûr ?</p>
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="closeModal()">Annuler</button>
+                <button class="btn-danger" onclick="confirmAction()">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section: Rééquilibrage -->
+    <div id="reequilibrage" class="section">
+        <h2>⚖️ Rééquilibrage</h2>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+            <button onclick="showSection('expenses')" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">➕ Ajouter une dépense</button>
+        </div>
+        <div id="reequilibrage-header"></div>
+        <div id="reequilibrage-content" style="display: none;">
+            <!-- 1. QUOTE-PART -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #f0f4ff; color: #667eea;">📊 1. QUOTE-PART (Ratio de consommation)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 600;">Loïc (Gourmich)</td>
+                            <td class="amount" style="background: #f9f9f9;" id="reequilibrage-quotepart-loic"></td>
+                            <td style="font-size: 12px; color: #999;">des repas</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">Alice (Tigresse)</td>
+                            <td class="amount" style="background: #f9f9f9;" id="reequilibrage-quotepart-alice"></td>
+                            <td style="font-size: 12px; color: #999;">des repas</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 2. DÉPENSES GLOBALES -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #f0f4ff; color: #667eea;">💰 2. DÉPENSES GLOBALES (Total à répartir)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reequilibrage-charges-breakdown-body">
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: #f9f9f9; font-weight: 700;">
+                            <td><strong>TOTAL GLOBAL</strong></td>
+                            <td class="amount" id="reequilibrage-total-global"></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- 3. CHARGES THÉORIQUES (Répartition) -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #f0f4ff; color: #667eea;">📋 3. CHARGES THÉORIQUES (Comment répartir?)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Loïc (sa part)</td>
+                            <td class="amount" id="reequilibrage-charges-loic"></td>
+                            <td style="font-size: 12px; color: #999;">à payer en théorie</td>
+                        </tr>
+                        <tr>
+                            <td>Alice (sa part)</td>
+                            <td class="amount" id="reequilibrage-charges-alice"></td>
+                            <td style="font-size: 12px; color: #999;">à payer en théorie</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 4. Détail par catégorie -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #f0f4ff; color: #667eea;">🔍 Détail des charges par catégorie</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reequilibrage-charges-detail-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 5. FINANCEMENT RÉEL -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #f0f4ff; color: #667eea;">💵 4. FINANCEMENT RÉEL (Qui a payé?)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="clickable" onclick="showReequilibrageVirements()">Virements</span></td>
+                            <td class="amount" id="reequilibrage-virements-loic"></td>
+                            <td class="amount" id="reequilibrage-virements-alice"></td>
+                        </tr>
+                        <tr>
+                            <td>Telegram</td>
+                            <td class="amount" id="reequilibrage-telegram-loic"></td>
+                            <td class="amount" id="reequilibrage-telegram-alice"></td>
+                        </tr>
+                        <tr style="background: #f9f9f9; font-weight: 700;">
+                            <td><strong>TOTAL FINANCÉ</strong></td>
+                            <td class="amount" id="reequilibrage-financing-loic"></td>
+                            <td class="amount" id="reequilibrage-financing-alice"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 6. SOLDE FINAL -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #f0f4ff; color: #667eea;">⚖️ 6. SOLDE (Qui doit quoi?)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 600;">Loïc</td>
+                            <td class="amount" style="font-weight: 700;" id="reequilibrage-solde-loic"></td>
+                            <td style="font-size: 12px; color: #999;" id="reequilibrage-solde-loic-note"></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">Alice</td>
+                            <td class="amount" style="font-weight: 700;" id="reequilibrage-solde-alice"></td>
+                            <td style="font-size: 12px; color: #999;" id="reequilibrage-solde-alice-note"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="conclusion">
+                <h2>✅ Conclusion</h2>
+                <p id="reequilibrage-conclusion-text"></p>
+            </div>
+
+            <!-- 6. DETTES & RÈGLEMENT -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="background: #fff3cd; color: #856404;">💸 DETTES & RÈGLEMENT</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reequilibrage-debts-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 7. AVANCES (Contributions hors brico) -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="background: #e3f2fd; color: #1976d2;">💰 AVANCES (Contributions familiales)</th>
+                        </tr>
+                        <tr>
+                            <th style="background: #f5f5f5;">Personne</th>
+                            <th style="background: #f5f5f5; text-align: right;">Montant</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reequilibrage-avances-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 8. CONTRIBUTION IMMOBILIER -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #f3e5f5; color: #7b1fa2;">🏠 CONTRIBUTION IMMOBILIER (Brico) - <span style="font-size: 0.85em;">Sur la période</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Loïc</td>
+                            <td class="amount" id="reequilibrage-immo-loic"></td>
+                            <td style="font-size: 12px; color: #999;">investissement immobilier</td>
+                        </tr>
+                        <tr>
+                            <td>Alice</td>
+                            <td class="amount" id="reequilibrage-immo-alice"></td>
+                            <td style="font-size: 12px; color: #999;"></td>
+                        </tr>
+                        <tr style="background: #f9f9f9; font-weight: 700;">
+                            <td><strong>TOTAL IMMO</strong></td>
+                            <td class="amount" id="reequilibrage-immo-total"></td>
+                            <td></td>
+                        </tr>
+                        <tr style="background: #f3e5f5; font-weight: 700; border-top: 2px solid #7b1fa2;">
+                            <td colspan="3" style="color: #7b1fa2;"><strong>💰 Investissement Riviere</strong></td>
+                        </tr>
+                        <tr style="background: #f3e5f5;">
+                            <td style="color: #7b1fa2; padding-left: 30px;">Loïc</td>
+                            <td class="amount" id="reequilibrage-immo-grand-total-loic" style="color: #7b1fa2;"></td>
+                            <td></td>
+                        </tr>
+                        <tr style="background: #f3e5f5;">
+                            <td style="color: #7b1fa2; padding-left: 30px;">Alice</td>
+                            <td class="amount" id="reequilibrage-immo-grand-total-alice" style="color: #7b1fa2;"></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 10. STATISTIQUES REPAS -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="background: #fff8e1; color: #f57f17;">🍽️ STATISTIQUES REPAS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reequilibrage-meals-stats-body">
+                        <tr>
+                            <td colspan="2" style="text-align: center; padding: 20px; color: #999;">Chargement des statistiques...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Meals (Rééquilibrage) -->
+    <div id="reequilibrageeMealsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Repas de la période</h2>
+                <button class="modal-close" onclick="closeReequilibrageMealsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <ul class="modal-list" id="reequilibrage-meals-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Virements (Rééquilibrage) -->
+    <div id="reequilibrageVirementsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Virements</h2>
+                <button class="modal-close" onclick="closeReequilibrageVirementsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">Loïc</h3>
+                    <ul class="modal-list" id="reequilibrage-virements-loic-list"></ul>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 15px; color: #333;">Alice</h3>
+                    <ul class="modal-list" id="reequilibrage-virements-alice-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "/api";
+        let pendingAction = null;
+        let MEALS_YEAR = 2026;
+        let MEALS_MONTH = 5;
+
+        // État du tri
+        let currentSortField = null;
+        let sortAscending = true;
+        let expensesData = [];
+
+        // Mots-clés pour auto-classification (dupliqués du service Python)
+        const QUOTEPART_KEYWORDS = [
+            "biocoop", "carrefour", "leclerc", "auchan", "intermarché", "carrefour market",
+            "courses", "marché", "marche", "sefa", "kerbio", "boulangerie", "boucherie",
+            "fromagerie", "alimentation", "épicerie", "fruits", "légumes", "viande", "poisson",
+            "fromage", "pain", "baguette", "lait", "oeufs", "beurre", "crème", "huile",
+            "café", "thé", "chocolat", "sucre", "farine", "riz", "pâtes", "conserves",
+            "crowdfarming", "la fourche", "fourche", "cantine", "restaurant",
+            "essence", "carburant", "gazole", "diesel", "pharmacie",
+            "supermarchés", "magasin", "action", "grande surface",
+            "câble", "ampoule", "électrique", "électronique", "seche cheveux", "appareil"
+        ];
+
+        const BRICO_KEYWORDS = [
+            "leroy", "merlin", "castorama", "brico", "bricodépôt", "casto", "mr bricolage",
+            "amazon", "cedeo", "placo", "carrelage", "peinture", "vernis", "enduit",
+            "vis", "clou", "maçonnerie", "plomberie", "électricité", "chauffage",
+            "fenêtre", "porte", "serrure", "poignée", "robinet", "mitigeur", "tuyau",
+            "tuyauterie", "béton", "sable", "ciment", "pierre", "brique", "tuile",
+            "terrasse", "dalle", "escalier", "rampe", "barrière", "grillage",
+            "outil", "perceuse", "scie", "marteau", "tournevis", "clé", "lime",
+            "burin", "chisel", "meuleuse", "sauteuse", "rabot", "établi"
+        ];
+
+        const DETTE_KEYWORDS = [
+            "doit", "dette", "prêt", "remboursement", "remboursé", "rembourser",
+            "emprunté", "emprunter", "avance", "avancé", "retour", "rendre",
+            "rendez", "tu dois", "je dois", "il doit", "elle doit"
+        ];
+
+        const VIREMENT_KEYWORDS = [
+            "vir", "virement", "transfert", "loïc", "loic", "alice", "vasseur", "gourmelon"
+        ];
+
+        function classifyByKeywords(label) {
+            if (!label) return "50/50";
+            const labelLower = label.toLowerCase();
+
+            for (let kw of VIREMENT_KEYWORDS) {
+                if (labelLower.includes(kw)) return "virement";
+            }
+            for (let kw of DETTE_KEYWORDS) {
+                if (labelLower.includes(kw)) return "dette";
+            }
+            for (let kw of BRICO_KEYWORDS) {
+                if (labelLower.includes(kw)) return "brico";
+            }
+            for (let kw of QUOTEPART_KEYWORDS) {
+                if (labelLower.includes(kw)) return "quotepart";
+            }
+            return "50/50";
+        }
+
+        const ACCOUNTS = {
+            gourmich: {
+                personnes: ['Loïc', 'Alban', 'Mahaut', 'Ilan'],
+                defaultRepas: { 'Loïc': 3, 'Alban': 0, 'Mahaut': 0, 'Ilan': 0 }
+            },
+            tigresse: {
+                personnes: ['Alice', 'Adèle', 'Oscar', 'Albert', 'Joséphine'],
+                defaultRepas: { 'Alice': 3, 'Adèle': 3, 'Oscar': 0, 'Albert': 0, 'Joséphine': 0 }
+            }
+        };
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+
+            if (sectionId === 'expenses') loadExpenses();
+            if (sectionId === 'periods') loadPeriods();
+            if (sectionId === 'meals') {
+                MEALS_MONTH = parseInt(document.getElementById('month-select').value) || new Date().getMonth() + 1;
+                loadMonth('gourmich');
+                loadMonth('tigresse');
+            }
+            if (sectionId === 'reequilibrage') loadReequilibrage();
+        }
+
+        // === DÉPENSES ===
+
+        function resetFilters() {
+            document.getElementById('filter-account').value = '';
+            document.getElementById('filter-source').value = '';
+            document.getElementById('filter-category').value = '';
+            document.getElementById('filter-label').value = '';
+            document.getElementById('filter-amount-min').value = '';
+            document.getElementById('filter-amount-max').value = '';
+            document.getElementById('filter-date-from').value = '';
+            document.getElementById('filter-date-to').value = '';
+            loadExpenses();
+        }
+
+        async function loadExpenses() {
+            const content = document.getElementById('expenses-content');
+            const accountFilter = document.getElementById('filter-account')?.value || '';
+            const sourceFilter = document.getElementById('filter-source')?.value || '';
+            const categoryFilter = document.getElementById('filter-category')?.value || '';
+            const labelFilter = document.getElementById('filter-label')?.value.toLowerCase().trim() || '';
+            const amountMin = parseFloat(document.getElementById('filter-amount-min')?.value) || 0;
+            const amountMax = parseFloat(document.getElementById('filter-amount-max')?.value) || Infinity;
+            const dateFrom = document.getElementById('filter-date-from')?.value || '';
+            const dateTo = document.getElementById('filter-date-to')?.value || '';
+
+            try {
+                const response = await fetch(`${API_URL}/expenses?limit=1000`);
+                expensesData = await response.json();
+
+                if (accountFilter) {
+                    expensesData = expensesData.filter(e => e.account_id == accountFilter);
+                }
+                if (sourceFilter) {
+                    expensesData = expensesData.filter(e => e.source === sourceFilter);
+                }
+                if (categoryFilter) {
+                    expensesData = expensesData.filter(e => e.category === categoryFilter);
+                }
+                if (labelFilter) {
+                    expensesData = expensesData.filter(e => e.label.toLowerCase().includes(labelFilter));
+                }
+                expensesData = expensesData.filter(e => parseFloat(e.amount) >= amountMin && parseFloat(e.amount) <= amountMax);
+                if (dateFrom) {
+                    expensesData = expensesData.filter(e => e.date >= dateFrom);
+                }
+                if (dateTo) {
+                    expensesData = expensesData.filter(e => e.date <= dateTo);
+                }
+
+                if (!expensesData.length) {
+                    content.innerHTML = '<p>Aucune dépense enregistrée.</p>';
+                    return;
+                }
+
+                // Réinitialiser l'état du tri lors du chargement des données
+                currentSortField = null;
+                sortAscending = true;
+
+                renderExpensesTable();
+            } catch (error) {
+                content.innerHTML = `<p class="error">Erreur : ${error.message}</p>`;
+            }
+        }
+
+        async function classifyExpense(id, mode, selectElement) {
+            // Récupérer la ligne pour l'animation
+            const row = selectElement.closest('tr');
+
+            // Montrer le spinner et désactiver le select
+            selectElement.disabled = true;
+            const originalHTML = selectElement.innerHTML;
+            selectElement.innerHTML = '<span class="spinner-inline"></span>Sauvegarde...';
+            selectElement.style.minWidth = '120px';
+
+            // Animation de la ligne
+            row.classList.add('row-highlight');
+
+            try {
+                const response = await fetch(`${API_URL}/expenses/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sharing_mode: mode || null })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la sauvegarde');
+                }
+
+                // Succès: montrer le feedback
+                showSaveNotification('✓ Ventilation sauvegardée', 'success');
+
+                // Recharger après un petit délai
+                setTimeout(() => {
+                    loadExpenses();
+                }, 500);
+
+            } catch (error) {
+                // Erreur: montrer le feedback et restaurer le select
+                showSaveNotification('✗ Erreur: ' + error.message, 'error');
+                selectElement.innerHTML = originalHTML;
+                selectElement.disabled = false;
+                row.classList.remove('row-highlight');
+            }
+        }
+
+        async function learnCategory(id) {
+            const selectElement = document.getElementById(`cat-select-${id}`);
+            if (!selectElement) return;
+
+            const category = selectElement.value;
+            if (!category) {
+                showSaveNotification('⚠️ Choisir une catégorie d\'abord', 'warning');
+                return;
+            }
+
+            const row = selectElement.closest('tr');
+            const originalHTML = selectElement.innerHTML;
+            selectElement.disabled = true;
+
+            try {
+                const response = await fetch(`${API_URL}/expenses/${id}/learn-category`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category: category })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la mémorisation');
+                }
+
+                showSaveNotification(`✓ Catégorie mémorisée: ${category}`, 'success');
+                setTimeout(() => {
+                    loadExpenses();
+                }, 500);
+
+            } catch (error) {
+                showSaveNotification(`✗ Erreur: ${error.message}`, 'error');
+                selectElement.disabled = false;
+            }
+        }
+
+        async function updateCategory(id, category, selectElement) {
+            // Récupérer la ligne pour l'animation
+            const row = selectElement.closest('tr');
+
+            // Montrer le spinner et désactiver le select
+            selectElement.disabled = true;
+            const originalHTML = selectElement.innerHTML;
+            selectElement.innerHTML = '<span class="spinner-inline"></span>Sauvegarde...';
+            selectElement.style.minWidth = '120px';
+
+            // Animation de la ligne
+            row.classList.add('row-highlight');
+
+            try {
+                const response = await fetch(`${API_URL}/expenses/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category: category })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la sauvegarde');
+                }
+
+                // Succès: montrer le feedback
+                showSaveNotification('✓ Catégorie sauvegardée', 'success');
+
+                // Recharger après un petit délai pour laisser le temps de voir l'animation
+                setTimeout(() => {
+                    loadExpenses();
+                }, 500);
+
+            } catch (error) {
+                // Erreur: montrer le feedback et restaurer le select
+                showSaveNotification('✗ Erreur: ' + error.message, 'error');
+                selectElement.innerHTML = originalHTML;
+                selectElement.disabled = false;
+                row.classList.remove('row-highlight');
+            }
+        }
+
+        function showSaveNotification(message, type) {
+            // Supprimer les anciens notifications
+            const oldNotif = document.querySelector('.save-feedback');
+            if (oldNotif) oldNotif.remove();
+
+            // Créer la nouvelle notification
+            const notif = document.createElement('div');
+            notif.className = `save-feedback ${type}`;
+            notif.textContent = message;
+            document.body.appendChild(notif);
+
+            // Supprimer après l'animation
+            setTimeout(() => notif.remove(), 3000);
+        }
+
+        function sortExpenses(fieldName) {
+            // Si on clique sur la même colonne, inverser l'ordre ; sinon, commencer par ascendant
+            if (currentSortField === fieldName) {
+                sortAscending = !sortAscending;
+            } else {
+                currentSortField = fieldName;
+                sortAscending = true;
+            }
+
+            // Tri du tableau
+            expensesData.sort((a, b) => {
+                let aVal = a[fieldName];
+                let bVal = b[fieldName];
+
+                // Conversion pour la comparaison
+                if (fieldName === 'amount') {
+                    aVal = parseFloat(aVal) || 0;
+                    bVal = parseFloat(bVal) || 0;
+                } else if (fieldName === 'date') {
+                    aVal = new Date(aVal);
+                    bVal = new Date(bVal);
+                } else {
+                    aVal = String(aVal).toLowerCase();
+                    bVal = String(bVal).toLowerCase();
+                }
+
+                if (aVal < bVal) return sortAscending ? -1 : 1;
+                if (aVal > bVal) return sortAscending ? 1 : -1;
+                return 0;
+            });
+
+            // Re-rendre le tableau
+            renderExpensesTable();
+        }
+
+        function renderExpensesTable() {
+            const content = document.getElementById('expenses-content');
+            const sourceFilter = document.getElementById('filter-source')?.value || '';
+            const isTelegramFilter = sourceFilter === 'telegram';
+            const ACCOUNT_NAMES = { 1: 'Loïc', 2: 'Alice', 3: 'CC', 5: 'Fortuneo' };
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="sortable ${currentSortField === 'date' ? (sortAscending ? 'sort-asc' : 'sort-desc') : ''}" onclick="sortExpenses('date')">Date</th>
+                            <th class="sortable ${currentSortField === 'label' ? (sortAscending ? 'sort-asc' : 'sort-desc') : ''}" onclick="sortExpenses('label')">Libellé</th>
+                            <th class="amount sortable ${currentSortField === 'amount' ? (sortAscending ? 'sort-asc' : 'sort-desc') : ''}" onclick="sortExpenses('amount')">Montant</th>
+                            <th>Compte</th>
+                            <th class="sortable ${currentSortField === 'category' ? (sortAscending ? 'sort-asc' : 'sort-desc') : ''}" onclick="sortExpenses('category')">Catégorie</th>
+                            <th class="sortable ${currentSortField === 'status' ? (sortAscending ? 'sort-asc' : 'sort-desc') : ''}" onclick="sortExpenses('status')">Statut</th>
+                            <th class="actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            expensesData.forEach(exp => {
+                const badge = `<span class="badge ${exp.status}">${exp.status}</span>`;
+                const accountName = ACCOUNT_NAMES[exp.account_id] || '—';
+
+                // Flag "pointage"
+                let initialCategory = '50/50';
+                if (exp.source === 'telegram') {
+                    initialCategory = classifyByKeywords(exp.label);
+                } else if (exp.source === 'bankin' && exp.account_id === 5) {
+                    initialCategory = 'quotepart';
+                }
+                const isReclassified = exp.category && exp.category !== initialCategory;
+                const pointageFlag = isReclassified ? ' 📍' : '';
+
+                let actions = '';
+                if (exp.status === 'draft') {
+                    actions = `<button class="btn-danger btn-small" onclick="if(confirm('Supprimer cette dépense ?')) deleteExpense(${exp.id})">Supprimer</button>`;
+                }
+
+                let typeCell = '';
+                if (isTelegramFilter) {
+                    const sharingMode = exp.sharing_mode || '';
+                    const modeLabel = sharingMode === 'quotepart' ? 'Quote-part' :
+                                    sharingMode === 'brico' ? 'Brico' :
+                                    sharingMode === 'dette' ? 'Dette' : '—';
+                    const modeColor = sharingMode ? '#28a745' : '#ff9800';
+                    typeCell = `
+                        <td style="text-align: center;">
+                            <select onchange="classifyExpense(${exp.id}, this.value, this)" style="padding: 4px 8px; border-radius: 4px; background-color: ${modeColor}; color: white; border: none; cursor: pointer; font-weight: 600;">
+                                <option value="" ${!sharingMode ? 'selected' : ''}>—</option>
+                                <option value="quotepart" ${sharingMode === 'quotepart' ? 'selected' : ''}>Quote-part</option>
+                                <option value="brico" ${sharingMode === 'brico' ? 'selected' : ''}>Brico</option>
+                                <option value="dette" ${sharingMode === 'dette' ? 'selected' : ''}>Dette</option>
+                            </select>
+                        </td>
+                    `;
+                }
+
+                let categoryCell = '';
+                const category = exp.category || '';
+                const categoryLabel = category === 'quotepart' ? 'Quote-part' :
+                                    category === 'brico' ? 'Brico' :
+                                    category === 'dette' ? 'Dette' :
+                                    category === 'virement' ? 'Virement' :
+                                    category === '50/50' ? '50/50' : '—';
+                const categoryColor = category ? '#28a745' : '#ff9800';
+
+                if (exp.status === 'draft') {
+                    categoryCell = `
+                        <td style="text-align: center;">
+                            <div style="display: flex; align-items: center; gap: 5px; justify-content: center;">
+                                <select id="cat-select-${exp.id}" onchange="updateCategory(${exp.id}, this.value, this)" style="padding: 4px 8px; border-radius: 4px; background-color: ${categoryColor}; color: white; border: none; cursor: pointer; font-weight: 600;">
+                                    <option value="" ${!category ? 'selected' : ''}>—</option>
+                                    <option value="quotepart" ${category === 'quotepart' ? 'selected' : ''}>Quote-part</option>
+                                    <option value="50/50" ${category === '50/50' ? 'selected' : ''}>50/50</option>
+                                    <option value="brico" ${category === 'brico' ? 'selected' : ''}>Brico</option>
+                                    <option value="dette" ${category === 'dette' ? 'selected' : ''}>Dette</option>
+                                    <option value="virement" ${category === 'virement' ? 'selected' : ''}>Virement</option>
+                                </select>
+                                <button onclick="learnCategory(${exp.id})" title="Mémoriser cette association" style="padding: 4px 6px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">💾</button>
+                            </div>${pointageFlag}
+                        </td>
+                    `;
+                } else {
+                    categoryCell = `<td style="text-align: center;"><strong style="color: ${categoryColor};">${categoryLabel}</strong>${pointageFlag}</td>`;
+                }
+
+                html += `
+                    <tr>
+                        <td>${exp.date}</td>
+                        <td>${exp.label}</td>
+                        <td class="amount">${parseFloat(exp.amount).toFixed(2)}€</td>
+                        <td><strong>${accountName}</strong></td>
+                        ${categoryCell}
+                        <td>${badge}</td>
+                        <td class="actions">${actions}</td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+            content.innerHTML = html;
+        }
+
+        async function submitExpense(event) {
+            event.preventDefault();
+
+            const formData = {
+                date: document.getElementById('exp-date').value,
+                label: document.getElementById('exp-label').value,
+                amount: document.getElementById('exp-amount').value,
+                category: document.getElementById('exp-category').value,
+                comment: document.getElementById('exp-comment').value || null
+            };
+
+            const msgDiv = document.getElementById('expenses-message');
+
+            try {
+                const response = await fetch(`${API_URL}/expenses`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    msgDiv.innerHTML = '<p class="success">✓ Dépense enregistrée !</p>';
+                    document.getElementById('expense-form').reset();
+                    document.getElementById('exp-date').valueAsDate = new Date();
+                    setTimeout(() => msgDiv.innerHTML = '', 3000);
+                    loadExpenses();
+                } else {
+                    const error = await response.json();
+                    msgDiv.innerHTML = `<p class="error">✗ Erreur : ${error.detail || 'Erreur inconnue'}</p>`;
+                }
+            } catch (error) {
+                msgDiv.innerHTML = `<p class="error">✗ Erreur : ${error.message}</p>`;
+            }
+        }
+
+        async function deleteExpense(id) {
+            try {
+                const response = await fetch(`${API_URL}/expenses/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    document.getElementById('expenses-message').innerHTML = '<p class="success">✓ Dépense supprimée !</p>';
+                    setTimeout(() => document.getElementById('expenses-message').innerHTML = '', 2000);
+                    loadExpenses();
+                } else {
+                    document.getElementById('expenses-message').innerHTML = '<p class="error">✗ Impossible de supprimer cette dépense</p>';
+                }
+            } catch (error) {
+                document.getElementById('expenses-message').innerHTML = `<p class="error">✗ Erreur : ${error.message}</p>`;
+            }
+        }
+
+        // === PÉRIODES ===
+
+        async function loadPeriods() {
+            const content = document.getElementById('periods-content');
+            try {
+                const response = await fetch(`${API_URL}/periods`);
+                const periods = await response.json();
+
+                if (!periods.length) {
+                    content.innerHTML = '<p>Aucune période enregistrée.</p>';
+                    return;
+                }
+
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Période</th>
+                                <th>Statut</th>
+                                <th class="amount">Total</th>
+                                <th class="amount">Adulte 1</th>
+                                <th class="amount">Adulte 2</th>
+                                <th class="actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                periods.forEach(p => {
+                    let badgeText = p.status;
+                    if (p.status === 'frozen' && p.frozen_at) {
+                        const frozenDate = new Date(p.frozen_at).toLocaleDateString('fr-FR');
+                        badgeText = `Validé ${frozenDate}`;
+                    }
+                    const badge = `<span class="badge ${p.status}">${badgeText}</span>`;
+                    let actions = `<button class="btn-info btn-small" onclick="showSection('reequilibrage'); reequilibragePeriodId=${p.id}; loadReequilibrage();">📊 Rééquilibrage</button>`;
+
+                    // Export MD buttons
+                    actions += ` <button class="btn-secondary btn-small" onclick="exportPeriodDetail(${p.id}, '${p.name}', '${p.start_date}', '${p.end_date}')">📄 Détail</button>`;
+                    actions += ` <button class="btn-secondary btn-small" onclick="exportPeriodSummary()">📊 Synthèse</button>`;
+
+                    if (p.status === 'draft') {
+                        actions += ` <button class="btn-info btn-small" onclick="exportPeriodMarkdown(${p.id}, '${p.name}')">📄 Exporter MD</button>`;
+                        actions += ` <button class="btn-success btn-small" onclick="showFreezeConfirm(${p.id})">Geler</button>`;
+                    } else if (p.status === 'frozen') {
+                        actions += ` <button class="btn-info btn-small" onclick="exportPeriodMarkdown(${p.id}, '${p.name}')">📄 Exporter MD</button>`;
+                        actions += ` <button class="btn-warning btn-small" onclick="exportPeriod(${p.id})">Exporter Excel</button>`;
+                    }
+
+                    html += `
+                        <tr>
+                            <td>${p.name}</td>
+                            <td>${p.start_date} à ${p.end_date}</td>
+                            <td>${badge}</td>
+                            <td class="amount">${parseFloat(p.total_amount || 0).toFixed(2)}€</td>
+                            <td class="amount">${parseFloat(p.adulte1_total || 0).toFixed(2)}€</td>
+                            <td class="amount">${parseFloat(p.adulte2_total || 0).toFixed(2)}€</td>
+                            <td class="actions">${actions}</td>
+                        </tr>
+                    `;
+                });
+
+                html += `</tbody></table>`;
+                content.innerHTML = html;
+            } catch (error) {
+                content.innerHTML = `<p class="error">Erreur : ${error.message}</p>`;
+            }
+        }
+
+        async function submitPeriod(event) {
+            event.preventDefault();
+
+            const formData = {
+                name: document.getElementById('period-name').value,
+                start_date: document.getElementById('period-start').value,
+                end_date: document.getElementById('period-end').value,
+                notes: document.getElementById('period-notes').value || null
+            };
+
+            const msgDiv = document.getElementById('periods-message');
+
+            try {
+                const response = await fetch(`${API_URL}/periods`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    msgDiv.innerHTML = '<p class="success">✓ Période créée !</p>';
+                    document.getElementById('period-form').reset();
+                    setTimeout(() => msgDiv.innerHTML = '', 3000);
+                    loadPeriods();
+                } else {
+                    const error = await response.json();
+                    msgDiv.innerHTML = `<p class="error">✗ Erreur : ${error.detail || 'Erreur inconnue'}</p>`;
+                }
+            } catch (error) {
+                msgDiv.innerHTML = `<p class="error">✗ Erreur : ${error.message}</p>`;
+            }
+        }
+
+        async function freezePeriod(id) {
+            try {
+                const response = await fetch(`${API_URL}/periods/${id}/freeze`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    document.getElementById('periods-message').innerHTML = '<p class="success">✓ Période gelée !</p>';
+                    setTimeout(() => document.getElementById('periods-message').innerHTML = '', 2000);
+                    loadPeriods();
+                } else {
+                    document.getElementById('periods-message').innerHTML = '<p class="error">✗ Impossible de geler cette période</p>';
+                }
+            } catch (error) {
+                document.getElementById('periods-message').innerHTML = `<p class="error">✗ Erreur : ${error.message}</p>`;
+            }
+        }
+
+        function exportPeriodMarkdown(id, periodName) {
+            const link = document.createElement('a');
+            link.href = `${API_URL}/periods/${id}/export`;
+            link.download = `periode_${periodName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.md`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportPeriod(id) {
+            window.location.href = `${API_URL}/exports/excel/${id}`;
+        }
+
+        async function calculateReequilibrage(periodId) {
+            try {
+                // Récupérer la période et le rééquilibrage
+                const periodResp = await fetch(`${API_URL}/periods/${periodId}`);
+                const period = await periodResp.json();
+
+                const response = await fetch(`${API_URL}/reequilibrage/${periodId}`);
+                if (!response.ok) throw new Error('Erreur API');
+
+                const data = await response.json();
+
+                // Période info
+                document.getElementById('reequilibrage-period-name').textContent = period.name;
+                document.getElementById('reequilibrage-period-dates').textContent = `${period.start_date} au ${period.end_date}`;
+
+                // Quote-part détail
+                const loicQp = parseFloat(data.quotepart.loic) * 100;
+                const aliceQp = parseFloat(data.quotepart.alice) * 100;
+                document.getElementById('reequilibrage-quotepart-detail').innerHTML = `
+                    <p style="margin: 0;"><strong>loic :</strong> ${loicQp.toFixed(1)}% (repas Gourmich)</p>
+                    <p style="margin: 5px 0 0 0;"><strong>alice :</strong> ${aliceQp.toFixed(1)}% (repas Tigresse)</p>
+                `;
+
+                // Charges théoriques détail
+                let chargesHtml = '';
+                data.charges.detail.forEach(cat => {
+                    const catName = cat.category === 'quotepart' ? 'Quote-part (ratio repas)' : cat.category;
+                    chargesHtml += `<p style="margin: 8px 0;"><strong>${catName} :</strong> loic ${parseFloat(cat.loic).toFixed(2)}€ + alice ${parseFloat(cat.alice).toFixed(2)}€ (${cat.count} dépense${cat.count > 1 ? 's' : ''})</p>`;
+                });
+                chargesHtml += `<p style="margin: 8px 0; font-weight: 600; border-top: 1px solid #ddd; padding-top: 8px;"><strong>Total :</strong> loic ${parseFloat(data.charges.loic).toFixed(2)}€ + alice ${parseFloat(data.charges.alice).toFixed(2)}€</p>`;
+                document.getElementById('reequilibrage-charges-detail').innerHTML = chargesHtml;
+
+                // Financement réel détail
+                let financeHtml = '';
+                financeHtml += `<p style="margin: 8px 0;"><strong>Virements :</strong> loic ${parseFloat(data.financement.virements.loic).toFixed(2)}€ (${data.financement.virements.count}), alice ${parseFloat(data.financement.virements.alice).toFixed(2)}€ (${data.financement.virements.count})</p>`;
+                financeHtml += `<p style="margin: 8px 0;"><strong>Telegram (hors brico) :</strong> loic ${parseFloat(data.financement.telegram.loic).toFixed(2)}€ (${data.financement.telegram.count}), alice ${parseFloat(data.financement.telegram.alice).toFixed(2)}€ (${data.financement.telegram.count})</p>`;
+                financeHtml += `<p style="margin: 8px 0; font-weight: 600; border-top: 1px solid #ddd; padding-top: 8px;"><strong>Total financé :</strong> loic ${parseFloat(data.financement.loic).toFixed(2)}€ + alice ${parseFloat(data.financement.alice).toFixed(2)}€</p>`;
+                document.getElementById('reequilibrage-financement-detail').innerHTML = financeHtml;
+
+                // Synthèse tableau
+                const tableBody = document.getElementById('reequilibrage-table-body');
+                tableBody.innerHTML = `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.3);">
+                        <td style="padding: 12px;">Quote-part</td>
+                        <td style="text-align: right; padding: 12px;">${loicQp.toFixed(1)}%</td>
+                        <td style="text-align: right; padding: 12px;">${aliceQp.toFixed(1)}%</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.3);">
+                        <td style="padding: 12px;">Charges théoriques</td>
+                        <td style="text-align: right; padding: 12px;">${parseFloat(data.charges.loic).toFixed(2)}€</td>
+                        <td style="text-align: right; padding: 12px;">${parseFloat(data.charges.alice).toFixed(2)}€</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.3);">
+                        <td style="padding: 12px;">Financement réel</td>
+                        <td style="text-align: right; padding: 12px;">${parseFloat(data.financement.loic).toFixed(2)}€</td>
+                        <td style="text-align: right; padding: 12px;">${parseFloat(data.financement.alice).toFixed(2)}€</td>
+                    </tr>
+                    <tr style="font-weight: 600; background: rgba(255,255,255,0.1);">
+                        <td style="padding: 12px;">💰 SOLDE</td>
+                        <td style="text-align: right; padding: 12px;">${parseFloat(data.solde.loic).toFixed(2)}€</td>
+                        <td style="text-align: right; padding: 12px;">${parseFloat(data.solde.alice).toFixed(2)}€</td>
+                    </tr>
+                `;
+
+                // Conclusion
+                document.getElementById('reequilibrage-conclusion').textContent = data.conclusion;
+
+                // Afficher la section
+                document.getElementById('reequilibrage-result').style.display = 'block';
+                document.getElementById('reequilibrage-result').scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                alert(`Erreur : ${error.message}`);
+            }
+        }
+
+        // === REPAS ===
+
+        function getDaysInMonth(year, month) {
+            return new Date(year, month, 0).getDate();
+        }
+
+        function changeMonth() {
+            MEALS_MONTH = parseInt(document.getElementById('month-select').value);
+            loadMonth('gourmich');
+            loadMonth('tigresse');
+        }
+
+        async function loadMonth(account) {
+            try {
+                const response = await fetch(`${API_URL}/meals/month/${MEALS_YEAR}/${MEALS_MONTH}/${account}`);
+                if (!response.ok) throw new Error('Erreur API');
+
+                const data = await response.json();
+                createMealsTable(account, data);
+                await updateMealsStats(account);
+            } catch (error) {
+                const loadDiv = document.getElementById(`${account}-loading`);
+                loadDiv.innerHTML = `<p class="error">Erreur : ${error.message}</p>`;
+            }
+        }
+
+        function createMealsTable(account, data) {
+            const personnes = ACCOUNTS[account].personnes;
+            const daysInMonth = getDaysInMonth(MEALS_YEAR, MEALS_MONTH);
+
+            let html = '<thead><tr><th class="jour">Jour</th>';
+            personnes.forEach(p => {
+                html += `<th>${p}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(MEALS_YEAR, MEALS_MONTH - 1, day);
+                const dayOfWeek = date.getDay();
+                const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+                html += `<tr ${isWeekend ? 'class="meal-weekend"' : ''}>`;
+                html += `<td class="jour ${isWeekend ? 'meal-weekend' : ''}">
+                    ${day} ${dayNames[dayOfWeek]}
+                </td>`;
+
+                personnes.forEach(p => {
+                    const value = data[day] && data[day][p] ? data[day][p] : 0;
+                    html += `<td>
+                        <input type="number"
+                            min="0" max="3"
+                            value="${value}"
+                            onchange="updateMeal('${account}', ${day}, '${p}', this.value)">
+                    </td>`;
+                });
+
+                html += '</tr>';
+            }
+
+            html += '</tbody>';
+            const table = document.getElementById(`${account}-table`);
+            table.innerHTML = html;
+            table.style.display = 'table';
+            document.getElementById(`${account}-loading`).style.display = 'none';
+        }
+
+        async function updateMeal(account, day, person, value) {
+            try {
+                const response = await fetch(`${API_URL}/meals/record`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        year: MEALS_YEAR,
+                        month: MEALS_MONTH,
+                        day: day,
+                        account: account,
+                        person: person,
+                        repas: parseInt(value) || 0
+                    })
+                });
+
+                if (!response.ok) throw new Error('Erreur lors de la sauvegarde');
+                await updateMealsStats(account);
+            } catch (error) {
+                console.error('Erreur:', error.message);
+            }
+        }
+
+        async function updateMealsStats(account) {
+            const statsDiv = document.getElementById(`${account}-stats`);
+            try {
+                const url = `${API_URL}/meals/summary/${MEALS_YEAR}/${MEALS_MONTH}`;
+                console.log('Fetching stats:', url);
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                console.log(`Stats data for ${account}:`, data);
+
+                if (!data.summary || !data.summary[account]) {
+                    throw new Error(`Pas de données pour ${account}`);
+                }
+
+                const personnes = ACCOUNTS[account].personnes;
+                let html = '';
+                const totalRepas = personnes.reduce((sum, p) => sum + (data.summary[account][p] || 0), 0);
+
+                personnes.forEach(p => {
+                    const total = data.summary[account][p] || 0;
+                    const pct = totalRepas > 0 ? ((total / totalRepas) * 100).toFixed(0) : 0;
+                    html += `<div class="stat-item">
+                        <span class="stat-label">${p}</span>
+                        <span class="stat-value">${total} repas (${pct}%)</span>
+                    </div>`;
+                });
+                html += `<div class="stat-item" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;">
+                    <span class="stat-label">Total</span>
+                    <span class="stat-value">${totalRepas} repas</span>
+                </div>`;
+
+                statsDiv.innerHTML = html;
+                statsDiv.style.display = 'block';
+                console.log(`Stats affichées pour ${account}`);
+            } catch (error) {
+                console.error('Erreur stats:', error.message);
+                statsDiv.innerHTML = `<p style="color: red;"><strong>ERREUR:</strong> ${error.message}</p>`;
+                statsDiv.style.display = 'block';
+            }
+        }
+
+        // === MODAL DE CONFIRMATION ===
+
+        function showDeleteConfirm(id, type) {
+            const modal = document.getElementById('confirm-modal');
+            document.getElementById('modal-title').textContent = 'Confirmer la suppression';
+            document.getElementById('modal-message').textContent = 'Cette action est irréversible.';
+            pendingAction = { action: 'delete', type, id };
+            modal.classList.add('active');
+        }
+
+        function showFreezeConfirm(id) {
+            const modal = document.getElementById('confirm-modal');
+            document.getElementById('modal-title').textContent = 'Confirmer le gel de la période';
+            document.getElementById('modal-message').textContent = 'Une fois gelée, la période ne pourra plus être modifiée.';
+            pendingAction = { action: 'freeze', id };
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('confirm-modal').classList.remove('active');
+            pendingAction = null;
+        }
+
+        async function confirmAction() {
+            closeModal();
+            if (!pendingAction) return;
+
+            if (pendingAction.action === 'delete') {
+                if (pendingAction.type === 'expense') {
+                    await deleteExpense(pendingAction.id);
+                }
+            } else if (pendingAction.action === 'freeze') {
+                await freezePeriod(pendingAction.id);
+            }
+        }
+
+        // Initialisation
+        window.addEventListener('load', () => {
+            document.getElementById('exp-date').valueAsDate = new Date();
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('period-start').valueAsDate = new Date();
+            document.getElementById('period-end').valueAsDate = new Date();
+
+            // Initialise le mois pour les repas
+            const currentMonth = new Date().getMonth() + 1;
+            document.getElementById('month-select').value = currentMonth;
+            MEALS_MONTH = currentMonth;
+
+            loadExpenses();
+        });
+
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('confirm-modal');
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // ========== RÉÉQUILIBRAGE FUNCTIONS ==========
+        let reequilibrageData = null;
+        let reequilibragePeriodId = 1;
+
+        async function loadReequilibrage() {
+            const header = document.getElementById('reequilibrage-header');
+            header.innerHTML = '<div style="text-align: center; padding: 40px;"><div class="spinner"></div><p>Chargement du rééquilibrage...</p></div>';
+
+            try {
+                const response = await fetch(`/api/reequilibrage/${reequilibragePeriodId}`);
+                if (!response.ok) throw new Error('Erreur chargement rééquilibrage');
+
+                reequilibrageData = await response.json();
+                await displayReequilibrage();
+                header.innerHTML = '';
+                document.getElementById('reequilibrage-content').style.display = 'block';
+            } catch (error) {
+                console.error('Erreur:', error);
+                header.innerHTML = '<p style="color: red;">Erreur lors du chargement du rééquilibrage</p>';
+            }
+        }
+
+        async function displayReequilibrage() {
+            const data = reequilibrageData;
+            console.log("displayReequilibrage: data =", data);
+
+            try {
+            // Quote-part
+            document.getElementById('reequilibrage-quotepart-loic').innerHTML =
+                `<span class="clickable" onclick="showReequilibrageMeals()">${(parseFloat(data.quotepart.loic) * 100).toFixed(2)}%</span>`;
+            document.getElementById('reequilibrage-quotepart-alice').textContent =
+                `${(parseFloat(data.quotepart.alice) * 100).toFixed(2)}%`;
+
+            // Détail des dépenses globales
+            let totalGlobal = 0;
+            let breakdownHTML = '';
+            data.charges.detail.forEach(detail => {
+                const total = parseFloat(detail.loic) + parseFloat(detail.alice);
+                totalGlobal += total;
+                breakdownHTML += `
+                    <tr>
+                        <td><strong>${detail.category.toUpperCase()}</strong></td>
+                        <td class="amount">${total.toFixed(2)}€</td>
+                        <td style="font-size: 12px; color: #999;">${detail.count} opérations</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('reequilibrage-charges-breakdown-body').innerHTML = breakdownHTML;
+            document.getElementById('reequilibrage-total-global').innerHTML = `<strong>${totalGlobal.toFixed(2)}€</strong>`;
+
+            // Charges théoriques
+            document.getElementById('reequilibrage-charges-loic').textContent =
+                `${parseFloat(data.charges.loic).toFixed(2)}€`;
+            document.getElementById('reequilibrage-charges-alice').textContent =
+                `${parseFloat(data.charges.alice).toFixed(2)}€`;
+
+            // Financement
+            document.getElementById('reequilibrage-financing-loic').textContent =
+                `${parseFloat(data.financement.loic).toFixed(2)}€`;
+            document.getElementById('reequilibrage-financing-alice').textContent =
+                `${parseFloat(data.financement.alice).toFixed(2)}€`;
+
+            // Contribution Immobilier (période)
+            const immoLoic = parseFloat(data.immo?.loic || 0);
+            const immoAlice = parseFloat(data.immo?.alice || 0);
+            const immoTotal = immoLoic + immoAlice;
+
+            document.getElementById('reequilibrage-immo-loic').textContent = `${immoLoic.toFixed(2)}€`;
+            document.getElementById('reequilibrage-immo-alice').textContent = `${immoAlice.toFixed(2)}€`;
+            document.getElementById('reequilibrage-immo-total').innerHTML = `<strong>${immoTotal.toFixed(2)}€</strong>`;
+
+            // Total Avances Brico (global - tout ce qui a été importé)
+            try {
+                const bricoTotal = await fetch('/api/reequilibrage/brico/total').then(r => r.json());
+                const totalLoic = parseFloat(bricoTotal.loic || 0);
+                const totalAlice = parseFloat(bricoTotal.alice || 0);
+                document.getElementById('reequilibrage-immo-grand-total-loic').innerHTML =
+                    `<strong>${totalLoic.toFixed(2)}€</strong>`;
+                document.getElementById('reequilibrage-immo-grand-total-alice').innerHTML =
+                    `<strong>${totalAlice.toFixed(2)}€</strong>`;
+            } catch(err) {
+                console.error("Erreur calcul total brico:", err);
+                document.getElementById('reequilibrage-immo-grand-total-loic').innerHTML = `<strong>--€</strong>`;
+                document.getElementById('reequilibrage-immo-grand-total-alice').innerHTML = `<strong>--€</strong>`;
+            }
+
+            // Solde
+            const soldeLoic = parseFloat(data.solde.loic);
+            const soldeAlice = parseFloat(data.solde.alice);
+            document.getElementById('reequilibrage-solde-loic').innerHTML =
+                `<span class="${soldeLoic >= 0 ? 'positive' : 'negative'}">${soldeLoic.toFixed(2)}€</span>`;
+            document.getElementById('reequilibrage-solde-alice').innerHTML =
+                `<span class="${soldeAlice >= 0 ? 'positive' : 'negative'}">${soldeAlice.toFixed(2)}€</span>`;
+
+            // Notes
+            const soldeNote = (solde, name) => {
+                if (solde > 0) return `${name} a avancé`;
+                if (solde < 0) return `${name} doit rembourser`;
+                return "équilibré";
+            };
+            document.getElementById('reequilibrage-solde-loic-note').textContent = soldeNote(soldeLoic, 'Loic');
+            document.getElementById('reequilibrage-solde-alice-note').textContent = soldeNote(soldeAlice, 'Alice');
+
+            // Conclusion
+            document.getElementById('reequilibrage-conclusion-text').textContent = data.conclusion;
+
+            // Détail charges
+            let chargesHTML = '';
+            data.charges.detail.forEach(detail => {
+                const total = parseFloat(detail.loic) + parseFloat(detail.alice);
+                let explanation = '';
+                if (detail.category === 'quotepart') {
+                    const ratio_loic = parseFloat(data.quotepart.loic);
+                    const ratio_alice = parseFloat(data.quotepart.alice);
+                    explanation = ` = ${total.toFixed(2)}€ × ${(ratio_loic*100).toFixed(2)}% / ${(ratio_alice*100).toFixed(2)}%`;
+                } else if (detail.category === '50/50') {
+                    explanation = ` = ${total.toFixed(2)}€ ÷ 2`;
+                }
+                chargesHTML += `
+                    <tr>
+                        <td style="text-transform: uppercase; font-weight: 600;">${detail.category}</td>
+                        <td style="font-size: 12px; color: #999; padding: 12px 15px;">${detail.count} opérations${explanation}</td>
+                    </tr>
+                    <tr style="background: #fafafa;">
+                        <td style="padding-left: 30px; font-weight: 500;">Loïc</td>
+                        <td class="amount">${parseFloat(detail.loic).toFixed(2)}€</td>
+                        <td></td>
+                    </tr>
+                    <tr style="background: #fafafa;">
+                        <td style="padding-left: 30px; font-weight: 500;">Alice</td>
+                        <td class="amount">${parseFloat(detail.alice).toFixed(2)}€</td>
+                        <td></td>
+                    </tr>
+                `;
+            });
+            document.getElementById('reequilibrage-charges-detail-body').innerHTML = chargesHTML;
+
+            // Virements
+            document.getElementById('reequilibrage-virements-loic').innerHTML =
+                `<span class="clickable" onclick="showReequilibrageVirements()">${parseFloat(data.financement.virements.loic).toFixed(2)}€</span>`;
+            document.getElementById('reequilibrage-virements-alice').innerHTML =
+                `<span class="clickable" onclick="showReequilibrageVirements()">${parseFloat(data.financement.virements.alice).toFixed(2)}€</span>`;
+
+            // Telegram
+            document.getElementById('reequilibrage-telegram-loic').textContent =
+                `${parseFloat(data.financement.telegram.loic).toFixed(2)}€`;
+            document.getElementById('reequilibrage-telegram-alice').textContent =
+                `${parseFloat(data.financement.telegram.alice).toFixed(2)}€`;
+
+            // Dettes
+            const soldeLoicVal = parseFloat(data.solde.loic);
+            const soldeAliceVal = parseFloat(data.solde.alice);
+            let debtsHTML = '';
+
+            if (soldeLoicVal < 0 && soldeAliceVal < 0) {
+                const loicDebt = Math.abs(soldeLoicVal);
+                const aliceDebt = Math.abs(soldeAliceVal);
+                const netDebt = Math.abs(loicDebt - aliceDebt);
+                const creditor = loicDebt > aliceDebt ? 'Alice' : 'Loïc';
+                const debtor = loicDebt > aliceDebt ? 'Loïc' : 'Alice';
+
+                debtsHTML = `
+                    <tr style="background: #fff3cd;">
+                        <td><strong>Situation:</strong></td>
+                        <td style="font-weight: 600;">Les deux ont dépensé plus qu'ils n'ont financé</td>
+                    </tr>
+                    <tr style="background: #fff3cd;">
+                        <td><strong>Règlement net:</strong></td>
+                        <td style="font-weight: 700; color: #f44336; font-size: 16px;">
+                            <strong>${debtor} doit ${netDebt.toFixed(2)}€ à ${creditor}</strong>
+                        </td>
+                    </tr>
+                `;
+            } else if (soldeLoicVal < 0) {
+                debtsHTML = `
+                    <tr style="background: #fff3cd;">
+                        <td><strong>Loïc doit à Alice:</strong></td>
+                        <td style="font-weight: 700; color: #f44336; font-size: 16px;">
+                            <strong>${Math.abs(soldeLoicVal).toFixed(2)}€</strong>
+                        </td>
+                    </tr>
+                `;
+            } else if (soldeAliceVal < 0) {
+                debtsHTML = `
+                    <tr style="background: #fff3cd;">
+                        <td><strong>Alice doit à Loïc:</strong></td>
+                        <td style="font-weight: 700; color: #f44336; font-size: 16px;">
+                            <strong>${Math.abs(soldeAliceVal).toFixed(2)}€</strong>
+                        </td>
+                    </tr>
+                `;
+            } else if (soldeLoicVal > 0 || soldeAliceVal > 0) {
+                if (soldeLoicVal > 0) {
+                    debtsHTML += `
+                        <tr style="background: #c8e6c9;">
+                            <td><strong>Loïc a avancé:</strong></td>
+                            <td style="font-weight: 700; color: #4caf50;">${soldeLoicVal.toFixed(2)}€</td>
+                        </tr>
+                    `;
+                }
+                if (soldeAliceVal > 0) {
+                    debtsHTML += `
+                        <tr style="background: #c8e6c9;">
+                            <td><strong>Alice a avancé:</strong></td>
+                            <td style="font-weight: 700; color: #4caf50;">${soldeAliceVal.toFixed(2)}€</td>
+                        </tr>
+                    `;
+                }
+            } else {
+                debtsHTML = `
+                    <tr>
+                        <td colspan="2" style="text-align: center; padding: 20px; color: #4caf50; font-weight: 600;">
+                            ✅ Soldes équilibrés - Aucune dette!
+                        </td>
+                    </tr>
+                `;
+            }
+
+            document.getElementById('reequilibrage-debts-body').innerHTML = debtsHTML;
+
+            // Avances
+            const loicAvances = parseFloat(data.avances.loic);
+            const aliceAvances = parseFloat(data.avances.alice);
+            let avancesHTML = `
+                <tr>
+                    <td><strong>Loïc</strong></td>
+                    <td style="text-align: right;">${loicAvances.toFixed(2)}€</td>
+                </tr>
+                <tr>
+                    <td><strong>Alice</strong></td>
+                    <td style="text-align: right;">${aliceAvances.toFixed(2)}€</td>
+                </tr>
+            `;
+            document.getElementById('reequilibrage-avances-body').innerHTML = avancesHTML;
+
+            // Immo
+            const loicImmo = parseFloat(data.immo.loic);
+            document.getElementById('reequilibrage-immo-loic').textContent = `${loicImmo.toFixed(2)}€`;
+
+            // Remplir la table Statistiques Repas
+            let mealsTotalQuotepart = 0;
+            let mealsTotalCount = 0;
+
+            // Calculer la somme des quotepart
+            data.charges.detail.forEach(detail => {
+                if (detail.category === 'quotepart') {
+                    mealsTotalQuotepart += parseFloat(detail.loic) + parseFloat(detail.alice);
+                }
+            });
+
+            // Test simple: afficher directement sans fetch
+            const statsElem = document.getElementById('reequilibrage-meals-stats-body');
+
+            // Charger les repas pour compter
+            if (statsElem) {
+                try {
+                    const mealsResponse = await fetch(`/api/reequilibrage/${reequilibragePeriodId}/meals`);
+                    if (mealsResponse.ok) {
+                        const meals = await mealsResponse.json();
+                        // Sommer les repas, pas compter les enregistrements
+                        mealsTotalCount = meals.reduce((sum, m) => sum + m.repas, 0);
+                    }
+                } catch (e) {
+                    console.error('Erreur chargement meals:', e);
+                    mealsTotalCount = 0;
+                }
+
+                const prixRepas = mealsTotalCount > 0 ? (mealsTotalQuotepart / mealsTotalCount).toFixed(2) : 'N/A';
+
+                statsElem.innerHTML = `
+                    <tr>
+                        <td><strong>Somme des quoteparts</strong></td>
+                        <td style="text-align: right; font-weight: 600;">${mealsTotalQuotepart.toFixed(2)}€</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nombre de repas</strong></td>
+                        <td style="text-align: right; font-weight: 600;">${mealsTotalCount}</td>
+                    </tr>
+                    <tr style="background: #fffacd; font-weight: 700; border-top: 2px solid #f57f17;">
+                        <td><strong>📊 Prix moyen d'un repas</strong></td>
+                        <td style="text-align: right; color: #f57f17; font-size: 16px;"><strong>${prixRepas}€</strong></td>
+                    </tr>
+                `;
+            }
+            } catch(error) {
+                console.error("Erreur displayReequilibrage:", error);
+                document.getElementById('reequilibrage-header').innerHTML = `<p style="color: red;">❌ Erreur: ${error.message}</p>`;
+            }
+        }
+
+        async function showReequilibrageMeals() {
+            const modal = document.getElementById('reequilibrageeMealsModal');
+            const listEl = document.getElementById('reequilibrage-meals-list');
+            listEl.innerHTML = '<li><div class="loading"><p>Chargement...</p></div></li>';
+            modal.style.display = 'block';
+
+            try {
+                const response = await fetch(`/api/reequilibrage/${reequilibragePeriodId}/meals`);
+                const meals = await response.json();
+
+                let html = '';
+                if (meals.length === 0) {
+                    html = '<li class="empty-message">Aucun repas enregistré</li>';
+                } else {
+                    meals.forEach(meal => {
+                        html += `
+                            <li>
+                                <div class="list-item-left">
+                                    <div class="list-item-date">${meal.date}</div>
+                                    <div class="list-item-label">${meal.person} (${meal.account})</div>
+                                </div>
+                                <div class="list-item-amount">${meal.repas}</div>
+                            </li>
+                        `;
+                    });
+                }
+                listEl.innerHTML = html;
+            } catch (error) {
+                console.error('Erreur:', error);
+                listEl.innerHTML = '<li class="empty-message">Erreur lors du chargement</li>';
+            }
+        }
+
+        async function showReequilibrageVirements() {
+            const modal = document.getElementById('reequilibrageVirementsModal');
+            modal.style.display = 'block';
+
+            const loicList = document.getElementById('reequilibrage-virements-loic-list');
+            const aliceList = document.getElementById('reequilibrage-virements-alice-list');
+            loicList.innerHTML = '<li><div class="loading"><p>Chargement...</p></div></li>';
+            aliceList.innerHTML = '';
+
+            try {
+                const response = await fetch(`/api/reequilibrage/${reequilibragePeriodId}/virements`);
+                const virements = await response.json();
+
+                let loicHTML = '';
+                if (virements.loic.length === 0) {
+                    loicHTML = '<li class="empty-message">Aucun virement</li>';
+                } else {
+                    virements.loic.forEach(vir => {
+                        loicHTML += `
+                            <li>
+                                <div class="list-item-left">
+                                    <div class="list-item-date">${vir.date}</div>
+                                    <div class="list-item-label">${vir.label}</div>
+                                </div>
+                                <div class="list-item-amount">${parseFloat(vir.amount).toFixed(2)}€</div>
+                            </li>
+                        `;
+                    });
+                }
+                loicList.innerHTML = loicHTML;
+
+                let aliceHTML = '';
+                if (virements.alice.length === 0) {
+                    aliceHTML = '<li class="empty-message">Aucun virement</li>';
+                } else {
+                    virements.alice.forEach(vir => {
+                        aliceHTML += `
+                            <li>
+                                <div class="list-item-left">
+                                    <div class="list-item-date">${vir.date}</div>
+                                    <div class="list-item-label">${vir.label}</div>
+                                </div>
+                                <div class="list-item-amount">${parseFloat(vir.amount).toFixed(2)}€</div>
+                            </li>
+                        `;
+                    });
+                }
+                aliceList.innerHTML = aliceHTML;
+            } catch (error) {
+                console.error('Erreur:', error);
+                loicList.innerHTML = '<li class="empty-message">Erreur lors du chargement</li>';
+            }
+        }
+
+        function closeReequilibrageMealsModal() {
+            document.getElementById('reequilibrageeMealsModal').style.display = 'none';
+        }
+
+        function closeReequilibrageVirementsModal() {
+            document.getElementById('reequilibrageVirementsModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const mealsModal = document.getElementById('reequilibrageeMealsModal');
+            const virementsModal = document.getElementById('reequilibrageVirementsModal');
+            if (event.target === mealsModal) {
+                mealsModal.style.display = 'none';
+            }
+            if (event.target === virementsModal) {
+                virementsModal.style.display = 'none';
+            }
+        }
+
+        // ========== EXPORT FUNCTIONS ==========
+        function exportPeriodDetail(periodId, periodName, startDate, endDate) {
+            if (!reequilibrageData) {
+                alert('Veuillez d\'abord charger le rééquilibrage');
+                return;
+            }
+
+            const data = reequilibrageData;
+            const today = new Date().toISOString().split('T')[0];
+
+            let md = `---
+name: period-${startDate.replace(/-/g, '')}-to-${endDate.replace(/-/g, '')}
+description: Période ${startDate} → ${endDate} — ${data.conclusion}
+metadata:
+  type: project
+  period_id: ${periodId}
+  status: closed
+  closed_date: "${today}"
+---
+
+# Période ${startDate} → ${endDate}
+
+## 📊 Solde Final (Ce qui a été validé)
+
+**${data.conclusion}**
+
+## 📈 Détails du Rééquilibrage
+
+### Quote-part (Consommation)
+- Loïc (Gourmich): ${(parseFloat(data.quotepart.loic) * 100).toFixed(2)}%
+- Alice (Tigresse): ${(parseFloat(data.quotepart.alice) * 100).toFixed(2)}%
+
+### Charges Théoriques
+- Loïc devait payer: ${parseFloat(data.charges.loic).toFixed(2)}€
+- Alice devait payer: ${parseFloat(data.charges.alice).toFixed(2)}€
+- Total dépenses: ${(parseFloat(data.charges.loic) + parseFloat(data.charges.alice)).toFixed(2)}€
+
+### Financement Réel
+- Loïc a financé: ${parseFloat(data.financement.loic).toFixed(2)}€
+  - Virements: ${parseFloat(data.financement.virements.loic).toFixed(2)}€
+  - Telegram: ${parseFloat(data.financement.telegram.loic).toFixed(2)}€
+- Alice a financé: ${parseFloat(data.financement.alice).toFixed(2)}€
+  - Virements: ${parseFloat(data.financement.virements.alice).toFixed(2)}€
+  - Telegram: ${parseFloat(data.financement.telegram.alice).toFixed(2)}€
+
+### Solde & Dettes
+- Solde Loïc: ${parseFloat(data.solde.loic).toFixed(2)}€
+- Solde Alice: ${parseFloat(data.solde.alice).toFixed(2)}€
+
+## 💰 Avances (Contributions Familiales)
+- Loïc: ${parseFloat(data.avances.loic).toFixed(2)}€
+- Alice: ${parseFloat(data.avances.alice).toFixed(2)}€
+
+## 🏠 Contribution Immobilier
+- Loïc (Brico): ${parseFloat(data.immo.loic).toFixed(2)}€
+
+## ✅ Validation
+- Date de clôture: ${today}
+- Validé par: Loïc et Alice
+- Règlement: En attente
+`;
+
+            downloadFile(md, `period_${startDate}_to_${endDate}.md`);
+        }
+
+        function exportPeriodSummary() {
+            const today = new Date().toISOString().split('T')[0];
+            let md = `---
+name: periods-closed-summary
+description: Synthèse de toutes les périodes clôturées
+metadata:
+  type: project
+---
+
+# Périodes Clôturées - Synthèse
+
+## Vue d'ensemble
+
+| Période | Dates | Solde Final | Détails |
+|---------|-------|------------|---------|
+| Période 1 | 04/01 → 23/05/2026 | **Loïc doit 1 611.33€ à Alice** | Voir ci-dessous |
+
+## 📊 Période 1: 04/01 → 23/05/2026
+
+**Conclusion**: Loïc doit 1 611.33€ à Alice
+
+### Contributions
+- Loïc: 3 797.50€
+- Alice: 6 660.20€
+
+### Contribution Immobilier
+- Loïc (Brico): 133.31€
+
+**Validée le**: ${today}
+
+---
+
+## Structure de mémorisation
+
+Pour chaque nouvelle période clôturée:
+1. Créer un fichier détail avec tous les chiffres
+2. Mettre à jour ce tableau
+
+`;
+
+            downloadFile(md, 'periods_closed.md');
+        }
+
+        function downloadFile(content, filename) {
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/markdown;charset=utf-8,' + encodeURIComponent(content));
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+    </script>
+</body>
+</html>

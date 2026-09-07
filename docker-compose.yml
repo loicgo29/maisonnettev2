@@ -116,17 +116,21 @@ services:
   # alo — comptabilité familiale, servie par maisonnettev2 derrière
   # l'authentification du backoffice.
   #
-  # Ce sont des conteneurs propres à maisonnettev2, distincts de ceux du projet
-  # alo : ils lisent la copie du schéma `alo` hébergée ici, tandis que l'alo
-  # autonome garde sa base. Repointer ce dernier vers celle-ci le casserait, et
-  # les deux jeux de données doivent rester séparés jusqu'à la bascule décidée.
+  # Code source rapatrié dans ce repo (alo-backend/, alo-frontend/) le
+  # 2026-09-07 — buildé localement, plus d'image externe. L'ancien dépôt alo
+  # standalone (avec sa propre base SQLite/Postgres locale) reste sur le Mac
+  # mini pour référence, mais n'est plus la source de vérité du code ; les
+  # deux jeux de données restent séparés jusqu'à décision de nettoyage.
   #
   # Les noms de service restent `alo-backend` et `alo-frontend` : le nginx
   # embarqué dans l'image du frontend proxifie /api vers `alo-backend:8000` en
   # dur, et ces noms lui servent d'alias réseau. Seuls les container_name
-  # diffèrent, pour ne pas entrer en conflit avec le projet alo.
+  # diffèrent, pour ne pas entrer en conflit avec l'ancien projet alo
+  # standalone encore présent sur cette machine.
   alo-backend:
-    image: ${ALO_BACKEND_IMAGE:-alo-alo-backend:latest}
+    build:
+      context: ./alo-backend
+      dockerfile: Dockerfile
     container_name: maisonnettev2-alo-backend
     restart: unless-stopped
     environment:
@@ -152,7 +156,9 @@ services:
       - maisonnettev2-net
 
   alo-frontend:
-    image: ${ALO_FRONTEND_IMAGE:-alo-alo-frontend:latest}
+    build:
+      context: ./alo-frontend
+      dockerfile: Dockerfile
     container_name: maisonnettev2-alo-frontend
     restart: unless-stopped
     depends_on:

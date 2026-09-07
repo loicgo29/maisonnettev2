@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rééquilibrage ALO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .header p {
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .period-info {
+            display: flex;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-top: 5px;
+        }
+
+        .main-table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .clickable {
+            cursor: pointer;
+            color: #667eea;
+            text-decoration: underline;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .clickable:hover {
+            color: #764ba2;
+        }
+
+        .amount {
+            text-align: right;
+            font-weight: 600;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .amount.positive {
+            color: #4caf50;
+        }
+
+        .amount.negative {
+            color: #f44336;
+        }
+
+        .conclusion {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .conclusion h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .conclusion p {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .conclusion br {
+            margin: 5px 0;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: auto;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .modal-close {
+            font-size: 28px;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-list {
+            list-style: none;
+        }
+
+        .modal-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-list li:last-child {
+            border-bottom: none;
+        }
+
+        .list-item-left {
+            flex: 1;
+        }
+
+        .list-item-date {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .list-item-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .list-item-amount {
+            text-align: right;
+            font-weight: 600;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .empty-message {
+            padding: 30px;
+            text-align: center;
+            color: #999;
+        }
+
+        .quote-part-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Retour</a>
+
+        <div class="header" id="header">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Chargement du rééquilibrage...</p>
+            </div>
+        </div>
+
+        <div id="content" style="display: none;">
+            <!-- 1. QUOTE-PART -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #f0f4ff; color: #667eea;">📊 1. QUOTE-PART (Ratio de consommation)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 600;">Loïc (Gourmich)</td>
+                            <td class="amount" style="background: #f9f9f9;" id="quotepart-loic"></td>
+                            <td style="font-size: 12px; color: #999;">des repas</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">Alice (Tigresse)</td>
+                            <td class="amount" style="background: #f9f9f9;" id="quotepart-alice"></td>
+                            <td style="font-size: 12px; color: #999;">des repas</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 2. DÉPENSES GLOBALES -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #f0f4ff; color: #667eea;">💰 2. DÉPENSES GLOBALES (Total à répartir)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="charges-breakdown-body">
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: #f9f9f9; font-weight: 700;">
+                            <td><strong>TOTAL GLOBAL</strong></td>
+                            <td class="amount" id="total-global"></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- 3. CHARGES THÉORIQUES (Répartition) -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #f0f4ff; color: #667eea;">📋 3. CHARGES THÉORIQUES (Comment répartir?)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Loïc (sa part)</td>
+                            <td class="amount" id="charges-loic"></td>
+                            <td style="font-size: 12px; color: #999;">à payer en théorie</td>
+                        </tr>
+                        <tr>
+                            <td>Alice (sa part)</td>
+                            <td class="amount" id="charges-alice"></td>
+                            <td style="font-size: 12px; color: #999;">à payer en théorie</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 4. Détail par catégorie -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #f0f4ff; color: #667eea;">🔍 Détail des charges par catégorie</th>
+                        </tr>
+                    </thead>
+                    <tbody id="charges-detail-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 5. FINANCEMENT RÉEL -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #f0f4ff; color: #667eea;">💵 4. FINANCEMENT RÉEL (Qui a payé?)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="clickable" onclick="showVirements()">Virements</span></td>
+                            <td class="amount" id="virements-loic"></td>
+                            <td class="amount" id="virements-alice"></td>
+                        </tr>
+                        <tr>
+                            <td>Telegram</td>
+                            <td class="amount" id="telegram-loic"></td>
+                            <td class="amount" id="telegram-alice"></td>
+                        </tr>
+                        <tr style="background: #f9f9f9; font-weight: 700;">
+                            <td><strong>TOTAL FINANCÉ</strong></td>
+                            <td class="amount" id="financing-loic"></td>
+                            <td class="amount" id="financing-alice"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 6. SOLDE FINAL -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #f0f4ff; color: #667eea;">⚖️ 5. SOLDE (Qui doit quoi?)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 600;">Loïc</td>
+                            <td class="amount" style="font-weight: 700;" id="solde-loic"></td>
+                            <td style="font-size: 12px; color: #999;" id="solde-loic-note"></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">Alice</td>
+                            <td class="amount" style="font-weight: 700;" id="solde-alice"></td>
+                            <td style="font-size: 12px; color: #999;" id="solde-alice-note"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="conclusion">
+                <h2>✅ Conclusion</h2>
+                <p id="conclusion-text"></p>
+            </div>
+
+            <!-- 6. FLUX DE RÈGLEMENT DÉTAILLÉ -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="3" style="background: #e8f5e9; color: #2e7d32;">🔄 FLUX DE RÈGLEMENT (3 ÉTAPES)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="settlement-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 7. DETTES & RÈGLEMENT (ancien format) -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="background: #fff3cd; color: #856404;">💸 RÉSUMÉ SOLDES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="debts-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 8. AVANCES (Contributions hors brico) -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="background: #e3f2fd; color: #1976d2;">💰 AVANCES (Contributions familiales)</th>
+                        </tr>
+                        <tr>
+                            <th style="background: #f5f5f5;">Personne</th>
+                            <th style="background: #f5f5f5; text-align: right;">Montant</th>
+                        </tr>
+                    </thead>
+                    <tbody id="avances-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 9. CONTRIBUTION IMMOBILIER -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="background: #f3e5f5; color: #7b1fa2;">🏠 CONTRIBUTION IMMOBILIER (BRICO)</th>
+                        </tr>
+                        <tr>
+                            <th style="background: #f5f5f5;">Description</th>
+                            <th style="background: #f5f5f5; text-align: right;">Montant</th>
+                        </tr>
+                    </thead>
+                    <tbody id="immo-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 10. STATISTIQUES REPAS -->
+            <div class="main-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="2" style="background: #fff8e1; color: #f57f17;">🍽️ STATISTIQUES REPAS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="meals-stats-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Meals -->
+    <div id="mealsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Repas de la période</h2>
+                <button class="modal-close" onclick="closeMealsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <ul class="modal-list" id="meals-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Virements -->
+    <div id="virementsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Virements</h2>
+                <button class="modal-close" onclick="closeVirementsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">Loïc</h3>
+                    <ul class="modal-list" id="virements-loic-list"></ul>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 15px; color: #333;">Alice</h3>
+                    <ul class="modal-list" id="virements-alice-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api';
+        let periodId = 1;
+        let reequilibrageData = null;
+
+        async function loadReequilibrage() {
+            try {
+                const response = await fetch(`${API_URL}/reequilibrage/${periodId}`);
+                if (!response.ok) throw new Error('Erreur chargement rééquilibrage');
+
+                reequilibrageData = await response.json();
+                displayReequilibrage();
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('header').innerHTML =
+                    '<p style="color: red;">Erreur lors du chargement du rééquilibrage</p>';
+            }
+        }
+
+        async function displayReequilibrage() {
+            const data = reequilibrageData;
+
+            // Quote-part
+            document.getElementById('quotepart-loic').innerHTML =
+                `<span class="clickable" onclick="showMeals()">${(parseFloat(data.quotepart.loic) * 100).toFixed(2)}%</span>`;
+            document.getElementById('quotepart-alice').textContent =
+                `${(parseFloat(data.quotepart.alice) * 100).toFixed(2)}%`;
+
+            // Détail des dépenses globales par catégorie
+            let totalGlobal = 0;
+            let breakdownHTML = '';
+            data.charges.detail.forEach(detail => {
+                const total = parseFloat(detail.loic) + parseFloat(detail.alice);
+                totalGlobal += total;
+                breakdownHTML += `
+                    <tr>
+                        <td><strong>${detail.category.toUpperCase()}</strong></td>
+                        <td class="amount">${total.toFixed(2)}€</td>
+                        <td style="font-size: 12px; color: #999;">${detail.count} opérations</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('charges-breakdown-body').innerHTML = breakdownHTML;
+            document.getElementById('total-global').innerHTML =
+                `<strong>${totalGlobal.toFixed(2)}€</strong>`;
+
+            // Charges théoriques
+            document.getElementById('charges-loic').textContent =
+                `${parseFloat(data.charges.loic).toFixed(2)}€`;
+            document.getElementById('charges-alice').textContent =
+                `${parseFloat(data.charges.alice).toFixed(2)}€`;
+
+            // Financement
+            document.getElementById('financing-loic').textContent =
+                `${parseFloat(data.financement.loic).toFixed(2)}€`;
+            document.getElementById('financing-alice').textContent =
+                `${parseFloat(data.financement.alice).toFixed(2)}€`;
+
+            // Solde
+            const soldeLoic = parseFloat(data.solde.loic);
+            const soldeAlice = parseFloat(data.solde.alice);
+            document.getElementById('solde-loic').innerHTML =
+                `<span class="${soldeLoic >= 0 ? 'positive' : 'negative'}">${soldeLoic.toFixed(2)}€</span>`;
+            document.getElementById('solde-alice').innerHTML =
+                `<span class="${soldeAlice >= 0 ? 'positive' : 'negative'}">${soldeAlice.toFixed(2)}€</span>`;
+
+            // Notes pour solde
+            const soldeNote = (solde, name) => {
+                if (solde > 0) return `${name} a avancé`;
+                if (solde < 0) return `${name} doit rembourser`;
+                return "soldes équilibrés";
+            };
+            document.getElementById('solde-loic-note').textContent = soldeNote(soldeLoic, 'Loic');
+            document.getElementById('solde-alice-note').textContent = soldeNote(soldeAlice, 'Alice');
+
+            // Conclusion (avec sauts de ligne)
+            document.getElementById('conclusion-text').innerHTML = data.conclusion.replace(/\n/g, '<br>');
+
+            // Détail charges par catégorie
+            let chargesHTML = '';
+            data.charges.detail.forEach(detail => {
+                const total = parseFloat(detail.loic) + parseFloat(detail.alice);
+                let explanation = '';
+                if (detail.category === 'quotepart') {
+                    const ratio_loic = parseFloat(data.quotepart.loic);
+                    const ratio_alice = parseFloat(data.quotepart.alice);
+                    explanation = ` = ${total.toFixed(2)}€ × ${(ratio_loic*100).toFixed(2)}% / ${(ratio_alice*100).toFixed(2)}%`;
+                } else if (detail.category === '50/50') {
+                    explanation = ` = ${total.toFixed(2)}€ ÷ 2`;
+                }
+                chargesHTML += `
+                    <tr>
+                        <td style="text-transform: uppercase; font-weight: 600;">${detail.category}</td>
+                        <td style="font-size: 12px; color: #999; padding: 12px 15px;">${detail.count} opérations${explanation}</td>
+                    </tr>
+                    <tr style="background: #fafafa;">
+                        <td style="padding-left: 30px; font-weight: 500;">Loïc</td>
+                        <td class="amount">${parseFloat(detail.loic).toFixed(2)}€</td>
+                        <td></td>
+                    </tr>
+                    <tr style="background: #fafafa;">
+                        <td style="padding-left: 30px; font-weight: 500;">Alice</td>
+                        <td class="amount">${parseFloat(detail.alice).toFixed(2)}€</td>
+                        <td></td>
+                    </tr>
+                `;
+            });
+            document.getElementById('charges-detail-body').innerHTML = chargesHTML;
+
+            // Virements
+            document.getElementById('virements-loic').innerHTML =
+                `<span class="clickable" onclick="showVirements()">${parseFloat(data.financement.virements.loic).toFixed(2)}€</span>`;
+            document.getElementById('virements-alice').innerHTML =
+                `<span class="clickable" onclick="showVirements()">${parseFloat(data.financement.virements.alice).toFixed(2)}€</span>`;
+
+            // Telegram
+            document.getElementById('telegram-loic').textContent =
+                `${parseFloat(data.financement.telegram.loic).toFixed(2)}€`;
+            document.getElementById('telegram-alice').textContent =
+                `${parseFloat(data.financement.telegram.alice).toFixed(2)}€`;
+
+            document.getElementById('header').innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h1>⚖️ Rééquilibrage ALO</h1>
+                        <div class="period-info">
+                            <div class="info-item">
+                                <span class="info-label">Période analysée</span>
+                                <span class="info-value">${data.start_date} → ${data.end_date}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Total des dépenses</span>
+                                <span class="info-value">${totalGlobal.toFixed(2)}€</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="location.reload()" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">🔄 Recalcul</button>
+                </div>
+            `;
+
+            // FLUX DE RÈGLEMENT DÉTAILLÉ
+            const soldeLoicVal = parseFloat(data.solde.loic);
+            const soldeAliceVal = parseFloat(data.solde.alice);
+            const loicAvances = parseFloat(data.avances.loic);
+            const aliceAvances = parseFloat(data.avances.alice);
+
+            // Calcul du déficit du compte Fortuneo
+            // Total charges théoriques
+            let totalCharges = 0;
+            data.charges.detail.forEach(cat => {
+                totalCharges += parseFloat(cat.loic) + parseFloat(cat.alice);
+            });
+
+            // Total financé (virements + telegram)
+            const totalFinancé = loicAvances + aliceAvances;
+
+            // Déficit = charges - financement
+            const deficitCompte = totalCharges - totalFinancé;
+
+            let settlementHTML = `
+                <tr style="background: #e8f5e9; font-weight: 600;">
+                    <th style="text-align: left; padding: 15px;">État actuel du compte Fortuneo</th>
+                    <th style="text-align: right; padding: 15px;">Montant</th>
+                    <th style="text-align: right; padding: 15px; width: 150px;">État</th>
+                </tr>
+                <tr>
+                    <td>Total financé (virements + avances)</td>
+                    <td style="text-align: right; font-weight: 600;">${totalFinancé.toFixed(2)}€</td>
+                    <td style="text-align: right;"><span style="background: #c8e6c9; padding: 4px 8px; border-radius: 4px; color: #2e7d32; font-size: 12px; font-weight: 600;">Entrées</span></td>
+                </tr>
+                <tr>
+                    <td>Total des charges (quotepart + 50/50)</td>
+                    <td style="text-align: right; font-weight: 600;">${totalCharges.toFixed(2)}€</td>
+                    <td style="text-align: right;"><span style="background: #ffebee; padding: 4px 8px; border-radius: 4px; color: #c62828; font-size: 12px; font-weight: 600;">Sorties</span></td>
+                </tr>
+                <tr style="background: #ffe0b2; font-weight: 700; border-top: 2px solid #ff9800;">
+                    <td>💔 Déficit du compte Fortuneo</td>
+                    <td style="text-align: right; color: #e65100; font-size: 16px;">${deficitCompte.toFixed(2)}€</td>
+                    <td style="text-align: right;"><span style="background: #ffe0b2; padding: 4px 8px; border-radius: 4px; color: #e65100; font-size: 12px; font-weight: 600;">À financer</span></td>
+                </tr>
+            `;
+
+            settlementHTML += `
+                <tr style="background: #fff9c4; font-weight: 600; border-top: 3px solid #fbc02d;">
+                    <th colspan="3" style="text-align: left; padding: 15px;">⚙️ RÈGLEMENT EN 2 ÉTAPES</th>
+                </tr>
+                <tr style="background: #fff9c4;">
+                    <td colspan="3">
+                        <div style="padding: 10px 0;">
+                            <div style="margin-bottom: 10px; padding: 10px; background: #ffeb3b; border-radius: 4px;">
+                                <strong style="color: #f57f17;">Étape 1:</strong> Loïc verse <strong style="font-size: 18px; color: #f44336;">${Math.abs(soldeLoicVal).toFixed(2)}€</strong> au compte Fortuneo
+                            </div>
+                            <div style="margin-bottom: 10px; padding: 10px; background: #ffeb3b; border-radius: 4px;">
+                                <strong style="color: #f57f17;">Étape 2:</strong> Le compte rembourse Alice <strong style="font-size: 18px; color: #4caf50;">${soldeAliceVal.toFixed(2)}€</strong>
+                            </div>
+                            <div style="padding: 10px; background: #c8e6c9; border-radius: 4px;">
+                                <strong style="color: #2e7d32;">Résultat final:</strong> Compte Fortuneo équilibré ✓
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            document.getElementById('settlement-body').innerHTML = settlementHTML;
+
+            // DETTES & RÈGLEMENT
+            let debtsHTML = '';
+
+            let debtsHTML = '';
+
+            // Logique: compenser les dettes mutuelles
+            if (soldeLoicVal < 0 && soldeAliceVal < 0) {
+                // Les deux doivent de l'argent
+                const loicDebt = Math.abs(soldeLoicVal);
+                const aliceDebt = Math.abs(soldeAliceVal);
+                const netDebt = Math.abs(loicDebt - aliceDebt);
+                const creditor = loicDebt > aliceDebt ? 'Alice' : 'Loïc';
+                const debtor = loicDebt > aliceDebt ? 'Loïc' : 'Alice';
+
+                debtsHTML = `
+                    <tr style="background: #fff3cd;">
+                        <td><strong>Situation:</strong></td>
+                        <td style="font-weight: 600;">Les deux ont dépensé plus qu'ils n'ont financé</td>
+                    </tr>
+                    <tr style="background: #fff3cd;">
+                        <td><strong>Règlement net:</strong></td>
+                        <td style="font-weight: 700; color: #f44336; font-size: 16px;">
+                            <strong>${debtor} doit ${netDebt.toFixed(2)}€ à ${creditor}</strong>
+                        </td>
+                    </tr>
+                    <tr style="background: #fff3cd; font-size: 12px; color: #666;">
+                        <td colspan="2">
+                            (Loïc doit ${loicDebt.toFixed(2)}€ + Alice doit ${aliceDebt.toFixed(2)}€ = après compensation: ${netDebt.toFixed(2)}€)
+                        </td>
+                    </tr>
+                `;
+            } else if (soldeLoicVal < 0) {
+                // Seul Loïc doit
+                debtsHTML = `
+                    <tr style="background: #fff3cd;">
+                        <td><strong>Loïc doit à Alice:</strong></td>
+                        <td style="font-weight: 700; color: #f44336; font-size: 16px;">
+                            <strong>${Math.abs(soldeLoicVal).toFixed(2)}€</strong>
+                        </td>
+                    </tr>
+                `;
+            } else if (soldeAliceVal < 0) {
+                // Seule Alice doit
+                debtsHTML = `
+                    <tr style="background: #fff3cd;">
+                        <td><strong>Alice doit à Loïc:</strong></td>
+                        <td style="font-weight: 700; color: #f44336; font-size: 16px;">
+                            <strong>${Math.abs(soldeAliceVal).toFixed(2)}€</strong>
+                        </td>
+                    </tr>
+                `;
+            } else if (soldeLoicVal > 0 || soldeAliceVal > 0) {
+                // Au moins un a avancé de l'argent
+                if (soldeLoicVal > 0) {
+                    debtsHTML += `
+                        <tr style="background: #c8e6c9;">
+                            <td><strong>Loïc doit à Alice:</strong></td>
+                            <td style="font-weight: 700; color: #4caf50; font-size: 16px;">
+                                <strong>${soldeLoicVal.toFixed(2)}€ (crédit)</strong>
+                            </td>
+                        </tr>
+                    `;
+                }
+                if (soldeAliceVal > 0) {
+                    debtsHTML += `
+                        <tr style="background: #c8e6c9;">
+                            <td><strong>Alice doit à Loïc:</strong></td>
+                            <td style="font-weight: 700; color: #4caf50; font-size: 16px;">
+                                <strong>${soldeAliceVal.toFixed(2)}€ (crédit)</strong>
+                            </td>
+                        </tr>
+                    `;
+                }
+            } else {
+                debtsHTML = `
+                    <tr>
+                        <td colspan="2" style="text-align: center; padding: 20px; color: #4caf50; font-weight: 600;">
+                            ✅ Soldes équilibrés - Aucune dette!
+                        </td>
+                    </tr>
+                `;
+            }
+
+            document.getElementById('debts-body').innerHTML = debtsHTML;
+
+            // Remplir la table Avances (Contributions familiales)
+            let avancesHTML = `
+                <tr>
+                    <td><strong>Loïc</strong></td>
+                    <td style="text-align: right;">${loicAvances.toFixed(2)}€</td>
+                </tr>
+                <tr>
+                    <td><strong>Alice</strong></td>
+                    <td style="text-align: right;">${aliceAvances.toFixed(2)}€</td>
+                </tr>
+            `;
+            document.getElementById('avances-body').innerHTML = avancesHTML;
+
+            // Remplir la table Contribution Immobilier
+            const loicImmo = parseFloat(data.immo.loic);
+            const immoHTML = `
+                <tr>
+                    <td><strong>Brico (Loïc)</strong></td>
+                    <td style="text-align: right;"><strong>${loicImmo.toFixed(2)}€</strong></td>
+                </tr>
+            `;
+            document.getElementById('immo-body').innerHTML = immoHTML;
+
+            // Remplir la table Statistiques Repas
+            let mealsTotalQuotepart = 0;
+            let mealsTotalCount = 0;
+
+            // Calculer la somme des quotepart
+            data.charges.detail.forEach(detail => {
+                if (detail.category === 'quotepart') {
+                    mealsTotalQuotepart += parseFloat(detail.loic) + parseFloat(detail.alice);
+                }
+            });
+
+            // Charger les repas pour compter
+            try {
+                const mealsResponse = await fetch(`${API_URL}/reequilibrage/${periodId}/meals`);
+                const meals = await mealsResponse.json();
+                mealsTotalCount = meals.length;
+            } catch (e) {
+                console.error('Erreur chargement meals:', e);
+                mealsTotalCount = 0;
+            }
+
+            const prixRepas = mealsTotalCount > 0 ? (mealsTotalQuotepart / mealsTotalCount).toFixed(2) : 0;
+
+            const mealsStatsHTML = `
+                <tr>
+                    <td><strong>Somme des quoteparts</strong></td>
+                    <td style="text-align: right; font-weight: 600;">${mealsTotalQuotepart.toFixed(2)}€</td>
+                </tr>
+                <tr>
+                    <td><strong>Nombre de repas</strong></td>
+                    <td style="text-align: right; font-weight: 600;">${mealsTotalCount}</td>
+                </tr>
+                <tr style="background: #fffacd; font-weight: 700; border-top: 2px solid #f57f17;">
+                    <td><strong>📊 Prix moyen d'un repas</strong></td>
+                    <td style="text-align: right; color: #f57f17; font-size: 16px;"><strong>${prixRepas}€</strong></td>
+                </tr>
+            `;
+            document.getElementById('meals-stats-body').innerHTML = mealsStatsHTML;
+
+            document.getElementById('content').style.display = 'block';
+        }
+
+        async function showMeals() {
+            const modal = document.getElementById('mealsModal');
+            const listEl = document.getElementById('meals-list');
+            listEl.innerHTML = '<li><div class="loading"><p>Chargement...</p></div></li>';
+            modal.style.display = 'block';
+
+            try {
+                const response = await fetch(`${API_URL}/reequilibrage/${periodId}/meals`);
+                const meals = await response.json();
+
+                let html = '';
+                if (meals.length === 0) {
+                    html = '<li class="empty-message">Aucun repas enregistré</li>';
+                } else {
+                    meals.forEach(meal => {
+                        html += `
+                            <li>
+                                <div class="list-item-left">
+                                    <div class="list-item-date">${meal.date}</div>
+                                    <div class="list-item-label">${meal.person} (${meal.account})</div>
+                                </div>
+                                <div class="list-item-amount">${meal.repas}</div>
+                            </li>
+                        `;
+                    });
+                }
+                listEl.innerHTML = html;
+            } catch (error) {
+                console.error('Erreur:', error);
+                listEl.innerHTML = '<li class="empty-message">Erreur lors du chargement</li>';
+            }
+        }
+
+        async function showVirements() {
+            const modal = document.getElementById('virementsModal');
+            modal.style.display = 'block';
+
+            const loicList = document.getElementById('virements-loic-list');
+            const aliceList = document.getElementById('virements-alice-list');
+            loicList.innerHTML = '<li><div class="loading"><p>Chargement...</p></div></li>';
+            aliceList.innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_URL}/reequilibrage/${periodId}/virements`);
+                const virements = await response.json();
+
+                // Loïc
+                let loicHTML = '';
+                if (virements.loic.length === 0) {
+                    loicHTML = '<li class="empty-message">Aucun virement</li>';
+                } else {
+                    virements.loic.forEach(vir => {
+                        loicHTML += `
+                            <li>
+                                <div class="list-item-left">
+                                    <div class="list-item-date">${vir.date}</div>
+                                    <div class="list-item-label">${vir.label}</div>
+                                </div>
+                                <div class="list-item-amount">${parseFloat(vir.amount).toFixed(2)}€</div>
+                            </li>
+                        `;
+                    });
+                }
+                loicList.innerHTML = loicHTML;
+
+                // Alice
+                let aliceHTML = '';
+                if (virements.alice.length === 0) {
+                    aliceHTML = '<li class="empty-message">Aucun virement</li>';
+                } else {
+                    virements.alice.forEach(vir => {
+                        aliceHTML += `
+                            <li>
+                                <div class="list-item-left">
+                                    <div class="list-item-date">${vir.date}</div>
+                                    <div class="list-item-label">${vir.label}</div>
+                                </div>
+                                <div class="list-item-amount">${parseFloat(vir.amount).toFixed(2)}€</div>
+                            </li>
+                        `;
+                    });
+                }
+                aliceList.innerHTML = aliceHTML;
+            } catch (error) {
+                console.error('Erreur:', error);
+                loicList.innerHTML = '<li class="empty-message">Erreur lors du chargement</li>';
+            }
+        }
+
+        function closeMealsModal() {
+            document.getElementById('mealsModal').style.display = 'none';
+        }
+
+        function closeVirementsModal() {
+            document.getElementById('virementsModal').style.display = 'none';
+        }
+
+        // Fermer la modal en cliquant en dehors
+        window.onclick = function(event) {
+            const mealsModal = document.getElementById('mealsModal');
+            const virementsModal = document.getElementById('virementsModal');
+            if (event.target === mealsModal) {
+                mealsModal.style.display = 'none';
+            }
+            if (event.target === virementsModal) {
+                virementsModal.style.display = 'none';
+            }
+        }
+
+        // Charger au démarrage
+        document.addEventListener('DOMContentLoaded', loadReequilibrage);
+    </script>
+</body>
+</html>

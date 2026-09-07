@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendrier des Repas - Janvier 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .accounts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .account {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .account h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .account.gourmich h2 {
+            color: #ff6b6b;
+        }
+
+        .account.tigresse h2 {
+            color: #4ecdc4;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        th {
+            background: #f0f0f0;
+            padding: 8px;
+            text-align: center;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #ddd;
+        }
+
+        th.jour {
+            text-align: left;
+        }
+
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        td.jour {
+            text-align: left;
+            font-weight: 600;
+            background: #fafafa;
+            min-width: 90px;
+        }
+
+        input[type="number"] {
+            width: 45px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 0.85em;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        }
+
+        tr:hover td {
+            background: #f9f9f9;
+        }
+
+        tr:hover td.jour {
+            background: #f0f0f0;
+        }
+
+        .stats {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .stat-label {
+            font-weight: 600;
+        }
+
+        .stat-value {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .weekend {
+            background: #fff9e6;
+        }
+
+        .weekend.jour {
+            background: #fff3cd;
+        }
+
+        @media (max-width: 1200px) {
+            .accounts {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.8em;
+            }
+
+            input[type="number"] {
+                width: 40px;
+                padding: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📅 Calendrier des Repas</h1>
+            <p>Trackez les repas par personne et par compte</p>
+            <div style="margin-top: 15px;">
+                <label for="month-select" style="margin-right: 10px;">Mois :</label>
+                <select id="month-select" onchange="changeMonth()" style="padding: 8px 12px; border-radius: 4px; border: 1px solid #ddd;">
+                    <option value="1">Janvier</option>
+                    <option value="2">Février</option>
+                    <option value="3">Mars</option>
+                    <option value="4">Avril</option>
+                    <option value="5">Mai</option>
+                    <option value="6">Juin</option>
+                    <option value="7">Juillet</option>
+                    <option value="8">Août</option>
+                    <option value="9">Septembre</option>
+                    <option value="10">Octobre</option>
+                    <option value="11">Novembre</option>
+                    <option value="12">Décembre</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="controls">
+            <button onclick="goToALO()">💰 Retour ALO</button>
+        </div>
+
+        <div id="error" class="error" style="display:none;"></div>
+
+        <div class="accounts">
+            <div class="account gourmich">
+                <h2>🍽️ Gourmich (4 personnes)</h2>
+                <div id="gourmich-loading" class="loading">Chargement...</div>
+                <table id="gourmich-table" style="display:none;"></table>
+                <div class="stats" id="gourmich-stats" style="display:none;"></div>
+            </div>
+
+            <div class="account tigresse">
+                <h2>🐯 Tigresse (5 personnes)</h2>
+                <div id="tigresse-loading" class="loading">Chargement...</div>
+                <table id="tigresse-table" style="display:none;"></table>
+                <div class="stats" id="tigresse-stats" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "/api/meals";
+        let YEAR = 2026;
+        let MONTH = 1;
+
+        function getDaysInMonth(year, month) {
+            return new Date(year, month, 0).getDate();
+        }
+
+        function changeMonth() {
+            MONTH = parseInt(document.getElementById('month-select').value);
+            loadMonth('gourmich');
+            loadMonth('tigresse');
+        }
+
+        const ACCOUNTS = {
+            gourmich: {
+                personnes: ['Loïc', 'Alban', 'Mahaut', 'Ilan'],
+                defaultRepas: { 'Loïc': 3, 'Alban': 0, 'Mahaut': 0, 'Ilan': 0 }
+            },
+            tigresse: {
+                personnes: ['Alice', 'Adèle', 'Oscar', 'Albert', 'Joséphine'],
+                defaultRepas: { 'Alice': 3, 'Adèle': 3, 'Oscar': 0, 'Albert': 0, 'Joséphine': 0 }
+            }
+        };
+
+        async function loadMonth(account) {
+            try {
+                const response = await fetch(`${API_URL}/month/${YEAR}/${MONTH}/${account}`);
+                if (!response.ok) throw new Error('Erreur API');
+
+                const data = await response.json();
+                createTable(account, data);
+                await updateStats(account);
+            } catch (error) {
+                showError(`Erreur lors du chargement de ${account}: ${error.message}`);
+            }
+        }
+
+        function createTable(account, data) {
+            const personnes = ACCOUNTS[account].personnes;
+            const daysInMonth = getDaysInMonth(YEAR, MONTH);
+
+            let html = '<thead><tr><th class="jour">Jour</th>';
+            personnes.forEach(p => {
+                html += `<th>${p}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(YEAR, MONTH - 1, day);
+                const dayOfWeek = date.getDay();
+                const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+                html += `<tr ${isWeekend ? 'class="weekend"' : ''}>`;
+                html += `<td class="jour ${isWeekend ? 'weekend' : ''}">
+                    ${day} ${dayNames[dayOfWeek]}
+                </td>`;
+
+                personnes.forEach(p => {
+                    const value = data[day] && data[day][p] ? data[day][p] : 0;
+                    html += `<td>
+                        <input type="number"
+                            min="0" max="3"
+                            value="${value}"
+                            onchange="updateMeal('${account}', ${day}, '${p}', this.value)">
+                    </td>`;
+                });
+
+                html += '</tr>';
+            }
+
+            html += '</tbody>';
+            const table = document.getElementById(`${account}-table`);
+            table.innerHTML = html;
+            table.style.display = 'table';
+            document.getElementById(`${account}-loading`).style.display = 'none';
+        }
+
+        async function updateMeal(account, day, person, value) {
+            try {
+                const response = await fetch(`${API_URL}/record`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        year: YEAR,
+                        month: MONTH,
+                        day: day,
+                        account: account,
+                        person: person,
+                        repas: parseInt(value) || 0
+                    })
+                });
+
+                if (!response.ok) throw new Error('Erreur lors de la sauvegarde');
+                await updateStats(account);
+            } catch (error) {
+                showError(`Erreur: ${error.message}`);
+            }
+        }
+
+        async function updateStats(account) {
+            try {
+                const response = await fetch(`${API_URL}/summary/${YEAR}/${MONTH}`);
+                if (!response.ok) throw new Error('Erreur API');
+
+                const data = await response.json();
+                const personnes = ACCOUNTS[account].personnes;
+                const daysInMonth = getDaysInMonth(YEAR, MONTH);
+
+                let html = '';
+                personnes.forEach(p => {
+                    const total = data.summary[account][p] || 0;
+                    const pct = total > 0 ? ((total / (daysInMonth * 3)) * 100).toFixed(0) : 0;
+                    html += `<div class="stat-item">
+                        <span class="stat-label">${p}</span>
+                        <span class="stat-value">${total} repas (${pct}%)</span>
+                    </div>`;
+                });
+
+                const totalRepas = personnes.reduce((sum, p) => sum + (data.summary[account][p] || 0), 0);
+                html += `<div class="stat-item" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;">
+                    <span class="stat-label">Total</span>
+                    <span class="stat-value">${totalRepas} repas</span>
+                </div>`;
+
+                const statsDiv = document.getElementById(`${account}-stats`);
+                statsDiv.innerHTML = html;
+                statsDiv.style.display = 'block';
+            } catch (error) {
+                showError(`Erreur stats: ${error.message}`);
+            }
+        }
+
+        function showError(msg) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = msg;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function goToALO() {
+            window.location.href = '/';
+        }
+
+        window.addEventListener('load', () => {
+            loadMonth('gourmich');
+            loadMonth('tigresse');
+        });
+    </script>
+</body>
+</html>

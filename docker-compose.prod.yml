@@ -121,11 +121,15 @@ services:
   # ── alo — comptabilité familiale ──────────────────────────────────────
   # Servie derrière l'authentification du backoffice, comme en local (voir
   # Caddyfile, bloc alo.{$DOMAIN}). Lit la copie du schéma `alo` hébergée
-  # dans le Postgres de maisonnettev2 : l'alo autonome (Mac mini) garde sa
-  # propre base, les deux jeux de données restent séparés jusqu'à la bascule
-  # décidée dans TODO.md.
+  # dans le Postgres de maisonnettev2.
+  #
+  # Code source rapatrié dans ce repo (alo-backend/, alo-frontend/) le
+  # 2026-09-07 : le dépôt alo séparé avait sa CI cassée depuis des semaines et
+  # n'a donc jamais publié d'image sur un registre. Les images sont désormais
+  # buildées et publiées par la CI de maisonnettev2, sous son propre
+  # namespace GHCR. Le dépôt alo original n'est plus la source de vérité.
   alo-backend:
-    image: ${ALO_BACKEND_IMAGE:-ghcr.io/logo-projects/alo-backend:latest}
+    image: ${ALO_BACKEND_IMAGE:-ghcr.io/loicgo29/maisonnettev2-alo-backend:latest}
     container_name: maisonnette-alo-backend
     restart: unless-stopped
     environment:
@@ -150,7 +154,7 @@ services:
     networks: [maisonnette]
 
   alo-frontend:
-    image: ${ALO_FRONTEND_IMAGE:-ghcr.io/logo-projects/alo-frontend:latest}
+    image: ${ALO_FRONTEND_IMAGE:-ghcr.io/loicgo29/maisonnettev2-alo-frontend:latest}
     container_name: maisonnette-alo-frontend
     restart: unless-stopped
     depends_on:

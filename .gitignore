@@ -3,6 +3,13 @@ node_modules/
 *.pnp
 .pnp.js
 
+# Python (alo-backend)
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ruff_cache/
+
 # Build
 dist/
 build/
