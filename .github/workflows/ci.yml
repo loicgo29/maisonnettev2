@@ -293,11 +293,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Dockerfile.nginx et non Dockerfile : c'est celui que la production
+      # utilise. Et les build args sont indispensables — SvelteKit fige les
+      # valeurs `$env/static/public` dans le paquet construit, elles ne peuvent
+      # pas être corrigées au démarrage. Sans eux, l'image publiée viserait le
+      # realm `master` par défaut.
       - name: Build & Push frontend
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
+          file: ./frontend/Dockerfile.nginx
           push: true
+          build-args: |
+            PUBLIC_AUTH_URL=https://auth.maisonnette-pecheur-bertheaume.fr
+            PUBLIC_AUTH_REALM=maisonnettev2
+            PUBLIC_AUTH_CLIENT_ID=maisonnettev2-frontend
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository }}-frontend:latest
             ${{ env.REGISTRY }}/${{ github.repository }}-frontend:${{ github.sha }}

@@ -30,9 +30,11 @@ services:
     networks: [maisonnette]
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    # Image publiée par la CI plutôt que construite ici : le serveur n'a que
+    # deux cœurs, et bâtir sur place l'a saturé au point de couper la session de
+    # déploiement (load > 90, « Broken pipe »). La CI construit une fois, le
+    # serveur se contente de tirer.
+    image: ${BACKEND_IMAGE:-ghcr.io/loicgo29/maisonnettev2-backend:latest}
     container_name: maisonnette-backend
     restart: unless-stopped
     depends_on:
@@ -77,9 +79,10 @@ services:
     networks: [maisonnette]
 
   backoffice:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.nginx
+    # Construite par la CI avec les build args de production : SvelteKit fige
+    # l'URL de Keycloak et le realm dans le paquet, ils ne peuvent pas être
+    # corrigés au démarrage.
+    image: ${BACKOFFICE_IMAGE:-ghcr.io/loicgo29/maisonnettev2-frontend:latest}
     container_name: maisonnette-backoffice
     restart: unless-stopped
     depends_on:
