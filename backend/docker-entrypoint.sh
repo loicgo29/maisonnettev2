@@ -33,4 +33,17 @@ else
   echo "⚠️  Seed failed but continuing (may already exist)"
 fi
 
+# Gîte et photos. Ce provisionnement n'était appelé de nulle part : la base de
+# production s'est retrouvée sans aucun gîte ni photo, /api/gites répondant un
+# tableau vide. Le script est idempotent et réaligne les photos sur les fichiers
+# réellement présents, il peut donc être rejoué à chaque démarrage.
+echo "🏠 Provisionnement du gîte et des photos..."
+if node prisma/seed.mjs; then
+  echo "✅ Gîte et photos provisionnés"
+else
+  # Sans photos le site public n'a rien à montrer : on le dit clairement plutôt
+  # que de laisser découvrir une galerie vide.
+  echo "❌ Provisionnement du gîte en échec — le site public sera sans photos"
+fi
+
 exec "$@"
