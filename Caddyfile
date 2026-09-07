@@ -80,6 +80,50 @@ auth.{$DOMAIN} {
 }
 
 # ========================================================================
+# alo — sous-domaine alo.<domaine>, comptabilité familiale
+#
+# alo n'a aucune authentification propre : forward_auth demande au backoffice
+# si la requête est authentifiée, et ne sert la page qu'en cas de réponse 200.
+# Sous-domaine et non chemin `/alo` : le nginx interne d'alo proxifie déjà
+# `/api` vers son backend, un chemin entrerait en collision avec l'API de
+# maisonnettev2. Miroir exact du bloc `alo.maisonnette.localhost` du Caddyfile
+# de développement.
+# ========================================================================
+alo.{$DOMAIN} {
+	encode gzip zstd
+
+	forward_auth backend:3001 {
+		uri /api/backoffice/auth/verify
+
+		@refuse status 401 403
+		handle_response @refuse {
+			redir * https://{$DOMAIN}/backoffice/login 302
+		}
+	}
+
+	reverse_proxy alo-frontend:80
+
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+
+		# Sans cela, le navigateur ressert alo depuis son cache après une
+		# déconnexion alors qu'il n'y a plus de session.
+		Cache-Control "no-store"
+	}
+
+	log {
+		output file /data/access.log {
+			roll_size 10MB
+			roll_keep 5
+		}
+	}
+}
+
+# ========================================================================
 # SITE PUBLIC — <domaine> et www.<domaine>
 # ========================================================================
 {$DOMAIN}, www.{$DOMAIN} {

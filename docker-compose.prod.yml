@@ -118,6 +118,50 @@ services:
       retries: 3
     networks: [maisonnette]
 
+  # ── alo — comptabilité familiale ──────────────────────────────────────
+  # Servie derrière l'authentification du backoffice, comme en local (voir
+  # Caddyfile, bloc alo.{$DOMAIN}). Lit la copie du schéma `alo` hébergée
+  # dans le Postgres de maisonnettev2 : l'alo autonome (Mac mini) garde sa
+  # propre base, les deux jeux de données restent séparés jusqu'à la bascule
+  # décidée dans TODO.md.
+  alo-backend:
+    image: ${ALO_BACKEND_IMAGE:-ghcr.io/logo-projects/alo-backend:latest}
+    container_name: maisonnette-alo-backend
+    restart: unless-stopped
+    environment:
+      # `search_path` est le seul mécanisme par lequel alo choisit son schéma :
+      # rien dans son code Python ne le qualifie.
+      DATABASE_URL: postgresql+psycopg2://maisonnettev2:${DB_PASSWORD:?DB_PASSWORD manquant}@postgres:5432/maisonnettev2?options=-csearch_path%3Dalo
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+      ENVIRONMENT: production
+      DEBUG: 'false'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - alo_data:/app/data
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://127.0.0.1:8000/docs']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks: [maisonnette]
+
+  alo-frontend:
+    image: ${ALO_FRONTEND_IMAGE:-ghcr.io/logo-projects/alo-frontend:latest}
+    container_name: maisonnette-alo-frontend
+    restart: unless-stopped
+    depends_on:
+      - alo-backend
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://127.0.0.1:80/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks: [maisonnette]
+
   backup:
     image: postgres:16-alpine
     container_name: maisonnette-backup
@@ -217,6 +261,7 @@ services:
       - backoffice
       - public
       - keycloak
+      - alo-frontend
     networks: [maisonnette]
 
 volumes:
@@ -224,6 +269,8 @@ volumes:
   caddy_data:
   caddy_config:
   maisonnettev2_logs:
+  # Session Telegram et règles de catégorisation apprises par alo.
+  alo_data:
 
 networks:
   maisonnette:
