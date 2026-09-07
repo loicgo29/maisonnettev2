@@ -21,7 +21,8 @@
     "test:all": "npm run lint && npm run type-check && npm run test && npm run test:bdd",
     "audit": "npm audit --audit-level=high",
     "db:seed": "tsx src/seed.ts && node prisma/seed.mjs",
-    "db:deploy": "prisma migrate deploy && tsx src/seed.ts && node prisma/seed.mjs"
+    "db:deploy": "prisma migrate deploy && tsx src/seed.ts && node prisma/seed.mjs",
+    "db:seed:image": "node dist/seed.js && node prisma/seed.mjs"
   },
   "keywords": [
     "gite",

@@ -250,8 +250,11 @@ jobs:
       # La base de docker-compose.test.ci.yml (voir son commentaire) est vide
       # après migration : plusieurs steps (reservations.steps.js) attendent un
       # gîte déjà en base et échouent sinon.
+      # `db:seed:image` et non `db:seed` : l'image de production n'embarque que
+      # dist/, pas les sources. Lancer la variante TypeScript dans le conteneur
+      # échoue sur « Cannot find module '/app/src/seed.ts' ».
       - name: Seed de la base de test
-        run: docker exec maisonnette-test-backend npm run db:seed
+        run: docker exec maisonnette-test-backend npm run db:seed:image
 
       - name: Tests BDD
         run: npm run test:bdd
