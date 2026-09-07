@@ -23,7 +23,12 @@ test.describe('Parcours backoffice complet', () => {
     await page.click('button[type="submit"]');
 
     // Le login doit mener à /backoffice/meals, pas rester sur le formulaire.
-    await page.waitForURL('**/backoffice/meals', { timeout: 15000 });
+    await page.waitForURL((u) => !u.pathname.endsWith('/backoffice/login'), {
+      timeout: 15000,
+    });
+    // La connexion mène à alo quand il est déployé : on revient sur Repas,
+    // qui est l'objet de ce test.
+    await page.goto('/backoffice/meals');
 
     // Aucun message d'erreur affiché à l'écran.
     const erreurVisible = await page
@@ -49,7 +54,12 @@ test.describe('Parcours backoffice complet', () => {
     await page.fill('#username', 'admin');
     await page.fill('#pwd', 'admin123');
     await page.click('button[type="submit"]');
-    await page.waitForURL('**/backoffice/meals', { timeout: 15000 });
+    await page.waitForURL((u) => !u.pathname.endsWith('/backoffice/login'), {
+      timeout: 15000,
+    });
+    // La connexion mène à alo quand il est déployé : on revient sur Repas,
+    // qui est l'objet de ce test.
+    await page.goto('/backoffice/meals');
 
     const cookies = await context.cookies();
     const jeton = cookies.find((c) => c.name === 'backoffice_token');

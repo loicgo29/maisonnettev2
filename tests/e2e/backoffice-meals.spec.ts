@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test';
 // ouverte.
 const BACKOFFICE_MEALS_URL = process.env.E2E_URL
   ? `${process.env.E2E_URL}/backoffice/meals`
-  : 'http://localhost:8030/backoffice/meals';
+  : 'http://maisonnette.localhost:8030/backoffice/meals';
 
 const API_MEALS_URL = process.env.E2E_API_URL
   ? `${process.env.E2E_API_URL}/api/backoffice/meals`
@@ -22,7 +22,12 @@ test.describe('Backoffice Meals Management', () => {
     await page.fill('#username', 'admin');
     await page.fill('#pwd', 'admin123');
     await page.click('button[type="submit"]');
-    await page.waitForURL('**/backoffice/meals', { timeout: 15000 });
+    await page.waitForURL((u) => !u.pathname.endsWith('/backoffice/login'), {
+      timeout: 15000,
+    });
+    // La connexion mène à alo quand il est déployé : on revient sur Repas,
+    // qui est l'objet de ce test.
+    await page.goto(BACKOFFICE_MEALS_URL);
     await page.waitForLoadState('networkidle');
   });
 

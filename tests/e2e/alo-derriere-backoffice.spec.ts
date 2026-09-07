@@ -22,7 +22,9 @@ async function seConnecter(page: import('@playwright/test').Page) {
   await page.fill('#username', 'admin');
   await page.fill('#pwd', 'admin123');
   await page.click('button[type="submit"]');
-  await page.waitForURL('**/backoffice/meals', { timeout: 15000 });
+  // La connexion mène à alo là où il est déployé, au backoffice sinon : on
+  // attend donc simplement d'avoir quitté le formulaire.
+  await page.waitForURL((u) => !u.pathname.endsWith('/backoffice/login'), { timeout: 15000 });
 }
 
 test.describe('alo derrière le backoffice', () => {
@@ -78,8 +80,25 @@ test.describe('alo derrière le backoffice', () => {
     expect(erreursConsole, 'erreurs console dans alo').toEqual([]);
   });
 
+  test('la connexion mène directement à alo', async ({ page }) => {
+    await page.goto(`${BASE}/backoffice/login`);
+    await page.fill('#username', 'admin');
+    await page.fill('#pwd', 'admin123');
+    await page.click('button[type="submit"]');
+
+    await page.waitForURL(/alo\./, { timeout: 15000 });
+    expect(page.url()).toContain('alo.');
+
+    // Et alo doit réellement s'être rendu, pas seulement l'URL avoir changé.
+    await page.waitForLoadState('networkidle');
+    const contenu = await page.locator('#root').innerHTML();
+    expect(contenu.length, 'alo sert une page blanche').toBeGreaterThan(100);
+  });
+
   test('le backoffice propose un lien vers alo', async ({ page }) => {
     await seConnecter(page);
+    // La connexion mène à alo : on revient dans le backoffice pour y voir le menu.
+    await page.goto(`${BASE}/backoffice/meals`);
     const lien = page.locator('nav a', { hasText: 'alo' });
     await expect(lien).toBeVisible();
     expect(await lien.getAttribute('href')).toContain('alo.');
@@ -94,5 +113,11 @@ test.describe('alo derrière le backoffice', () => {
     // survivrait et la déconnexion ne déconnecterait rien.
     await page.goto(ALO);
     expect(page.url(), 'alo reste accessible après déconnexion').toContain('/backoffice/login');
+
+    // Et l'API, qui porte les données, doit être fermée elle aussi.
+    await page.goto(`${ALO}/api/periods`);
+    expect(page.url(), "l'API d'alo reste ouverte après déconnexion").toContain(
+      '/backoffice/login'
+    );
   });
 });

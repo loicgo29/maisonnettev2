@@ -52,6 +52,12 @@ http://alo.maisonnette.localhost, http://alo.localhost {
 		X-Frame-Options "SAMEORIGIN"
 		Referrer-Policy "strict-origin-when-cross-origin"
 		-Server
+
+		# Sans cela, le navigateur ressert alo depuis son cache après une
+		# déconnexion : l'application réapparaît alors qu'il n'y a plus de
+		# session. Aucune donnée n'est exposée — les appels d'API, eux, sont
+		# refusés — mais l'affichage laisse croire à un accès toujours ouvert.
+		Cache-Control "no-store"
 	}
 }
 

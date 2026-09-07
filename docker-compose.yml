@@ -82,6 +82,58 @@ services:
     networks:
       - maisonnettev2-net
 
+  # alo — comptabilité familiale, servie par maisonnettev2 derrière
+  # l'authentification du backoffice.
+  #
+  # Ce sont des conteneurs propres à maisonnettev2, distincts de ceux du projet
+  # alo : ils lisent la copie du schéma `alo` hébergée ici, tandis que l'alo
+  # autonome garde sa base. Repointer ce dernier vers celle-ci le casserait, et
+  # les deux jeux de données doivent rester séparés jusqu'à la bascule décidée.
+  #
+  # Les noms de service restent `alo-backend` et `alo-frontend` : le nginx
+  # embarqué dans l'image du frontend proxifie /api vers `alo-backend:8000` en
+  # dur, et ces noms lui servent d'alias réseau. Seuls les container_name
+  # diffèrent, pour ne pas entrer en conflit avec le projet alo.
+  alo-backend:
+    image: ${ALO_BACKEND_IMAGE:-alo-alo-backend:latest}
+    container_name: maisonnettev2-alo-backend
+    restart: unless-stopped
+    environment:
+      # `search_path` est le seul mécanisme par lequel alo choisit son schéma :
+      # rien dans son code Python ne le qualifie.
+      DATABASE_URL: postgresql+psycopg2://${DB_USER:-maisonnettev2}:${DB_PASSWORD}@postgres-maisonnettev2:5432/${DB_NAME:-maisonnettev2}?options=-csearch_path%3Dalo
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+      ENVIRONMENT: production
+      DEBUG: 'false'
+    depends_on:
+      postgres-maisonnettev2:
+        condition: service_healthy
+    volumes:
+      - alo_data:/app/data
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://127.0.0.1:8000/docs']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - maisonnettev2-net
+
+  alo-frontend:
+    image: ${ALO_FRONTEND_IMAGE:-alo-alo-frontend:latest}
+    container_name: maisonnettev2-alo-frontend
+    restart: unless-stopped
+    depends_on:
+      - alo-backend
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://127.0.0.1:80/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - maisonnettev2-net
+
   caddy:
     build:
       context: ./caddy
@@ -92,13 +144,9 @@ services:
     depends_on:
       - backend
       - frontend
+      - alo-frontend
     networks:
       - maisonnettev2-net
-      # alo tourne dans son propre compose, sur le réseau partagé de
-      # l'écosystème. Caddy l'y rejoint pour le servir derrière
-      # l'authentification du backoffice, plutôt que d'en dupliquer les
-      # conteneurs : alo garde ainsi la maîtrise de son cycle de vie.
-      - nas-network
     volumes:
       - maisonnettev2_caddy_data:/data
       - maisonnettev2_caddy_config:/config
@@ -129,10 +177,9 @@ volumes:
   maisonnettev2_pg_data:
   maisonnettev2_caddy_data:
   maisonnettev2_caddy_config:
+  # Session Telegram et règles de catégorisation apprises par alo.
+  alo_data:
 
 networks:
   maisonnettev2-net:
     driver: bridge
-  # Créé par l'écosystème (alo, immich…), pas par ce projet : d'où `external`.
-  nas-network:
-    external: true

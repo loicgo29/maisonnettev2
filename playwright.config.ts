@@ -16,7 +16,12 @@ export default defineConfig({
     // E2E_URL permet de rejouer la même suite contre la production sans
     // toucher aux tests ; sans cela `page.goto('/…')` visait toujours la pile
     // locale, y compris quand on croyait valider le serveur distant.
-    baseURL: process.env.E2E_URL || 'http://localhost:8030',
+    //
+    // `maisonnette.localhost` et non `localhost` : le jeton de session est un
+    // cookie de domaine, que les navigateurs refusent d'attacher à `localhost`
+    // — c'est un domaine de premier niveau. Depuis `localhost`, la session ne
+    // suivrait pas jusqu'à alo.
+    baseURL: process.env.E2E_URL || 'http://maisonnette.localhost:8030',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },

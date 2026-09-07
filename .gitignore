@@ -54,3 +54,7 @@ tests/OAUTH2_TESTS.md
 debug-redirect.mjs
 debug-*.mjs
 .env.bak
+
+# Sauvegardes de base de données : elles contiennent les données réelles
+# (comptabilité familiale, réservations) et n'ont rien à faire dans le dépôt.
+backups/

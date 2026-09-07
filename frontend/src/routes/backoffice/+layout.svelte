@@ -1,21 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { urlAlo } from '$lib/alo';
 
 	// La page de connexion n'a pas de menu : l'afficher y proposerait des liens
 	// tous inaccessibles, et la redirection du +layout.ts les rejetterait.
 	$: surLaConnexion = $page.url.pathname === '/backoffice/login';
 
-	// alo vit sur son propre sous-domaine — son nginx sert /api, qui entrerait
-	// en collision avec l'API de maisonnettev2 sous un simple chemin. L'URL se
-	// déduit donc de l'hôte courant plutôt que d'être écrite en dur, pour valoir
-	// aussi bien en développement qu'en production.
-	$: urlAlo = construireUrlAlo($page.url);
-
-	function construireUrlAlo(url: URL): string {
-		const hote = url.hostname.replace(/^www\./, '');
-		const port = url.port ? `:${url.port}` : '';
-		return `${url.protocol}//alo.${hote}${port}/`;
-	}
+	$: lienAlo = urlAlo($page.url);
 </script>
 
 {#if surLaConnexion}
@@ -26,7 +17,7 @@
 		<a href="/backoffice/meals" class:actif={$page.url.pathname.startsWith('/backoffice/meals')}>
 			🍽️ Repas
 		</a>
-		<a href={urlAlo}>💶 alo</a>
+		<a href={lienAlo}>💶 alo</a>
 		<a href="/backoffice/logout" class="deconnexion">Déconnexion</a>
 	</nav>
 

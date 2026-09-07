@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { invalidateAll } from '$app/navigation';
+	import { destinationApresConnexion } from '$lib/alo';
 
 	let username = '';
 	let pwd = '';
@@ -79,7 +79,12 @@
 			}
 
 			await invalidateAll();
-			await goto('/backoffice/meals');
+
+			// alo est la destination par défaut, avec repli sur le backoffice là
+			// où il n'est pas déployé. On passe par `location.href` et non par la
+			// navigation de SvelteKit : alo vit sur un autre sous-domaine, que le
+			// routeur interne ne sait pas atteindre.
+			location.href = await destinationApresConnexion(new URL(location.href));
 		} catch (err) {
 			console.error('[Login] Error:', err);
 			error = 'Connection error: ' + (err instanceof Error ? err.message : 'Unknown error');
