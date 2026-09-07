@@ -12,6 +12,7 @@ const API_MEALS_URL = process.env.E2E_API_URL
   : 'http://localhost:3001/api/backoffice/meals';
 
 const BACKOFFICE_LOGIN_URL = BACKOFFICE_MEALS_URL.replace('/meals', '/login');
+const ADMIN_PWD = process.env.E2E_ADMIN_PWD || 'admin123';
 
 test.describe('Backoffice Meals Management', () => {
   test.beforeEach(async ({ page }) => {
@@ -20,7 +21,7 @@ test.describe('Backoffice Meals Management', () => {
     // le contenu des repas échouaient alors sans qu'aucun bug n'existe.
     await page.goto(BACKOFFICE_LOGIN_URL);
     await page.fill('#username', 'admin');
-    await page.fill('#pwd', 'admin123');
+    await page.fill('#pwd', ADMIN_PWD);
     await page.click('button[type="submit"]');
     await page.waitForURL((u) => !u.pathname.endsWith('/backoffice/login'), {
       timeout: 15000,

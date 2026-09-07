@@ -16,11 +16,12 @@ import { test, expect } from '@playwright/test';
 // résout en 127.0.0.1 sans configuration.
 const BASE = process.env.E2E_URL || 'http://maisonnette.localhost:8030';
 const ALO = process.env.E2E_ALO_URL || 'http://alo.maisonnette.localhost:8030';
+const ADMIN_PWD = process.env.E2E_ADMIN_PWD || 'admin123';
 
 async function seConnecter(page: import('@playwright/test').Page) {
   await page.goto(`${BASE}/backoffice/login`);
   await page.fill('#username', 'admin');
-  await page.fill('#pwd', 'admin123');
+  await page.fill('#pwd', ADMIN_PWD);
   await page.click('button[type="submit"]');
   // La connexion mène à alo là où il est déployé, au backoffice sinon : on
   // attend donc simplement d'avoir quitté le formulaire.
@@ -83,7 +84,7 @@ test.describe('alo derrière le backoffice', () => {
   test('la connexion mène directement à alo', async ({ page }) => {
     await page.goto(`${BASE}/backoffice/login`);
     await page.fill('#username', 'admin');
-    await page.fill('#pwd', 'admin123');
+    await page.fill('#pwd', ADMIN_PWD);
     await page.click('button[type="submit"]');
 
     await page.waitForURL(/alo\./, { timeout: 15000 });

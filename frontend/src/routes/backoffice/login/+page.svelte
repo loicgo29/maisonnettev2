@@ -90,8 +90,6 @@
 				{loading ? 'Authenticating...' : 'Sign In'}
 			</button>
 		</form>
-
-		<p class="help-text">Default: admin / admin123 (change in production!)</p>
 	</div>
 </div>
 
@@ -196,11 +194,4 @@
 		cursor: not-allowed;
 	}
 
-	.help-text {
-		text-align: center;
-		font-size: 0.8rem;
-		color: #999;
-		margin-top: 1rem;
-		margin-bottom: 0;
-	}
 </style>

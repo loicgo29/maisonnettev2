@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+const ADMIN_PWD = process.env.E2E_ADMIN_PWD || 'admin123';
+
 /**
  * E2E Tests — Hetzner Three-Component Deployment
  *
@@ -118,7 +120,7 @@ test.describe('🚀 Hetzner Deployment — Three Components', () => {
 
       // Fill form
       await page.fill('input[name="username"]', 'admin');
-      await page.fill('input[name="pwd"]', 'admin123');
+      await page.fill('input[name="pwd"]', ADMIN_PWD);
 
       // Submit
       await page.click('button[type="submit"]');
@@ -136,7 +138,7 @@ test.describe('🚀 Hetzner Deployment — Three Components', () => {
 
       // Login
       await page.fill('input[name="username"]', 'admin');
-      await page.fill('input[name="pwd"]', 'admin123');
+      await page.fill('input[name="pwd"]', ADMIN_PWD);
       await page.click('button[type="submit"]');
 
       // Wait for redirect
@@ -164,7 +166,7 @@ test.describe('🚀 Hetzner Deployment — Three Components', () => {
       // Login first
       await page.goto('/backoffice/login');
       await page.fill('input[name="username"]', 'admin');
-      await page.fill('input[name="pwd"]', 'admin123');
+      await page.fill('input[name="pwd"]', ADMIN_PWD);
       await page.click('button[type="submit"]');
 
       // Wait for meals page
@@ -192,7 +194,7 @@ test.describe('🚀 Hetzner Deployment — Three Components', () => {
 
       // Login
       await page.fill('input[name="username"]', 'admin');
-      await page.fill('input[name="pwd"]', 'admin123');
+      await page.fill('input[name="pwd"]', ADMIN_PWD);
       await page.click('button[type="submit"]');
 
       // Wait for meals page
@@ -224,7 +226,7 @@ test.describe('🚀 Hetzner Deployment — Three Components', () => {
       // Login first to get token
       await page.goto('/backoffice/login');
       await page.fill('input[name="username"]', 'admin');
-      await page.fill('input[name="pwd"]', 'admin123');
+      await page.fill('input[name="pwd"]', ADMIN_PWD);
       await page.click('button[type="submit"]');
 
       // Wait for redirect

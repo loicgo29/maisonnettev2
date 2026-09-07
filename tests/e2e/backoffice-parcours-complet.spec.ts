@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+const ADMIN_PWD = process.env.E2E_ADMIN_PWD || 'admin123';
+
 /**
  * Parcours navigateur réel : login → meals → saisie → logout.
  * Les tests curl valident l'API ; celui-ci valide ce que l'utilisateur vit.
@@ -19,7 +21,7 @@ test.describe('Parcours backoffice complet', () => {
     await expect(page.locator('h1')).toContainText('Backoffice Login');
 
     await page.fill('#username', 'admin');
-    await page.fill('#pwd', 'admin123');
+    await page.fill('#pwd', ADMIN_PWD);
     await page.click('button[type="submit"]');
 
     // Le login doit mener à /backoffice/meals, pas rester sur le formulaire.
@@ -52,7 +54,7 @@ test.describe('Parcours backoffice complet', () => {
   test('le cookie de session est bien posé', async ({ page, context }) => {
     await page.goto('/backoffice/login');
     await page.fill('#username', 'admin');
-    await page.fill('#pwd', 'admin123');
+    await page.fill('#pwd', ADMIN_PWD);
     await page.click('button[type="submit"]');
     await page.waitForURL((u) => !u.pathname.endsWith('/backoffice/login'), {
       timeout: 15000,

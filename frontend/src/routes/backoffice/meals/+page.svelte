@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
 
 	export let data: { backofficeToken?: string } = {};
 
@@ -201,7 +202,7 @@
 		await loadMeals();
 	});
 
-	$: if (startDate && endDate) {
+	$: if (browser && startDate && endDate) {
 		loadMeals();
 	}
 

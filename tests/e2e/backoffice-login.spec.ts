@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 const BASE_URL = 'http://localhost:8030'; // Via Caddy reverse proxy (not 5173 direct)
+const ADMIN_PWD = process.env.E2E_ADMIN_PWD || 'admin123';
 
 test.describe('Backoffice Authentication', () => {
   test('should redirect unauthenticated users to login', async ({ page }) => {
@@ -49,7 +50,7 @@ test.describe('Backoffice Authentication', () => {
 
     // Fill form with default credentials
     await page.fill('input[type="text"]', 'admin');
-    await page.fill('input[type="password"]', 'admin123');
+    await page.fill('input[type="password"]', ADMIN_PWD);
 
     // Click login (may fail if endpoint not ready)
     await page.click('button[type="submit"]');
@@ -70,7 +71,7 @@ test.describe('Backoffice Authentication', () => {
 
     // Fill and submit
     await page.fill('input[type="text"]', 'admin');
-    await page.fill('input[type="password"]', 'admin123');
+    await page.fill('input[type="password"]', ADMIN_PWD);
     await page.click('button[type="submit"]');
 
     await page.waitForTimeout(3000);
@@ -93,14 +94,14 @@ test.describe('Backoffice Authentication', () => {
 
     await page.goto(`${BASE_URL}/backoffice/login`);
     await page.fill('input[type="text"]', 'admin');
-    await page.fill('input[type="password"]', 'admin123');
+    await page.fill('input[type="password"]', ADMIN_PWD);
     await page.click('button[type="submit"]');
 
     await page.waitForTimeout(2000);
 
     // Should not log passwords or tokens
     const hasSensitiveData = consoleLogs.some(log =>
-      log.includes('admin123') || log.includes('Bearer') || log.includes('eyJ')
+      log.includes(ADMIN_PWD) || log.includes('Bearer') || log.includes('eyJ')
     );
 
     expect(hasSensitiveData).toBe(false);
@@ -139,7 +140,7 @@ test.describe('Backoffice Authentication', () => {
 
     // Step 2: Submit credentials
     await page.fill('input[type="text"]', 'admin');
-    await page.fill('input[type="password"]', 'admin123');
+    await page.fill('input[type="password"]', ADMIN_PWD);
     await page.click('button[type="submit"]');
 
     // Step 3: Wait for redirect to meals
