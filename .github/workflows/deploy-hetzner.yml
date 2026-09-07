@@ -165,6 +165,12 @@ jobs:
           # maisonnettev2_postgres_data, que le service postgres réutilise.
           docker compose --env-file .env -f docker-compose.prod.yml up -d --remove-orphans
 
+          # Caddy monte son Caddyfile en lecture seule : `up -d` ne le recrée
+          # pas quand seul ce fichier a changé, et le routage reste celui d'avant
+          # — un bloc ajouté demeure invisible sans que rien ne le signale.
+          echo "🔁 Rechargement de la configuration de Caddy..."
+          docker compose --env-file .env -f docker-compose.prod.yml up -d --force-recreate caddy
+
           echo ""
           echo "🗄️ Applying database migrations..."
           docker compose --env-file .env -f docker-compose.prod.yml \

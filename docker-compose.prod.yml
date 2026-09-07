@@ -149,10 +149,18 @@ services:
   # moteur coûterait ~200 Mo de mémoire et une routine de sauvegarde de plus,
   # pour une isolation que deux bases assurent déjà.
   keycloak:
-    image: quay.io/keycloak/keycloak:24.0
+    # 26.0 : la version déjà présente sur le serveur. Tirer une 24.0 coûterait
+    # 700 Mo sur les 6 Go restants, pour une version plus ancienne.
+    # ⚠️ Le Keycloak local (projet idp/) tourne encore en 24 — divergence à
+    # résorber, une différence de version majeure entre développement et
+    # production finit toujours par surprendre.
+    image: quay.io/keycloak/keycloak:26.0
     container_name: maisonnette-keycloak
     restart: unless-stopped
-    command: start --optimized --http-enabled=true --proxy-headers=xforwarded
+    # `start` sans --optimized : cette option suppose une image reconstruite
+    # avec `kc.sh build`, sinon le démarrage échoue. Le coût est quelques
+    # secondes de plus au lancement.
+    command: start --http-enabled=true --proxy-headers=xforwarded
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
