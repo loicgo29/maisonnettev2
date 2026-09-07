@@ -17,13 +17,13 @@ services:
     container_name: maisonnette-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${DB_USER:-maisonnettev2}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME:-maisonnettev2}
+      POSTGRES_USER: maisonnettev2
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD manquant}
+      POSTGRES_DB: maisonnettev2
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-maisonnettev2}']
+      test: ['CMD-SHELL', 'pg_isready -U maisonnettev2']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -39,23 +39,33 @@ services:
       postgres:
         condition: service_healthy
     environment:
+      # ── Configuration ──────────────────────────────────────────────
+      # Versionnée : ces valeurs ne sont pas secrètes, et les cacher dans un
+      # fichier généré au déploiement les rendait invisibles en revue — c'est
+      # ainsi qu'une URL de realm Authentik a survécu des semaines.
       NODE_ENV: production
       PORT: 3001
-      DATABASE_URL: postgresql://${DB_USER:-maisonnettev2}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-maisonnettev2}
-      JWT_SECRET: ${JWT_SECRET}
-      OWNER_EMAIL: ${OWNER_EMAIL}
-      OWNER_PHONE: ${OWNER_PHONE}
-      # src/middleware/oidc.ts refuse de se charger sans cette URL — le
-      # conteneur repartait en boucle sur « KEYCLOAK_REALM_URL est absente ».
-      # Elle est produite par le workflow dans .env.production.
-      KEYCLOAK_REALM_URL: ${KEYCLOAK_REALM_URL}
-      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN}
-      MESSAGES_AUTO: ${MESSAGES_AUTO:-false}
-      RESEND_API_KEY: ${RESEND_API_KEY:-}
-      PRIVATE_GOOGLE_CLIENT_ID: ${PRIVATE_GOOGLE_CLIENT_ID:-}
+      PUBLIC_ORIGIN: https://maisonnette-pecheur-bertheaume.fr
+      OWNER_EMAIL: lgbertheaume@gmail.com
+      OWNER_PHONE: '+33781103889'
+      MESSAGES_AUTO: 'false'
+      # Keycloak n'est pas encore déployé : ce sous-domaine ne résout pas. La
+      # valeur est correcte pour le jour où il le sera, et oidc.ts n'exige que
+      # sa présence au démarrage, pas sa joignabilité.
+      KEYCLOAK_REALM_URL: https://auth.maisonnette-pecheur-bertheaume.fr/realms/maisonnettev2
+      # Identifiant OAuth public : déjà exposé dans l'authUrl de /api/calendar.
+      PRIVATE_GOOGLE_CLIENT_ID: 775094963614-ajspquocfsq0e5qpnlfm0leniia83iij.apps.googleusercontent.com
+      PRIVATE_GOOGLE_REDIRECT_URI: https://maisonnette-pecheur-bertheaume.fr/api/calendar/callback
+
+      # ── Secrets ────────────────────────────────────────────────────
+      # `:?` plutôt qu'une valeur vide : un déploiement doit échouer net s'il
+      # manque un secret, pas démarrer sur une chaîne vide. JWT_SECRET absent a
+      # fait boucler le backend en production le 6 septembre.
+      DATABASE_URL: postgresql://maisonnettev2:${DB_PASSWORD:?DB_PASSWORD manquant}@postgres:5432/maisonnettev2
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET manquant}
       PRIVATE_GOOGLE_CLIENT_SECRET: ${PRIVATE_GOOGLE_CLIENT_SECRET:-}
-      PRIVATE_GOOGLE_REDIRECT_URI: ${PRIVATE_GOOGLE_REDIRECT_URI:-}
       PRIVATE_GITE_CALENDAR_ID: ${PRIVATE_GITE_CALENDAR_ID:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
     ports:
       - '127.0.0.1:3001:3001'
     healthcheck:
@@ -110,7 +120,7 @@ services:
     container_name: maisonnette-backup
     restart: daily
     environment:
-      PGPASSWORD: ${DB_PASSWORD}
+      PGPASSWORD: ${DB_PASSWORD:?DB_PASSWORD manquant}
     volumes:
       - ./backups:/backups
       - postgres_data:/data:ro
@@ -121,7 +131,7 @@ services:
       sh -c 'mkdir -p /backups && exec 2>/backups/backup.log
       while true; do
         echo "[$(date)] Starting backup..."
-        pg_dump -h postgres -U ${DB_USER:-maisonnettev2} ${DB_NAME:-maisonnettev2} 2>/backups/backup.log | gzip > /backups/db-$(date +%Y%m%d-%H%M%S).sql.gz
+        pg_dump -h postgres -U maisonnettev2 maisonnettev2 2>/backups/backup.log | gzip > /backups/db-$(date +%Y%m%d-%H%M%S).sql.gz
         echo "[$(date)] Backup complete. Cleaning old backups (>7 days)..."
         find /backups -name "db-*.sql.gz" -mtime +7 -delete
         echo "[$(date)] Sleeping 24 hours until next backup..."
@@ -148,8 +158,8 @@ services:
       # Le Caddyfile lit {$DOMAIN} et {$ACME_EMAIL}. Sans ces deux lignes, la
       # substitution donne une directive `email` sans argument et Caddy refuse
       # de démarrer, laissant le site entier injoignable.
-      DOMAIN: ${DOMAIN}
-      ACME_EMAIL: ${ACME_EMAIL}
+      DOMAIN: maisonnette-pecheur-bertheaume.fr
+      ACME_EMAIL: loic@logo-solutions.fr
     depends_on:
       - backend
       - backoffice

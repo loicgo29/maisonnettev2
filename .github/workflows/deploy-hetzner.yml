@@ -26,45 +26,19 @@ jobs:
           KC_ADMIN_PASSWORD: ${{ secrets.KC_ADMIN_PASSWORD }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: |
+          # Seuls les secrets sont transmis au serveur : toute la configuration
+          # — domaine, realm, contacts, identifiants publics — vit désormais
+          # dans docker-compose.prod.yml, versionnée et relue en revue.
+          #
+          # Ce fichier contenait auparavant 31 lignes, dont l'essentiel n'était
+          # pas secret. Les valeurs y devenaient invisibles : une URL de realm
+          # Authentik y a survécu des semaines sans que personne ne la voie.
           cat > .env.production << 'ENVEOF'
-          DB_USER=maisonnettev2
           DB_PASSWORD=${{ env.DB_PASSWORD }}
-          DB_NAME=maisonnettev2
-          # Sans JWT_SECRET, src/middleware/backoffice-jwt.ts interrompt le
-          # démarrage en production et le backend boucle sur un redémarrage.
           JWT_SECRET=${{ env.JWT_SECRET }}
-          NODE_ENV=production
-          PORT=3001
-          VITE_API_URL=https://maisonnette-pecheur-bertheaume.fr
-          OWNER_EMAIL=lgbertheaume@gmail.com
-          OWNER_PHONE=+33781103889
-
-          DOMAIN=maisonnette-pecheur-bertheaume.fr
-          PUBLIC_ORIGIN=https://maisonnette-pecheur-bertheaume.fr
-          ACME_EMAIL=loic@logo-solutions.fr
-          PUBLIC_AUTH_URL=https://auth.maisonnette-pecheur-bertheaume.fr
-          PUBLIC_AUTH_REALM=maisonnettev2
-          PUBLIC_AUTH_CLIENT_ID=maisonnettev2-frontend
-
-          FRONTEND_HOST=127.0.0.1
-          FRONTEND_PORT=8030
-          BACKEND_HOST=127.0.0.1
-          BACKEND_PORT=3001
-          DB_HOST=postgres
-          DB_PORT=5432
-
-          KC_DB_PASSWORD=${{ env.KC_DB_PASSWORD }}
-          KC_ADMIN_USER=admin
-          KC_ADMIN_PASSWORD=${{ env.KC_ADMIN_PASSWORD }}
-          KEYCLOAK_REALM_URL=https://auth.maisonnette-pecheur-bertheaume.fr/realms/maisonnettev2/
-          MESSAGES_AUTO=false
-
-          RESEND_API_KEY=${{ env.RESEND_API_KEY }}
-
-          PRIVATE_GOOGLE_CLIENT_ID=${{ env.PRIVATE_GOOGLE_CLIENT_ID }}
           PRIVATE_GOOGLE_CLIENT_SECRET=${{ env.PRIVATE_GOOGLE_CLIENT_SECRET }}
-          PRIVATE_GOOGLE_REDIRECT_URI=${{ env.PRIVATE_GOOGLE_REDIRECT_URI }}
           PRIVATE_GITE_CALENDAR_ID=${{ env.PRIVATE_GITE_CALENDAR_ID }}
+          RESEND_API_KEY=${{ env.RESEND_API_KEY }}
           ENVEOF
 
           echo "✅ .env.production generated"
@@ -72,18 +46,11 @@ jobs:
       - name: Verify .env.production integrity
         run: |
           echo "✓ Verifying .env.production..."
+          # Les seules variables encore attendues sont les secrets : le reste
+          # est dans le compose, où une absence se voit à la lecture.
           required_vars=(
-            "PRIVATE_GOOGLE_CLIENT_ID"
-            "PRIVATE_GOOGLE_CLIENT_SECRET"
-            "PRIVATE_GOOGLE_REDIRECT_URI"
-            "PRIVATE_GITE_CALENDAR_ID"
             "DB_PASSWORD"
             "JWT_SECRET"
-            "KC_DB_PASSWORD"
-            "KC_ADMIN_PASSWORD"
-            "KEYCLOAK_REALM_URL"
-            "DOMAIN"
-            "ACME_EMAIL"
           )
           for var in "${required_vars[@]}"; do
             if ! grep -q "^${var}=" .env.production; then
@@ -134,14 +101,18 @@ jobs:
           # Move new .env.production to .env
           mv /tmp/.env.production .env
 
-          # Verify critical vars are present on production
-          for var in PRIVATE_GOOGLE_CLIENT_ID PRIVATE_GOOGLE_REDIRECT_URI KEYCLOAK_REALM_URL; do
+          # Le .env ne porte plus que des secrets : la configuration est dans
+          # le compose, où docker échoue de lui-même sur une variable absente
+          # grâce aux `${VAR:?message}`. Vérifier ici les variables de
+          # configuration ferait échouer le déploiement pour une valeur qui a
+          # simplement changé de place.
+          for var in DB_PASSWORD JWT_SECRET; do
             if ! grep -q "^${var}=" .env; then
               echo "❌ Production .env missing: ${var}"
               exit 1
             fi
           done
-          echo "✓ All env vars verified on production"
+          echo "✓ Secrets verified on production"
 
           # Download and extract code from GitHub
           curl -L -o code.tar.gz \
