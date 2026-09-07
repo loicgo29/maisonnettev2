@@ -141,6 +141,47 @@ services:
     profiles:
       - backup
 
+  # ── Fournisseur d'identité ────────────────────────────────────────────
+  # Keycloak, et non Authentik : le projet idp/ fait tourner Keycloak 24, et la
+  # documentation qui annonçait Authentik a été corrigée le 2026-09-07.
+  #
+  # Il partage le PostgreSQL de maisonnettev2, dans une base dédiée : un second
+  # moteur coûterait ~200 Mo de mémoire et une routine de sauvegarde de plus,
+  # pour une isolation que deux bases assurent déjà.
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: maisonnette-keycloak
+    restart: unless-stopped
+    command: start --optimized --http-enabled=true --proxy-headers=xforwarded
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:?KC_DB_PASSWORD manquant}
+      KC_HOSTNAME: auth.maisonnette-pecheur-bertheaume.fr
+      # Caddy termine le TLS en amont : sans cette indication, Keycloak fabrique
+      # ses URL de redirection en http et le navigateur refuse le flux.
+      KC_HOSTNAME_STRICT_HTTPS: 'true'
+      KC_HTTP_ENABLED: 'true'
+      KC_HEALTH_ENABLED: 'true'
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD:?KC_ADMIN_PASSWORD manquant}
+      # La JVM prend 1 Go si on la laisse faire, sur un serveur qui n'en a que
+      # 3,7 au total. 512 Mo suffisent largement pour un usage familial.
+      JAVA_OPTS_APPEND: -Xms256m -Xmx512m
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      # L'image Keycloak n'embarque ni curl ni wget : on se contente d'ouvrir
+      # une connexion sur le port applicatif, ce que bash sait faire seul.
+      test: ['CMD-SHELL', 'exec 3<>/dev/tcp/127.0.0.1/8080']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    networks: [maisonnette]
+
   caddy:
     image: caddy:latest
     container_name: maisonnette-caddy
@@ -164,6 +205,7 @@ services:
       - backend
       - backoffice
       - public
+      - keycloak
     networks: [maisonnette]
 
 volumes:

@@ -49,6 +49,37 @@ backoffice.{$DOMAIN} {
 }
 
 # ========================================================================
+# FOURNISSEUR D'IDENTITÉ — auth.<domaine>
+# Keycloak, TLS terminé ici : il tourne en clair sur le réseau interne.
+# ========================================================================
+auth.{$DOMAIN} {
+	encode gzip zstd
+
+	reverse_proxy keycloak:8080 {
+		# Keycloak fabrique ses URL de redirection à partir de ces en-têtes.
+		# Sans eux, il les forge en http et le navigateur refuse le flux, sans
+		# message qui désigne la cause.
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+		header_up X-Forwarded-For {remote_host}
+	}
+
+	header {
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	log {
+		output file /data/access.log {
+			roll_size 10MB
+			roll_keep 5
+		}
+	}
+}
+
+# ========================================================================
 # SITE PUBLIC — <domaine> et www.<domaine>
 # ========================================================================
 {$DOMAIN}, www.{$DOMAIN} {

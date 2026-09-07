@@ -39,6 +39,8 @@ jobs:
           PRIVATE_GOOGLE_CLIENT_SECRET=${{ env.PRIVATE_GOOGLE_CLIENT_SECRET }}
           PRIVATE_GITE_CALENDAR_ID=${{ env.PRIVATE_GITE_CALENDAR_ID }}
           RESEND_API_KEY=${{ env.RESEND_API_KEY }}
+          KC_DB_PASSWORD=${{ env.KC_DB_PASSWORD }}
+          KC_ADMIN_PASSWORD=${{ env.KC_ADMIN_PASSWORD }}
           ENVEOF
 
           echo "✅ .env.production generated"
@@ -51,6 +53,8 @@ jobs:
           required_vars=(
             "DB_PASSWORD"
             "JWT_SECRET"
+            "KC_DB_PASSWORD"
+            "KC_ADMIN_PASSWORD"
           )
           for var in "${required_vars[@]}"; do
             if ! grep -q "^${var}=" .env.production; then
@@ -106,7 +110,7 @@ jobs:
           # grâce aux `${VAR:?message}`. Vérifier ici les variables de
           # configuration ferait échouer le déploiement pour une valeur qui a
           # simplement changé de place.
-          for var in DB_PASSWORD JWT_SECRET; do
+          for var in DB_PASSWORD JWT_SECRET KC_DB_PASSWORD KC_ADMIN_PASSWORD; do
             if ! grep -q "^${var}=" .env; then
               echo "❌ Production .env missing: ${var}"
               exit 1
@@ -139,6 +143,19 @@ jobs:
             --env-file .env \
             -f docker-compose.prod.yml \
             build backend backoffice
+
+          echo ""
+          echo "🗄️ Base de Keycloak (créée si absente)..."
+          # L'image Keycloak ne crée pas sa base : sans cela elle boucle sur un
+          # échec de connexion. Ces trois commandes sont rejouables — la
+          # dernière réaligne le mot de passe sur le secret, ce qui évite le
+          # « password authentication failed » rencontré en local quand le rôle
+          # et le secret avaient divergé.
+          KCPW=$(grep '^KC_DB_PASSWORD=' .env | cut -d= -f2-)
+          PSQL="docker compose --env-file .env -f docker-compose.prod.yml exec -T postgres psql -U maisonnettev2 -d postgres"
+          $PSQL -c "CREATE ROLE keycloak LOGIN PASSWORD '$KCPW'" 2>/dev/null || echo "  rôle déjà présent"
+          $PSQL -c "CREATE DATABASE keycloak OWNER keycloak" 2>/dev/null || echo "  base déjà présente"
+          $PSQL -c "ALTER ROLE keycloak PASSWORD '$KCPW'"
 
           echo ""
           echo "🚀 Starting services..."
