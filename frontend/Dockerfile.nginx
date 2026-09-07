@@ -4,10 +4,23 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-# SvelteKit needs PUBLIC_* vars at build time (static site generation)
-RUN PUBLIC_AUTH_URL=${PUBLIC_AUTH_URL:-http://localhost:9001} \
-    PUBLIC_AUTH_REALM=${PUBLIC_AUTH_REALM:-master} \
-    PUBLIC_AUTH_CLIENT_ID=${PUBLIC_AUTH_CLIENT_ID:-maisonnettev2-frontend} \
+
+# SvelteKit résout `$env/static/public` à la construction : ces valeurs sont
+# figées dans le paquet servi, elles ne peuvent pas être changées au démarrage.
+#
+# Il faut des ARG : sans eux, les `${VAR:-défaut}` du RUN ne lisaient jamais
+# rien — docker build ne transmet pas l'environnement de l'hôte — et le défaut
+# s'appliquait toujours. Le realm retombait donc sur `master`, celui de
+# l'administration de Keycloak, dont les jetons n'ont rien à voir avec les
+# utilisateurs de l'application. Et .env n'aide pas : .dockerignore l'exclut du
+# contexte, à raison puisqu'il porte des secrets.
+ARG PUBLIC_AUTH_URL=http://localhost:9001
+ARG PUBLIC_AUTH_REALM=maisonnettev2
+ARG PUBLIC_AUTH_CLIENT_ID=maisonnettev2-frontend
+
+RUN PUBLIC_AUTH_URL="$PUBLIC_AUTH_URL" \
+    PUBLIC_AUTH_REALM="$PUBLIC_AUTH_REALM" \
+    PUBLIC_AUTH_CLIENT_ID="$PUBLIC_AUTH_CLIENT_ID" \
     npm run build
 
 # Serve with Node.js

@@ -5,15 +5,15 @@ services:
     image: postgres:16-alpine
     container_name: postgres-maisonnettev2
     environment:
-      POSTGRES_USER: ${DB_USER:-maisonnettev2}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME:-maisonnettev2}
+      POSTGRES_USER: maisonnettev2
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD manquant — voir .env.example}
+      POSTGRES_DB: maisonnettev2
     volumes:
       - maisonnettev2_pg_data:/var/lib/postgresql/data
     ports:
       - "5433:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-maisonnettev2}"]
+      test: ["CMD-SHELL", "pg_isready -U maisonnettev2"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,39 +26,48 @@ services:
       dockerfile: Dockerfile
     container_name: maisonnettev2-backend
     environment:
-      NODE_ENV: ${NODE_ENV:-development}
-      PORT: ${PORT:-3001}
-      DATABASE_URL: postgresql://${DB_USER:-maisonnettev2}:${DB_PASSWORD}@postgres-maisonnettev2:5432/${DB_NAME:-maisonnettev2}
-      RESEND_API_KEY: ${RESEND_API_KEY}
-      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID}
-      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
-      TWILIO_WHATSAPP_NUMBER: ${TWILIO_WHATSAPP_NUMBER}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
-      # Keycloak, et non Authentik : la valeur par défaut décrivait jusqu'ici un
-      # chemin Authentik (/application/o/…) sur le port 9000, alors que le
-      # projet idp/ fait tourner Keycloak sur 9001. Aucun jeton n'aurait pu être
-      # vérifié — et oidc.ts échoue en silence dans ce cas, rejetant tous les
-      # jetons sans distinguer un valide d'un invalide.
-      # `host.docker.internal` et non le nom du conteneur : Keycloak vit dans le
-      # compose du projet idp, sur un autre réseau Docker, donc `idp-keycloak`
-      # ne se résout pas d'ici.
-      KEYCLOAK_REALM_URL: ${KEYCLOAK_REALM_URL:-http://host.docker.internal:9001/realms/maisonnettev2}
-      GOOGLE_SERVICE_ACCOUNT_KEY_PATH: ${GOOGLE_SERVICE_ACCOUNT_KEY_PATH}
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
-      PRIVATE_GOOGLE_CLIENT_ID: ${PRIVATE_GOOGLE_CLIENT_ID}
-      PRIVATE_GOOGLE_CLIENT_SECRET: ${PRIVATE_GOOGLE_CLIENT_SECRET}
-      PRIVATE_GOOGLE_REDIRECT_URI: ${PRIVATE_GOOGLE_REDIRECT_URI}
-      PRIVATE_GITE_CALENDAR_ID: ${PRIVATE_GITE_CALENDAR_ID}
-      PUBLIC_CALENDAR_ID: ${PUBLIC_CALENDAR_ID}
-      SENTRY_DSN: ${SENTRY_DSN}
-      SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-development}
-      JWT_SECRET: ${JWT_SECRET}
-      OWNER_EMAIL: ${OWNER_EMAIL}
-      OWNER_PHONE: ${OWNER_PHONE}
+      # ── Configuration ──────────────────────────────────────────────
+      # Écrite ici, versionnée, relue en revue. Ces valeurs ne sont pas
+      # secrètes : les cacher dans un fichier local les faisait diverger d'une
+      # machine à l'autre sans que rien ne le signale.
+      NODE_ENV: development
+      PORT: 3001
+      DB_USER: maisonnettev2
+      DB_NAME: maisonnettev2
+      SENTRY_ENVIRONMENT: development
+      OWNER_EMAIL: contact@maisonnette-pecheur-bertheaume.fr
+      OWNER_PHONE: '+33781103889'
+      # Realm applicatif, jamais `master` : ce dernier est celui de
+      # l'administration de Keycloak. `host.docker.internal` car Keycloak vit
+      # dans le compose du projet idp, sur un autre réseau Docker.
+      KEYCLOAK_REALM_URL: http://host.docker.internal:9001/realms/maisonnettev2
+      # Identifiant OAuth public : il figure déjà dans l'authUrl que renvoie
+      # /api/calendar, le traiter en secret n'apportait rien.
+      PRIVATE_GOOGLE_CLIENT_ID: 775094963614-ajspquocfsq0e5qpnlfm0leniia83iij.apps.googleusercontent.com
+      PRIVATE_GOOGLE_REDIRECT_URI: http://localhost:3001/api/calendar/callback
+      PUBLIC_CALENDAR_ID: ${PUBLIC_CALENDAR_ID:-}
+      TWILIO_WHATSAPP_NUMBER: ${TWILIO_WHATSAPP_NUMBER:-}
+      MESSAGES_AUTO: 'false'
+
+      # ── Secrets ────────────────────────────────────────────────────
+      # Jamais de valeur par défaut : `:?` fait échouer docker compose avec un
+      # message clair plutôt que de démarrer sur une chaîne vide. Ils vivent
+      # dans .env, hors du dépôt.
+      DATABASE_URL: postgresql://maisonnettev2:${DB_PASSWORD:?DB_PASSWORD manquant — voir .env.example}@postgres-maisonnettev2:5432/maisonnettev2
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET manquant — voir .env.example}
+      # Facultatifs : absents, la fonctionnalité correspondante se tait.
+      PRIVATE_GOOGLE_CLIENT_SECRET: ${PRIVATE_GOOGLE_CLIENT_SECRET:-}
+      PRIVATE_GITE_CALENDAR_ID: ${PRIVATE_GITE_CALENDAR_ID:-}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
     ports:
-      - "${PORT:-3001}:3001"
+      - "3001:3001"
     depends_on:
       postgres-maisonnettev2:
         condition: service_healthy
@@ -75,14 +84,24 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.nginx
+      # SvelteKit fige ces valeurs dans le paquet construit : elles doivent
+      # arriver ici, pas dans `environment` qui n'agit qu'au démarrage.
+      args:
+        # C'est le navigateur qui suit cette URL : localhost, jamais un nom de
+        # conteneur. Realm applicatif, jamais `master`.
+        PUBLIC_AUTH_URL: http://localhost:9001
+        PUBLIC_AUTH_REALM: maisonnettev2
+        PUBLIC_AUTH_CLIENT_ID: maisonnettev2-frontend
     container_name: maisonnettev2-frontend
     environment:
-      PRIVATE_GITE_CALENDAR_ID: ${PRIVATE_GITE_CALENDAR_ID}
-      PRIVATE_GOOGLE_CLIENT_ID: ${PRIVATE_GOOGLE_CLIENT_ID}
-      PRIVATE_GOOGLE_CLIENT_SECRET: ${PRIVATE_GOOGLE_CLIENT_SECRET}
-      PRIVATE_GOOGLE_REDIRECT_URI: ${PRIVATE_GOOGLE_REDIRECT_URI}
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
-      PUBLIC_CALENDAR_ID: ${PUBLIC_CALENDAR_ID}
+      # Configuration
+      PRIVATE_GOOGLE_CLIENT_ID: 775094963614-ajspquocfsq0e5qpnlfm0leniia83iij.apps.googleusercontent.com
+      PRIVATE_GOOGLE_REDIRECT_URI: http://localhost:3001/api/calendar/callback
+      # Secrets, tous facultatifs ici
+      PRIVATE_GOOGLE_CLIENT_SECRET: ${PRIVATE_GOOGLE_CLIENT_SECRET:-}
+      PRIVATE_GITE_CALENDAR_ID: ${PRIVATE_GITE_CALENDAR_ID:-}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      PUBLIC_CALENDAR_ID: ${PUBLIC_CALENDAR_ID:-}
     ports:
       - "5173:5173"
     depends_on:
@@ -109,7 +128,7 @@ services:
     environment:
       # `search_path` est le seul mécanisme par lequel alo choisit son schéma :
       # rien dans son code Python ne le qualifie.
-      DATABASE_URL: postgresql+psycopg2://${DB_USER:-maisonnettev2}:${DB_PASSWORD}@postgres-maisonnettev2:5432/${DB_NAME:-maisonnettev2}?options=-csearch_path%3Dalo
+      DATABASE_URL: postgresql+psycopg2://maisonnettev2:${DB_PASSWORD:?DB_PASSWORD manquant — voir .env.example}@postgres-maisonnettev2:5432/maisonnettev2?options=-csearch_path%3Dalo
       API_HOST: 0.0.0.0
       API_PORT: 8000
       ENVIRONMENT: production
@@ -165,11 +184,11 @@ services:
       dockerfile: tests/Dockerfile
     container_name: maisonnettev2-tests
     environment:
-      DB_USER: ${DB_USER:-maisonnettev2}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME:-maisonnettev2}
+      DB_USER: maisonnettev2
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD manquant — voir .env.example}
+      DB_NAME: maisonnettev2
       DB_HOST: postgres-maisonnettev2
-      NODE_ENV: ${NODE_ENV:-development}
+      NODE_ENV: development
       VITE_API_URL: http://backend:3001
     depends_on:
       backend:

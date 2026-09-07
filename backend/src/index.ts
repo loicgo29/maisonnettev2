@@ -4,6 +4,11 @@ import dotenv from 'dotenv';
 // viennent de docker-compose et .env est absent.
 dotenv.config();
 
+// Importée avant tout le reste : la validation doit arrêter le démarrage avant
+// qu'un routeur n'instancie Prisma ou n'ouvre une connexion sur une
+// configuration incohérente.
+import { config } from './config.js';
+
 import express from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -24,7 +29,7 @@ import { errorHandler } from './middleware/error.js';
 import { demarrerPlanificateurMessages } from './jobs/messagesSejour.job.js';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = config.PORT;
 
 // Middleware
 app.use(helmet());
@@ -70,7 +75,7 @@ app.use('/api/backoffice', backofficeRouter);
 // reste hébergé à la maison : monter ces routes y produirait des 500 sur des
 // endpoints qui ne peuvent rien servir, et exposerait publiquement la surface
 // d'une application de comptabilité familiale.
-if (process.env.ALO_ENABLED === 'true') {
+if (config.ALO_ENABLED) {
   app.use('/api/alo', aloRouter);
   console.log('🧮 Module alo monté sur /api/alo');
 }
