@@ -147,7 +147,7 @@ jobs:
           # bâtit une fois, sur des machines faites pour ça.
           echo "📥 Récupération des images publiées par la CI..."
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker compose --env-file .env -f docker-compose.prod.yml pull backend backoffice
+          docker compose --env-file .env -f docker-compose.prod.yml pull backend backoffice alo-backend alo-frontend
 
           echo ""
           echo "🚀 Starting services..."
