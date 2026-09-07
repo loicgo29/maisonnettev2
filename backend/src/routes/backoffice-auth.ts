@@ -23,6 +23,32 @@ const LoginSchema = z.object({
 
 type LoginRequest = z.infer<typeof LoginSchema>;
 
+const DUREE_SESSION_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Options du cookie de session, partagées entre la pose et l'effacement.
+ *
+ * Les deux doivent coïncider exactement : un `clearCookie` dont le Domain
+ * diffère n'efface rien, et la déconnexion ne déconnecte alors personne.
+ */
+function cookieSession(req: Request) {
+  const hote = req.hostname;
+  // La spécification n'autorise pas d'attacher un domaine à une adresse IP ;
+  // le cookie serait rejeté en silence.
+  const estAdresseIP = /^[\d.]+$/.test(hote) || hote.includes(':');
+
+  return {
+    httpOnly: true,
+    // `req.secure` dépend de X-Forwarded-Proto, d'où le `trust proxy` du
+    // serveur : Caddy termine le TLS, le backend ne voit que du clair.
+    secure: req.secure,
+    sameSite: 'strict' as const,
+    path: '/',
+    maxAge: DUREE_SESSION_MS,
+    ...(estAdresseIP ? {} : { domain: hote.replace(/^www\./, '') }),
+  };
+}
+
 interface AuthResponse {
   success: boolean;
   token?: string;
@@ -88,6 +114,17 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
       JWT_SECRET_VALUE,
       { expiresIn: JWT_EXPIRY }
     );
+
+    // Le cookie est posé ici, et non par `document.cookie` côté navigateur :
+    // écrit en JavaScript, il était forcément lisible en JavaScript, donc une
+    // faille XSS quelque part dans l'application suffisait à emporter la
+    // session. HttpOnly le rend invisible aux scripts de la page.
+    //
+    // L'attribut Domain reste nécessaire pour qu'il accompagne les requêtes
+    // vers alo, sur son sous-domaine. C'est ce qui interdit le préfixe
+    // `__Host-`, que la spécification réserve aux cookies sans Domain :
+    // partage entre sous-domaines et durcissement maximal s'excluent.
+    res.cookie('backoffice_token', token, cookieSession(req));
 
     res.json({
       success: true,
@@ -161,20 +198,13 @@ router.post('/verify', (req: Request, res: Response): void => {
  * Logout (clear token cookie on backend)
  */
 router.post('/logout', (req: Request, res: Response): void => {
-  // Le cookie est posé avec un attribut Domain pour couvrir les sous-domaines
-  // (alo). Un clearCookie sans ce même Domain ne l'efface pas : le navigateur
-  // conserverait la session et la déconnexion ne déconnecterait rien.
-  // On efface donc les deux variantes, celle avec domaine et celle sans, pour
-  // couvrir aussi les sessions ouvertes avant ce changement.
+  // Les options doivent correspondre exactement à celles de la pose, Domain
+  // compris : sinon le navigateur conserve le cookie et la déconnexion ne
+  // déconnecte rien. La variante sans domaine efface en plus les sessions
+  // ouvertes avant que le cookie ne devienne un cookie de domaine.
+  const { maxAge: _ignore, ...options } = cookieSession(req);
+  res.clearCookie('backoffice_token', options);
   res.clearCookie('backoffice_token', { path: '/' });
-
-  const hote = req.hostname;
-  if (hote && !/^[\d.]+$/.test(hote) && !hote.includes(':')) {
-    res.clearCookie('backoffice_token', {
-      path: '/',
-      domain: hote.replace(/^www\./, ''),
-    });
-  }
 
   res.json({ success: true });
 });

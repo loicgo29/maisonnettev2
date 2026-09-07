@@ -35,6 +35,13 @@ if (!REALM_URL) {
 
 const JWKS_URL = `${REALM_URL}/protocol/openid-connect/certs`;
 
+// L'émetteur annoncé dans les jetons peut différer de l'URL par laquelle on
+// joint Keycloak : en développement le conteneur passe par
+// `host.docker.internal` tandis que Keycloak se nomme `localhost`. Comparer
+// l'un à l'autre rejetterait tous les jetons, valides compris.
+// En production les deux coïncident, la variable est alors superflue.
+const ISSUER = process.env.KEYCLOAK_ISSUER || REALM_URL;
+
 let cachedJWKSet: ReturnType<typeof createRemoteJWKSet> | null = null;
 
 async function getJWKSet() {
@@ -62,7 +69,13 @@ export async function verifyOIDCToken(req: AuthRequest, res: Response, next: Nex
       const jwkSet = await getJWKSet();
       console.log('[OIDC] JWKS loaded, verifying token...');
 
-      const verified = await jwtVerify(token, jwkSet);
+      // L'émetteur est vérifié, et pas seulement la signature : sans ce
+      // contrôle, un jeton signé par les mêmes clés mais émis pour un autre
+      // realm — ou par un autre client du même serveur — serait accepté ici.
+      // Une signature valide ne dit pas pour qui le jeton a été fabriqué.
+      const verified = await jwtVerify(token, jwkSet, {
+        issuer: ISSUER,
+      });
       console.log('[OIDC] Token verified successfully:', { sub: verified.payload.sub });
 
       // Attach decoded token payload to request

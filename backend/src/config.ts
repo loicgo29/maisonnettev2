@@ -61,6 +61,11 @@ const Schema = z.object({
     )
     .optional(),
 
+  // Émetteur attendu dans les jetons, quand il diffère de l'URL de contact —
+  // le cas en développement, où Keycloak s'annonce en `localhost` alors que le
+  // conteneur le joint par `host.docker.internal`.
+  KEYCLOAK_ISSUER: z.string().url().optional(),
+
   // ---- Contacts du gîte (configuration, pas des secrets) ---------------
   OWNER_EMAIL: z.string().email().optional(),
   OWNER_PHONE: z.string().optional(),

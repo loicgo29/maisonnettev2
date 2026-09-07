@@ -31,6 +31,11 @@ import { demarrerPlanificateurMessages } from './jobs/messagesSejour.job.js';
 const app = express();
 const PORT = config.PORT;
 
+// Caddy termine le TLS et relaie en clair : sans cette ligne, `req.secure` est
+// toujours faux et le cookie de session partirait sans l'attribut Secure, même
+// en HTTPS. Une seule couche de proxy, d'où le 1.
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(helmet());
 app.use(express.json());

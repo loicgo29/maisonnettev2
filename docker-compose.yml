@@ -41,6 +41,10 @@ services:
       # l'administration de Keycloak. `host.docker.internal` car Keycloak vit
       # dans le compose du projet idp, sur un autre réseau Docker.
       KEYCLOAK_REALM_URL: http://host.docker.internal:9001/realms/maisonnettev2
+      # Keycloak s'annonce en `localhost` dans les jetons qu'il émet, alors que
+      # le conteneur le joint par `host.docker.internal`. Sans cette précision,
+      # le contrôle de l'émetteur rejetterait tous les jetons, valides compris.
+      KEYCLOAK_ISSUER: http://localhost:9001/realms/maisonnettev2
       # Identifiant OAuth public : il figure déjà dans l'authUrl que renvoie
       # /api/calendar, le traiter en secret n'apportait rien.
       PRIVATE_GOOGLE_CLIENT_ID: 775094963614-ajspquocfsq0e5qpnlfm0leniia83iij.apps.googleusercontent.com
