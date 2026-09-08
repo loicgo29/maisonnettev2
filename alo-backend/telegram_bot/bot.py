@@ -21,6 +21,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# httpx logge l'URL complète de chaque requête à INFO, ce qui expose le token du bot
+# (l'URL Telegram Bot API l'inclut : /bot<TOKEN>/methode) dans les logs à chaque appel.
+# Réduit à WARNING pour éviter de le réexposer à chaque démarrage/requête.
+logging.getLogger("httpx").setLevel(logging.WARNING)
+
 
 def main():
     """Démarre le bot avec polling."""
