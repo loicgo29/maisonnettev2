@@ -26,11 +26,12 @@ GROUP_LOIC = -4118780090              # Alo Dépenses Loïc
 # Le port 8000 de maisonnettev2-alo-backend n'est PAS exposé sur l'hôte (accès réseau Docker
 # interne uniquement, via Caddy en production). Ce script utilise Telethon (authentification
 # interactive, code SMS) donc ne peut pas tourner dans un container sans TTY facilement :
-# lancer un tunnel ponctuel avant utilisation, ex.
-#   docker run --rm --network maisonnettev2_maisonnettev2-net -p 8000:8000 alpine/socat \
-#     TCP-LISTEN:8000,fork TCP:alo-backend:8000
-# puis exécuter ce script normalement depuis l'hôte.
-API_URL = "http://localhost:8000/api"
+# lancer un tunnel ponctuel avant utilisation (port hôte 8099 car 8000 déjà pris par un autre
+# tunnel SSH sur cette machine), ex.
+#   docker run -d --rm --name alo-tunnel --network maisonnettev2_maisonnettev2-net \
+#     -p 127.0.0.1:8099:8000 alpine/socat TCP-LISTEN:8000,fork,reuseaddr TCP:alo-backend:8000
+# puis exécuter ce script normalement depuis l'hôte. Penser à `docker stop alo-tunnel` après usage.
+API_URL = "http://localhost:8099/api"
 
 # Mapping groupe → compte
 GROUP_TO_ACCOUNT = {
