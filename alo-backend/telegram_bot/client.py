@@ -1,14 +1,20 @@
 import httpx
 import asyncio
+import os
 from typing import Optional
 from datetime import date
 
 
 class APIClient:
-    """Client HTTP vers l'API FastAPI pour importer des dépenses."""
+    """Client HTTP vers l'API FastAPI pour importer des dépenses.
 
-    def __init__(self, base_url: str = "http://localhost:8000"):
-        self.base_url = base_url
+    base_url par défaut lu depuis API_BASE_URL (nécessaire quand le bot tourne dans
+    son propre container, séparé de l'API — voir service alo-telegram-bot). Retombe
+    sur localhost:8000 pour un usage local hors Docker.
+    """
+
+    def __init__(self, base_url: Optional[str] = None):
+        self.base_url = base_url or os.getenv("API_BASE_URL", "http://localhost:8000")
 
     async def import_telegram_expense(
         self,

@@ -155,6 +155,27 @@ services:
     networks:
       - maisonnettev2-net
 
+  # Bot Telegram alo — process séparé (même image que alo-backend, commande différente).
+  # Migré depuis le repo alo standalone le 2026-09-08 (voir CLAUDE.md alo-backend et
+  # mémoire auto migration_base_alo_vers_maisonnettev2). Poste les dépenses via l'API
+  # interne (alo-backend:8000/api/imports/telegram), pas d'accès direct à la base.
+  alo-telegram-bot:
+    build:
+      context: ./alo-backend
+      dockerfile: Dockerfile
+    container_name: maisonnettev2-alo-telegram-bot
+    command: ['uv', 'run', 'python', '-m', 'telegram_bot.bot']
+    restart: unless-stopped
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:?TELEGRAM_BOT_TOKEN manquant — voir .env.example}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+      API_BASE_URL: http://alo-backend:8000
+    depends_on:
+      alo-backend:
+        condition: service_healthy
+    networks:
+      - maisonnettev2-net
+
   alo-frontend:
     build:
       context: ./alo-frontend

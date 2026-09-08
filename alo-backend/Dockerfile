@@ -15,6 +15,10 @@ RUN uv sync --frozen --no-install-project --no-dev
 COPY app ./app
 COPY alembic ./alembic
 COPY data ./data
+# Bot Telegram (process séparé, lancé via `command:` différent dans docker-compose —
+# voir service alo-telegram-bot). Même image que l'API pour éviter de dupliquer les
+# dépendances Python.
+COPY telegram_bot ./telegram_bot
 RUN echo "Rebuilt at $(date)"
 
 RUN uv sync --frozen --no-dev

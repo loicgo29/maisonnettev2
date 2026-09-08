@@ -26,6 +26,16 @@ Le dépôt `alo` original n'est plus la source de vérité pour ce code.
   ne le qualifie explicitement.
 - Migrations : Alembic (`alembic/`), comme avant.
 
+**`postgres-maisonnettev2` est la seule source de vérité depuis le 2026-09-08** (voir mémoire
+auto `migration_base_alo_vers_maisonnettev2`). Avant cette date, deux containers FastAPI
+tournaient en parallèle sur deux bases différentes (`postgres-shared`/base `logo` pour l'ancien
+repo standalone, `postgres-maisonnettev2` pour ce dossier) — source de confusion et de risque de
+divergence. Les anciens containers standalone (`alo-backend`, `alo-frontend`, pointant vers
+`postgres-shared`) ont été **arrêtés** (`docker stop`, pas supprimés) après avoir vérifié
+l'équivalence des données et nettoyé 18 lignes de test injectées par
+`tests/alo-api-workflow.spec.ts` dans `postgres-maisonnettev2`. Ne pas les relancer sans raison —
+ça recréerait la divergence.
+
 ## Quick Start (dev local, hors Docker)
 
 ```bash
@@ -127,12 +137,27 @@ une règle.
 
 ## Bot Telegram
 
-- Processus séparé d'uvicorn (évite les conflits de boucle asyncio)
-- Poste vers `http://localhost:8000/api/imports/telegram`
+**Migré et déployé le 2026-09-08** (voir mémoire auto `migration_base_alo_vers_maisonnettev2` et
+`objectif_repo_unique_maisonnettev2`). Service Docker séparé dans `docker-compose.yml` racine :
+`alo-telegram-bot` (container `maisonnettev2-alo-telegram-bot`), même image que `alo-backend`
+(le `Dockerfile` copie aussi `telegram_bot/`), commande différente
+(`uv run python -m telegram_bot.bot`).
+
+- Code : `telegram_bot/` à la racine du dossier (pas `app/telegram_bot/`, voir doublon ci-dessous)
+- Poste vers `http://alo-backend:8000/api/imports/telegram` (réseau Docker interne,
+  `client.py` lit l'URL depuis `API_BASE_URL`, pas de valeur en dur)
 - Formats acceptés : "Lidl 47.30", "47,50 Courses", "Transport - 12€"
-- Non déployé dans l'intégration maisonnettev2 actuelle (pas de service bot
-  dans le compose) — le code reste présent (`telegram_bot/`) pour un usage
-  local futur ou une réintégration.
+- Secret (`TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID`) dans Bitwarden : item `alo-telegram-bot`,
+  dossier `logo-prod` — voir mémoire auto `bitwarden_alo_telegram_bot`. Recopié dans
+  `maisonnettev2/.env` (variables consommées par le service).
+- ⚠️ Le token initial a été exposé dans les logs `httpx` du container (`docker logs`) — à
+  régénérer via @BotFather dès que possible, puis mettre à jour Bitwarden + `.env`.
+
+**Doublon nettoyé le 2026-09-08** : `app/telegram_bot/bot_main.py` et `get_group_ids.py` étaient
+une version obsolète (parsing dupliqué, 2 groupes en dur) — archivés en `.old` (pas supprimés).
+Seul `app/telegram_bot/import_history.py` reste utile (import Telethon de l'historique complet,
+usage ponctuel manuel — voir commentaire dans le fichier pour le contournement réseau nécessaire,
+le port 8000 n'étant pas exposé sur l'hôte).
 
 ## Pièges connus
 

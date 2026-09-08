@@ -22,8 +22,15 @@ GROUP_ALICE_QUOTEPART = -5164479851   # Alo Quote Part (Alice)
 GROUP_ALICE_5050 = -5151201098        # Alo 50/50 (Alice)
 GROUP_LOIC = -4118780090              # Alo Dépenses Loïc
 
-# API ALO
-API_URL = "http://localhost:8021/api"
+# API ALO — migré vers maisonnettev2 le 2026-09-08 (ancien port standalone 8021 abandonné).
+# Le port 8000 de maisonnettev2-alo-backend n'est PAS exposé sur l'hôte (accès réseau Docker
+# interne uniquement, via Caddy en production). Ce script utilise Telethon (authentification
+# interactive, code SMS) donc ne peut pas tourner dans un container sans TTY facilement :
+# lancer un tunnel ponctuel avant utilisation, ex.
+#   docker run --rm --network maisonnettev2_maisonnettev2-net -p 8000:8000 alpine/socat \
+#     TCP-LISTEN:8000,fork TCP:alo-backend:8000
+# puis exécuter ce script normalement depuis l'hôte.
+API_URL = "http://localhost:8000/api"
 
 # Mapping groupe → compte
 GROUP_TO_ACCOUNT = {
