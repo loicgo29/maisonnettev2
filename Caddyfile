@@ -134,6 +134,11 @@ alo.{$DOMAIN} {
 		reverse_proxy backoffice:5173
 	}
 
+	# Admin (réservations/messages) — redirige vers Keycloak OAuth
+	handle /admin* {
+		reverse_proxy backoffice:5173
+	}
+
 	# Ressources internes de SvelteKit : servies depuis le même conteneur,
 	# sinon les pages du backoffice arrivent sans style ni JavaScript.
 	handle /_app/* {
