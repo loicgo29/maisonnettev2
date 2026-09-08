@@ -36,9 +36,16 @@ env/
 *.db
 *.sqlite
 *.sqlite3
-data/
+# `data/*` et non `data/` : un dossier exclu ne peut plus être re-inclus par
+# les négations ci-dessous, git ne le traverse même pas pour les évaluer.
+# C'est ce qui a fait passer categorization_rules.yaml et
+# label_category_rules.json à travers les mailles du premier commit — la CI
+# les cherchait dans l'image, absents, catégorisation systématiquement
+# "divers".
+data/*
 !data/.gitkeep
 !data/categorization_rules.yaml
+!data/label_category_rules.json
 
 # Environment variables
 .env

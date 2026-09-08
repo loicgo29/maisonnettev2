@@ -1,0 +1,8 @@
+{
+  "_comment": "Associations apprises: label_keyword → catégorie. Ex: 'lidl' → 'quotepart'",
+  "lidl": "quotepart",
+  "leclerc": "quotepart",
+  "carrefour": "quotepart",
+  "intermarche": "quotepart",
+  "marche": "50/50"
+}

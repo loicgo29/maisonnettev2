@@ -1,0 +1,224 @@
+# Règles de catégorisation des dépenses
+# Format : keywords et regex patterns par catégorie
+# La première correspondance gagne
+
+alimentation:
+  keywords:
+    - lidl
+    - carrefour
+    - casino
+    - monoprix
+    - franprix
+    - auchan
+    - leclerc
+    - intermarché
+    - marché
+    - boucherie
+    - boulangerie
+    - fruit
+    - légume
+    - courses
+    - épicerie
+    - supermarché
+    - biocoop
+    - la fourche
+    - poisson
+    - magasin vert
+    - pain
+    - boulange
+    - carole
+    - weightworld
+    - sunday
+    - pourboire
+    - navette
+    - alsa
+  regex:
+    - 'resto|restaurant|café|pizza|burger'
+    - 'food|fridge'
+    - 'boulang|boulange'
+    - 'carole'
+
+logement:
+  keywords:
+    - loyer
+    - rent
+    - eau
+    - gaz
+    - électricité
+    - électrique
+    - edf
+    - engie
+    - veolia
+    - internet
+    - téléphone
+    - assurance
+    - hypothèque
+    - charges
+    - copropriété
+  regex:
+    - '(loyer|rent)'
+    - '(gaz|électricité|énergie)'
+
+enfants:
+  keywords:
+    - école
+    - crèche
+    - garderie
+    - classe
+    - livre
+    - jouet
+    - jeu
+    - cantine
+    - activité
+    - sport
+    - pédiatrie
+    - pédiatre
+    - enfant
+    - bébé
+    - couche
+    - biberon
+    - lait
+  regex:
+    - '(école|scolarité)'
+    - '(crèche|garderie)'
+    - '(maternelle|primaire|collège|lycée)'
+
+transport:
+  keywords:
+    - essence
+    - carburant
+    - diesel
+    - gazole
+    - parking
+    - péage
+    - sncf
+    - ratp
+    - bus
+    - métro
+    - vélo
+    - voiture
+    - taxi
+    - uber
+    - lyft
+    - autoroute
+    - essence
+  regex:
+    - '(essence|carburant)'
+    - '(parking|péage)'
+    - '(bus|métro|tram|train)'
+
+loisirs:
+  keywords:
+    - cinéma
+    - théâtre
+    - musée
+    - parc
+    - concert
+    - sport
+    - gym
+    - fitness
+    - activité
+    - jeu
+    - livre
+    - dvd
+    - cd
+    - streaming
+    - netflix
+    - spotify
+    - vacances
+    - hôtel
+    - airbnb
+    - stricot
+    - tricot
+    - tricotage
+  regex:
+    - '(cinema|cinéma)'
+    - '(théâtre|theater)'
+    - '(musée|museum)'
+    - '(hôtel|hotel)'
+    - '(tricot|tricotage)'
+
+sante:
+  keywords:
+    - pharmacie
+    - médicament
+    - médecin
+    - docteur
+    - dentiste
+    - ophtalmologue
+    - hôpital
+    - clinique
+    - cabinet
+    - ordonnance
+    - visite
+    - consultation
+    - secu
+    - mutuelle
+    - assurance maladie
+    - vitamines
+    - naturitas
+    - aromazone
+    - aromathérapie
+    - compléments
+  regex:
+    - '(pharmacie|pharmaceutical)'
+    - '(médecin|docteur|doctor)'
+    - '(dentiste|dentist)'
+    - '(vitamine|aromathérapie)'
+
+brico:
+  keywords:
+    - brico
+    - bricolage
+    - outils
+    - construction
+    - matériaux
+    - quincaillerie
+    - bois
+    - vis
+    - clou
+    - peinture
+    - tuile
+    - briques
+    - portes
+    - fenêtres
+    - leroy merlin
+    - leroymerlin
+  regex:
+    - '(bricolage|brico)'
+    - '(outils|quincaillerie)'
+    - '(peinture|vernis)'
+    - 'leroy'
+
+quotepart:
+  keywords:
+    - tonio
+    - shitaque
+    - savez-vous
+    - gie douar
+    - kerbio
+    - farine
+    - graine de bio
+    - la fourche
+    - poisson viande
+  regex: []
+
+trop_plein:
+  keywords:
+    - trop plein
+  regex: []
+
+regule_periode:
+  keywords:
+    - vir gel
+  regex: []
+
+virement:
+  keywords:
+    - vir
+  regex:
+    - '^vir\s'
+
+divers:
+  keywords: []
+  regex: []
