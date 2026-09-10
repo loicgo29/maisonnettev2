@@ -15,7 +15,7 @@ export function urlAlo(url: URL): string {
 }
 
 /** Destination de repli quand alo n'est pas déployé sur cet environnement. */
-export const REPLI_APRES_CONNEXION = '/backoffice/meals';
+export const REPLI_APRES_CONNEXION = '/backoffice';
 
 /**
  * Où envoyer l'utilisateur après une connexion réussie.

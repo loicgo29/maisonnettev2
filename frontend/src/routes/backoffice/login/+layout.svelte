@@ -16,8 +16,8 @@
 				});
 
 				if (response.ok) {
-					// Déjà authentifié, rediriger
-					await goto('/backoffice/meals');
+					// Déjà authentifié, rediriger vers dashboard
+					await goto('/backoffice');
 					return;
 				}
 			} catch (error) {
