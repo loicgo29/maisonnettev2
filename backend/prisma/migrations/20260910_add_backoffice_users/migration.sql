@@ -7,7 +7,7 @@ CREATE TABLE "BackofficeUser" (
     "role" TEXT NOT NULL DEFAULT 'staff',
     "active" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "lastLogin" TIMESTAMP(3),
 
     CONSTRAINT "BackofficeUser_pkey" PRIMARY KEY ("id")
