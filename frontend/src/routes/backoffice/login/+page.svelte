@@ -39,11 +39,8 @@
 
 			await invalidateAll();
 
-			// alo est la destination par défaut, avec repli sur le backoffice là
-			// où il n'est pas déployé. On passe par `location.href` et non par la
-			// navigation de SvelteKit : alo vit sur un autre sous-domaine, que le
-			// routeur interne ne sait pas atteindre.
-			location.href = await destinationApresConnexion(new URL(location.href));
+			// Rediriger vers le backoffice dashboard (gestion des messages/relances)
+			location.href = '/backoffice';
 		} catch (err) {
 			console.error('[Login] Error:', err);
 			error = 'Connection error: ' + (err instanceof Error ? err.message : 'Unknown error');
