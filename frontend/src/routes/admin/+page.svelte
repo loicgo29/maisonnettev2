@@ -1,102 +1,132 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { apiAdmin, ErreurAccesRefuse } from '$lib/apiAdmin';
+	import { page } from '$app/stores';
+	import { deconnexion, chargeUtile, jeton } from '$lib/auth';
 
-	let donnees: any = $state(null);
-	let erreur = $state('');
-	let chargement = $state(true);
-
-	onMount(async () => {
-		try {
-			donnees = await apiAdmin.tableauDeBord();
-		} catch (e) {
-			erreur = e instanceof ErreurAccesRefuse ? e.message : 'Impossible de charger le tableau de bord';
-		} finally {
-			chargement = false;
-		}
+	let nomUtilisateur = $derived.by(() => {
+		const t = jeton();
+		return t ? (chargeUtile(t)?.preferred_username ?? chargeUtile(t)?.email ?? 'Admin') : 'Admin';
 	});
-
-	function formatDate(d: string) {
-		return new Date(d).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
-	}
 </script>
 
-<h1>Tableau de bord</h1>
-
-{#if chargement}
-	<p>Chargement…</p>
-{:else if erreur}
-	<p class="erreur">{erreur}</p>
-{:else if donnees}
-	{#if !donnees.envoiAutomatique}
-		<p class="bandeau">
-			Envoi automatique désactivé : les messages sont planifiés mais n'attendent que ton clic dans
-			<a href="/admin/messages">Messages</a>.
-		</p>
-	{/if}
-
-	<div class="cartes">
-		<div class="carte">
-			<span class="nombre">{donnees.reservationsActives}</span>
-			<span class="libelle">réservations actives</span>
-		</div>
-		<div class="carte">
-			<span class="nombre">{donnees.messagesEnAttente}</span>
-			<span class="libelle">messages à envoyer</span>
+<div class="dashboard">
+	<div class="header">
+		<h1>🏠 Maisonnette Pécheur Bértheaume</h1>
+		<div class="user-info">
+			<span>Connecté: <strong>{nomUtilisateur}</strong></span>
+			<button on:click={deconnexion} class="btn-logout">Déconnexion</button>
 		</div>
 	</div>
 
-	<h2>Arrivées à venir (30 jours)</h2>
-	{#if donnees.arrivees.length === 0}
-		<p class="vide">Aucune arrivée prévue.</p>
-	{:else}
-		<table>
-			<thead>
-				<tr><th>Client</th><th>Plateforme</th><th>Arrivée</th><th>Départ</th></tr>
-			</thead>
-			<tbody>
-				{#each donnees.arrivees as r}
-					<tr>
-						<td><a href="/admin/reservations/{r.id}">{r.clientPrenom} {r.clientNom}</a></td>
-						<td>{r.plateforme}</td>
-						<td>{formatDate(r.dateDebut)}</td>
-						<td>{formatDate(r.dateFin)}</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	{/if}
-{/if}
+	<div class="content">
+		<h2>Administration</h2>
+		<div class="links-grid">
+			<a href="/admin/reservations" class="link-card">
+				<div class="icon">📅</div>
+				<h3>Réservations</h3>
+				<p>Gérer les réservations et les messages des clients</p>
+			</a>
+
+			<a href="/admin/messages" class="link-card">
+				<div class="icon">📬</div>
+				<h3>Messages</h3>
+				<p>Gérer les messages et les relances de paiement</p>
+			</a>
+		</div>
+	</div>
+</div>
 
 <style>
-	h1 { margin-bottom: 1rem; }
-	.bandeau {
-		background: #fef3c7;
-		border: 1px solid #fcd34d;
-		border-radius: 6px;
-		padding: 0.75rem 1rem;
-		margin-bottom: 1.5rem;
-		font-size: 0.9rem;
+	.dashboard {
+		min-height: 100vh;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+			sans-serif;
 	}
-	.cartes {
+
+	.header {
+		background: rgba(255, 255, 255, 0.95);
+		padding: 1.5rem 2rem;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	}
+
+	h1 {
+		margin: 0;
+		font-size: 1.8rem;
+		color: #333;
+	}
+
+	.user-info {
 		display: flex;
 		gap: 1rem;
+		align-items: center;
+		color: #666;
+	}
+
+	.btn-logout {
+		padding: 0.5rem 1rem;
+		background: #667eea;
+		color: white;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 0.9rem;
+		font-weight: 500;
+	}
+
+	.btn-logout:hover {
+		background: #764ba2;
+	}
+
+	.content {
+		max-width: 1000px;
+		margin: 2rem auto;
+		padding: 0 1rem;
+	}
+
+	h2 {
+		color: white;
+		font-size: 1.5rem;
 		margin-bottom: 2rem;
 	}
-	.carte {
-		background: white;
-		border-radius: 8px;
-		padding: 1.25rem 1.5rem;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-		display: flex;
-		flex-direction: column;
+
+	.links-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 1.5rem;
 	}
-	.nombre { font-size: 2rem; font-weight: 700; color: #14532d; }
-	.libelle { color: #6b7280; font-size: 0.9rem; }
-	table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
-	th, td { text-align: left; padding: 0.6rem 1rem; border-bottom: 1px solid #e5e7eb; }
-	th { background: #f3f4f6; font-size: 0.85rem; color: #6b7280; }
-	td a { color: #14532d; text-decoration: none; font-weight: 500; }
-	.vide { color: #9ca3af; }
-	.erreur { color: #b91c1c; }
+
+	.link-card {
+		background: white;
+		padding: 2rem;
+		border-radius: 8px;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		text-decoration: none;
+		color: inherit;
+		transition: transform 0.2s, box-shadow 0.2s;
+	}
+
+	.link-card:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+	}
+
+	.icon {
+		font-size: 2.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.link-card h3 {
+		margin: 0 0 0.5rem;
+		font-size: 1.3rem;
+		color: #333;
+	}
+
+	.link-card p {
+		margin: 0;
+		color: #666;
+		font-size: 0.95rem;
+	}
 </style>
