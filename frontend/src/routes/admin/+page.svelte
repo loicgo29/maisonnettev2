@@ -6,6 +6,12 @@
 		const t = jeton();
 		return t ? (chargeUtile(t)?.preferred_username ?? chargeUtile(t)?.email ?? 'Admin') : 'Admin';
 	});
+
+	function buildAloLink(): string {
+		const token = jeton();
+		if (!token) return 'https://alo.maisonnette-pecheur-bertheaume.fr/';
+		return `https://alo.maisonnette-pecheur-bertheaume.fr/login?token=${encodeURIComponent(token)}`;
+	}
 </script>
 
 <div class="dashboard">
@@ -32,7 +38,7 @@
 				<p>Gérer les messages et les relances de paiement</p>
 			</a>
 
-			<a href="https://alo.maisonnette-pecheur-bertheaume.fr/" class="link-card">
+			<a href={buildAloLink()} class="link-card">
 				<div class="icon">💶</div>
 				<h3>Comptes ALO</h3>
 				<p>Gérer les comptes et la comptabilité</p>
