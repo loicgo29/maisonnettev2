@@ -141,6 +141,17 @@ jobs:
           # Deploy WITH NO-CACHE to force rebuild with new env vars
           echo "=== DEPLOYING (NO-CACHE, WITH --env-file) ==="
 
+          # Debug: verify .env has JWT_SECRET before docker compose starts
+          echo "🔍 Verifying .env contains JWT_SECRET..."
+          if grep -q "^JWT_SECRET=" .env; then
+            echo "✓ JWT_SECRET found in .env"
+          else
+            echo "❌ JWT_SECRET NOT FOUND in .env - this will cause backend to fail"
+            echo "File contents:"
+            cat .env
+            exit 1
+          fi
+
           # Les images viennent du registre : le serveur n'a que deux cœurs, et
           # les construire ici l'a saturé jusqu'à couper la session SSH en
           # « Broken pipe », laissant un déploiement à moitié fait. La CI les
@@ -162,6 +173,22 @@ jobs:
           # — un bloc ajouté demeure invisible sans que rien ne le signale.
           echo "🔁 Rechargement de la configuration de Caddy..."
           docker compose --env-file .env -f docker-compose.prod.yml up -d --force-recreate caddy
+
+          echo ""
+          echo "⏳ Waiting for backend to be healthy..."
+          for i in {1..30}; do
+            if docker compose --env-file .env -f docker-compose.prod.yml exec -T backend curl -s http://localhost:3001/api/health > /dev/null 2>&1; then
+              echo "✅ Backend is healthy"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "❌ Backend failed to become healthy"
+              docker compose --env-file .env -f docker-compose.prod.yml logs backend | tail -50
+              exit 1
+            fi
+            echo "  Attempt $i/30..."
+            sleep 2
+          done
 
           echo ""
           echo "🗄️ Applying database migrations..."
