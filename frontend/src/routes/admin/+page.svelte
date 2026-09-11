@@ -32,7 +32,7 @@
 				<p>Gérer les messages et les relances de paiement</p>
 			</a>
 
-			<a href="https://alo.backoffice.maisonnette-pecheur-bertheaume.fr/" class="link-card">
+			<a href="https://alo.maisonnette-pecheur-bertheaume.fr/" class="link-card">
 				<div class="icon">💶</div>
 				<h3>Comptes ALO</h3>
 				<p>Gérer les comptes et la comptabilité</p>
