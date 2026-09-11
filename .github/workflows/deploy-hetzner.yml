@@ -38,6 +38,7 @@ jobs:
           KC_DB_PASSWORD: ${{ secrets.KC_DB_PASSWORD }}
           KC_ADMIN_PASSWORD: ${{ secrets.KC_ADMIN_PASSWORD }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         run: |
           # Seuls les secrets sont transmis au serveur : toute la configuration
           # — domaine, realm, contacts, identifiants publics — vit désormais
@@ -54,6 +55,7 @@ jobs:
           RESEND_API_KEY=${{ env.RESEND_API_KEY }}
           KC_DB_PASSWORD=${{ env.KC_DB_PASSWORD }}
           KC_ADMIN_PASSWORD=${{ env.KC_ADMIN_PASSWORD }}
+          TELEGRAM_BOT_TOKEN=${{ env.TELEGRAM_BOT_TOKEN }}
           ENVEOF
 
           echo "✅ .env.production generated"
