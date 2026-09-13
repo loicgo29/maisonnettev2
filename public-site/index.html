@@ -164,6 +164,18 @@
             align-items: center;
             justify-content: center;
         }
+
+        .calendar-grid-wrap { background: white; border-radius: 4px; padding: 1rem; }
+        .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .calendar-nav button { background: #667eea; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+        .calendar-nav button:hover { background: #764ba2; }
+        .calendar-nav h4 { margin: 0; text-transform: capitalize; }
+        .calendar-weekdays, .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.4rem; }
+        .calendar-weekdays { margin-bottom: 0.5rem; font-weight: bold; text-align: center; color: #666; font-size: 0.85rem; }
+        .calendar-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; }
+        .calendar-day.empty { border: none; }
+        .calendar-day.available { background: #d4edda; border-color: #28a745; color: #155724; font-weight: bold; }
+        .calendar-day.unavailable { background: #f8d7da; border-color: #dc3545; color: #721c24; font-weight: bold; }
     </style>
     <!-- METEO-MARINE:HEAD:START -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -262,11 +274,92 @@
             <h2>📅 Disponibilités</h2>
             <div class="calendar-section">
                 <h3>Calendrier en temps réel</h3>
-                <div class="calendar-placeholder">
+                <div id="calendar-placeholder" class="calendar-placeholder">
                     ⏳ Calendrier en cours de chargement...
+                </div>
+                <div id="calendar-grid-wrap" class="calendar-grid-wrap" style="display:none;">
+                    <div class="calendar-nav">
+                        <button id="calendar-prev" type="button">←</button>
+                        <h4 id="calendar-month-label"></h4>
+                        <button id="calendar-next" type="button">→</button>
+                    </div>
+                    <div class="calendar-weekdays">
+                        <div>Lun</div><div>Mar</div><div>Mer</div><div>Jeu</div><div>Ven</div><div>Sam</div><div>Dim</div>
+                    </div>
+                    <div id="calendar-days" class="calendar-days"></div>
                 </div>
                 <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">Le calendrier se met à jour automatiquement. Les dates en vert sont disponibles.</p>
             </div>
+
+            <script>
+              (function () {
+                const placeholder = document.getElementById("calendar-placeholder");
+                const gridWrap = document.getElementById("calendar-grid-wrap");
+                const monthLabel = document.getElementById("calendar-month-label");
+                const daysEl = document.getElementById("calendar-days");
+                let events = [];
+                let current = new Date();
+
+                function dateStr(y, m, d) {
+                  return y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+                }
+
+                function hasEvent(y, m, d) {
+                  const target = dateStr(y, m, d);
+                  return events.some((e) => {
+                    const eventDate = (e.start && (e.start.date || (e.start.dateTime || "").split("T")[0]));
+                    return eventDate === target;
+                  });
+                }
+
+                function render() {
+                  const y = current.getFullYear();
+                  const m = current.getMonth();
+                  monthLabel.textContent = current.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+
+                  const firstDay = (new Date(y, m, 1).getDay() + 6) % 7; // lundi = 0
+                  const daysCount = new Date(y, m + 1, 0).getDate();
+
+                  daysEl.innerHTML = "";
+                  for (let i = 0; i < firstDay; i++) {
+                    const empty = document.createElement("div");
+                    empty.className = "calendar-day empty";
+                    daysEl.appendChild(empty);
+                  }
+                  for (let d = 1; d <= daysCount; d++) {
+                    const cell = document.createElement("div");
+                    const unavailable = hasEvent(y, m, d);
+                    cell.className = "calendar-day " + (unavailable ? "unavailable" : "available");
+                    cell.textContent = String(d);
+                    daysEl.appendChild(cell);
+                  }
+                }
+
+                document.getElementById("calendar-prev").addEventListener("click", () => {
+                  current = new Date(current.getFullYear(), current.getMonth() - 1, 1);
+                  render();
+                });
+                document.getElementById("calendar-next").addEventListener("click", () => {
+                  current = new Date(current.getFullYear(), current.getMonth() + 1, 1);
+                  render();
+                });
+
+                fetch("/api/calendar/public")
+                  .then((res) => {
+                    if (!res.ok) throw new Error("Échec du chargement du calendrier");
+                    return res.json();
+                  })
+                  .then((data) => {
+                    events = data.events || [];
+                    placeholder.style.display = "none";
+                    gridWrap.style.display = "block";
+                    render();
+                  })
+                  .catch(() => {
+                    placeholder.textContent = "⚠️ Calendrier momentanément indisponible.";
+                  });
+              })();
+            </script>
         </section>
 
         <section id="contact">
