@@ -121,9 +121,6 @@ const WIDGET_STYLES = `
 `;
 
 function renderWidgetBody(forecast: SpotForecast, allForecasts: SpotForecast[]): string {
-  const h = currentHour(forecast);
-  const color = comfortColor(h.score);
-
   const clientData = {
     closeHauledAngle: CLOSE_HAULED_ANGLE_DEG,
     spots: allForecasts.map((f) => ({
@@ -157,10 +154,6 @@ function renderWidgetBody(forecast: SpotForecast, allForecasts: SpotForecast[]):
     </label>
   </div>
 
-  <div style="display:flex;align-items:baseline;gap:12px;">
-    <span id="score-value" style="font-size:40px;font-weight:700;color:${color};">${h.score}</span>
-    <span id="score-label" style="font-size:18px;color:${color};">${comfortLabel(h.score)}</span>
-  </div>
   <p id="synthesis">${synthesisSentence(forecast)}</p>
 
   <div id="map"></div>
@@ -186,8 +179,6 @@ function renderWidgetBody(forecast: SpotForecast, allForecasts: SpotForecast[]):
 
     const spotSelect = document.getElementById("spot-select");
     const hourSelect = document.getElementById("hour-select");
-    const scoreValue = document.getElementById("score-value");
-    const scoreLabel = document.getElementById("score-label");
     const synthesis = document.getElementById("synthesis");
 
     for (const spot of DATA.spots) {
@@ -221,19 +212,6 @@ function renderWidgetBody(forecast: SpotForecast, allForecasts: SpotForecast[]):
         hourSelect.appendChild(opt);
       });
       hourSelect.value = String(closestHourIndex(spot));
-    }
-
-    const scoreColors = [
-      [20, "#b91c1c"], [40, "#c2410c"], [60, "#ca8a04"], [80, "#65a30d"], [101, "#15803d"]
-    ];
-    function colorForScore(score) {
-      for (const [max, color] of scoreColors) if (score < max) return color;
-      return "#15803d";
-    }
-    const labels = [[20,"Déconseillé"],[40,"Difficile"],[60,"Moyen"],[80,"Bon"],[101,"Excellent"]];
-    function labelForScore(score) {
-      for (const [max, label] of labels) if (score < max) return label;
-      return "Excellent";
     }
 
     // Déplace un point de (distanceMeters) dans la direction (bearingDeg),
@@ -322,13 +300,9 @@ function renderWidgetBody(forecast: SpotForecast, allForecasts: SpotForecast[]):
       const idx = Number(hourSelect.value);
       const h = spot.hours[idx];
 
-      scoreValue.textContent = h.score;
-      scoreValue.style.color = colorForScore(h.score);
-      scoreLabel.textContent = labelForScore(h.score);
-      scoreLabel.style.color = colorForScore(h.score);
       synthesis.textContent =
         "Conditions à " + spot.name + " : vent " + h.speedKn + " nds, marée " + h.phase +
-        " (coef " + h.coefficient + "), score " + h.score + "/100.";
+        " (coef " + h.coefficient + ").";
 
       map.setView([spot.latitude, spot.longitude], 13);
 
