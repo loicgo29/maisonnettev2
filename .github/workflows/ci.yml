@@ -390,6 +390,18 @@ jobs:
             ${{ env.REGISTRY }}/${{ github.repository }}-alo-frontend:latest
             ${{ env.REGISTRY }}/${{ github.repository }}-alo-frontend:${{ github.sha }}
 
+      # meteo-marine — rapatrié dans ce repo le 2026-09-13, même raisonnement
+      # que alo : un service séparé mais trop petit pour justifier sa propre
+      # CI/registre.
+      - name: Build & Push meteo-marine
+        uses: docker/build-push-action@v5
+        with:
+          context: ./meteo-marine
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository }}-meteo-marine:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}-meteo-marine:${{ github.sha }}
+
   # Smoke test OAuth2 contre le VRAI Keycloak de production — jamais sur push
   # ou pull_request : bdd-tests couvre déjà le flux complet contre un Keycloak
   # éphémère et isolé (voir infra/keycloak/realm-test.json) à chaque commit.

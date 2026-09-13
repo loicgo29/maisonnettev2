@@ -118,6 +118,23 @@ services:
       retries: 3
     networks: [maisonnette]
 
+  # ── meteo-marine — widget météo/marée du site public ───────────────────
+  # Régénère les prévisions (Open-Meteo + api-maree.fr) et republie le
+  # widget dans public-site/index.html toutes les heures, entre des
+  # marqueurs HTML dédiés (voir meteo-marine/src/publish.ts). Le site public
+  # reste 100% statique côté nginx : ce conteneur est le seul à écrire dans
+  # ce volume, jamais le service `public`.
+  meteo-marine:
+    image: ${METEO_MARINE_IMAGE:-ghcr.io/loicgo29/maisonnettev2-meteo-marine:latest}
+    container_name: maisonnette-meteo-marine
+    restart: unless-stopped
+    environment:
+      MAREE_API_KEY: ${MAREE_API_KEY:?MAREE_API_KEY manquant}
+      PUBLISH_TARGET: /app/public-site/index.html
+    volumes:
+      - ./public-site:/app/public-site
+    networks: [maisonnette]
+
   # ── alo — comptabilité familiale ──────────────────────────────────────
   # Servie derrière l'authentification du backoffice, comme en local (voir
   # Caddyfile, bloc alo.{$DOMAIN}). Lit la copie du schéma `alo` hébergée

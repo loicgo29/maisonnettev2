@@ -176,6 +176,24 @@ services:
     networks:
       - maisonnettev2-net
 
+  # Régénère et republie le widget météo/marée du site public toutes les
+  # heures, entre les marqueurs HTML de public-site/index.html (voir
+  # meteo-marine/src/publish.ts). N'écrit que ce bloc, jamais le reste de
+  # la page — un échec de l'API tierce laisse la page publiée inchangée.
+  meteo-marine:
+    build:
+      context: ./meteo-marine
+      dockerfile: Dockerfile
+    container_name: maisonnettev2-meteo-marine
+    restart: unless-stopped
+    environment:
+      MAREE_API_KEY: ${MAREE_API_KEY:?MAREE_API_KEY manquant — voir .env.example}
+      PUBLISH_TARGET: /app/public-site/index.html
+    volumes:
+      - ./public-site:/app/public-site
+    networks:
+      - maisonnettev2-net
+
   alo-frontend:
     build:
       context: ./alo-frontend

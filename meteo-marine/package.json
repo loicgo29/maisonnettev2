@@ -1,0 +1,19 @@
+{
+  "name": "meteo-marine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prototype": "tsx src/prototype.ts",
+    "tide": "tsx --env-file=.env src/tide.ts",
+    "forecast": "tsx --env-file=.env src/forecast.ts",
+    "generate": "tsx --env-file=.env src/generate.ts",
+    "publish": "tsx --env-file=.env src/publish.ts",
+    "publish:docker": "tsx src/publish.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "@types/node": "^22.0.0"
+  }
+}
