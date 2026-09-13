@@ -40,6 +40,8 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           MAREE_API_KEY: ${{ secrets.MAREE_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          PUBLIC_CALENDAR_ID: ${{ secrets.PUBLIC_CALENDAR_ID }}
         run: |
           # Seuls les secrets sont transmis au serveur : toute la configuration
           # — domaine, realm, contacts, identifiants publics — vit désormais
@@ -58,6 +60,8 @@ jobs:
           KC_ADMIN_PASSWORD=${{ env.KC_ADMIN_PASSWORD }}
           TELEGRAM_BOT_TOKEN=${{ env.TELEGRAM_BOT_TOKEN }}
           MAREE_API_KEY=${{ env.MAREE_API_KEY }}
+          GOOGLE_API_KEY=${{ env.GOOGLE_API_KEY }}
+          PUBLIC_CALENDAR_ID=${{ env.PUBLIC_CALENDAR_ID }}
           ENVEOF
 
           echo "✅ .env.production generated"

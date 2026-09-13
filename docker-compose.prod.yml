@@ -67,6 +67,13 @@ services:
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET manquant}
       PRIVATE_GOOGLE_CLIENT_SECRET: ${PRIVATE_GOOGLE_CLIENT_SECRET:-}
       PRIVATE_GITE_CALENDAR_ID: ${PRIVATE_GITE_CALENDAR_ID:-}
+      # Absents ici depuis toujours (jamais dans docker-compose.prod.yml, ni en
+      # secret GitHub) : /api/calendar/public répondait 400 « Missing
+      # GOOGLE_API_KEY » et le calendrier public restait bloqué sur son
+      # placeholder "Calendrier en cours de chargement...". Présents côté dev
+      # (docker-compose.yml) depuis le début — l'oubli n'a touché que la prod.
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      PUBLIC_CALENDAR_ID: ${PUBLIC_CALENDAR_ID:-}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
     ports:
       - '127.0.0.1:3001:3001'
