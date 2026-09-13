@@ -45,22 +45,41 @@
 		for (let i = 1; i <= daysCount; i++) daysInMonth.push(i);
 	}
 
+	// "YYYY-MM-DD" (journée entière) ou ISO complet — toujours en heure
+	// locale, jamais new Date("YYYY-MM-DD") qui parse en UTC et décale le
+	// jour affiché selon le fuseau du visiteur.
+	function parseLocalDate(str: string): Date {
+		const dateOnly = /^(\d{4})-(\d{2})-(\d{2})$/.exec(str);
+		if (dateOnly) {
+			return new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]));
+		}
+		return new Date(str);
+	}
+
+	// Un événement multi-jours (ex: réservation du 16 au 19) a un start/end
+	// couvrant plusieurs jours, `end` étant exclusif (convention Google
+	// Calendar) : il faut tester le chevauchement avec la journée, pas
+	// l'égalité avec son début — sinon seul le premier jour ressort réservé.
+	function eventForDay(day: number | null): CalendarEvent | null {
+		if (!day) return null;
+		const dayStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+		const dayEnd = new Date(currentDate.getFullYear(), currentDate.getMonth(), day + 1);
+		return events.find(e => {
+			const startStr = e.start.date || e.start.dateTime;
+			const endStr = e.end.date || e.end.dateTime;
+			if (!startStr || !endStr) return false;
+			const start = parseLocalDate(startStr);
+			const end = parseLocalDate(endStr);
+			return start < dayEnd && end > dayStart;
+		}) || null;
+	}
+
 	function hasEvent(day: number | null): boolean {
-		if (!day) return false;
-		const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-		return events.some(e => {
-			const eventDate = e.start.date || e.start.dateTime?.split('T')[0];
-			return eventDate === dateStr;
-		});
+		return eventForDay(day) !== null;
 	}
 
 	function getEventForDay(day: number | null): CalendarEvent | null {
-		if (!day) return null;
-		const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-		return events.find(e => {
-			const eventDate = e.start.date || e.start.dateTime?.split('T')[0];
-			return eventDate === dateStr;
-		}) || null;
+		return eventForDay(day);
 	}
 
 	function isAvailable(day: number | null): boolean {
