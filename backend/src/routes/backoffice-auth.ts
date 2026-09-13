@@ -21,8 +21,6 @@ const LoginSchema = z.object({
   pwd: z.string().min(4, 'Password must be at least 4 characters').max(256),
 });
 
-type LoginRequest = z.infer<typeof LoginSchema>;
-
 const DUREE_SESSION_MS = 24 * 60 * 60 * 1000;
 
 /**
@@ -202,7 +200,8 @@ router.post('/logout', (req: Request, res: Response): void => {
   // compris : sinon le navigateur conserve le cookie et la déconnexion ne
   // déconnecte rien. La variante sans domaine efface en plus les sessions
   // ouvertes avant que le cookie ne devienne un cookie de domaine.
-  const { maxAge: _ignore, ...options } = cookieSession(req);
+  const { maxAge, ...options } = cookieSession(req);
+  void maxAge; // exclu volontairement : clearCookie n'en a pas besoin
   res.clearCookie('backoffice_token', options);
   res.clearCookie('backoffice_token', { path: '/' });
 

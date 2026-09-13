@@ -27,6 +27,7 @@ import adminRouter from './routes/admin.js';
 import backofficeRouter from './routes/backoffice/index.js';
 import { errorHandler } from './middleware/error.js';
 import { demarrerPlanificateurMessages } from './jobs/messagesSejour.job.js';
+import { demarrerPlanificateurMeteoMarine } from './jobs/meteoMarine.job.js';
 
 const app = express();
 const PORT = config.PORT;
@@ -100,4 +101,5 @@ app.listen(PORT, () => {
   // Après l'écoute : un échec de planification ne doit pas empêcher l'API de
   // servir, et le passage au démarrage a besoin de la base, pas du port.
   demarrerPlanificateurMessages();
+  demarrerPlanificateurMeteoMarine();
 });
