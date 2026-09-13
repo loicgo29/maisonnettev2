@@ -3,6 +3,7 @@
 
 import type { SpotForecast } from "./data.js";
 import { CLOSE_HAULED_ANGLE_DEG } from "./engine.js";
+import { getDayAvailability } from "./activities.js";
 
 function comfortLabel(score: number): string {
   if (score < 20) return "Déconseillé";
@@ -42,9 +43,25 @@ function comfortAdjectivePlural(score: number): string {
   return "excellentes";
 }
 
+function renderActivityChecklist(
+  availability: {
+    activity: { id: string; label: string; icon: string };
+    possible: boolean;
+    reason: string;
+  }[]
+): string {
+  return availability
+    .map(({ activity, possible, reason }) => {
+      const cls = possible ? "activity-yes" : "activity-no";
+      const mark = possible ? "✓" : "✗";
+      return `<li class="${cls}" data-activity="${activity.id}"><span class="mark">${mark}</span> ${activity.icon} ${activity.label} — ${reason}</li>`;
+    })
+    .join("\n    ");
+}
+
 function synthesisSentence(forecast: SpotForecast): string {
   const h = currentHour(forecast);
-  return `Conditions ${comfortAdjectivePlural(h.score)} pour la voile aujourd'hui à ${forecast.spot.name} (vent ${h.speedKn} nds, marée ${h.tide.phase}).`;
+  return `Conditions actuelles à ${forecast.spot.name} : vent ${h.speedKn} nds, marée ${h.tide.phase} (coef ${h.tide.coefficient}).`;
 }
 
 // ---------------------------------------------------------------------------
@@ -118,9 +135,20 @@ const WIDGET_STYLES = `
   #meteo-marine .legend span { display: inline-flex; align-items: center; gap: 4px; margin-right: 16px; }
   #meteo-marine .swatch { display: inline-block; width: 18px; height: 3px; }
   #meteo-marine footer.meteo-attribution { margin-top: 40px; font-size: 11px; color: #9ca3af; }
+  #meteo-marine .activities-title { font-weight: 600; margin: 12px 0 6px; }
+  #meteo-marine .activities { list-style: none; padding: 0; margin: 0 0 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px; }
+  #meteo-marine .activities li { padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; }
+  #meteo-marine .activity-yes { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+  #meteo-marine .activity-no { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+  #meteo-marine .mark { font-weight: 700; margin-right: 2px; }
+  #meteo-marine .providers { display: flex; flex-wrap: wrap; gap: 16px; margin: 8px 0 16px; font-size: 13px; }
+  #meteo-marine .providers a { color: #2563eb; text-decoration: none; }
+  #meteo-marine .providers a:hover { text-decoration: underline; }
 `;
 
 function renderWidgetBody(forecast: SpotForecast, allForecasts: SpotForecast[]): string {
+  const h = currentHour(forecast);
+
   const clientData = {
     closeHauledAngle: CLOSE_HAULED_ANGLE_DEG,
     spots: allForecasts.map((f) => ({
@@ -156,6 +184,16 @@ function renderWidgetBody(forecast: SpotForecast, allForecasts: SpotForecast[]):
 
   <p id="synthesis">${synthesisSentence(forecast)}</p>
 
+  <p id="activities-title" class="activities-title">Activités possibles aujourd'hui à ${forecast.spot.name} :</p>
+  <ul id="activities" class="activities">
+    ${renderActivityChecklist(getDayAvailability(forecast.hours, new Date().toISOString().slice(0, 10)))}
+  </ul>
+
+  <div class="providers">
+    <a href="https://maps.app.goo.gl/fgKS9tuCPiZT34Pc8" target="_blank" rel="noopener">⛵ Centre nautique Vent d'Ouest (Plougonvelin)</a>
+    <a href="https://maps.app.goo.gl/4CmpFLZRTsVAXZeY8" target="_blank" rel="noopener">🚤 Activjet (jet-ski)</a>
+  </div>
+
   <div id="map"></div>
   <div class="legend">
     <span><span class="swatch" style="background:#14532d;"></span>Direction du vent</span>
@@ -165,6 +203,7 @@ function renderWidgetBody(forecast: SpotForecast, allForecasts: SpotForecast[]):
     <span><span class="swatch" style="background:#eab308;border-radius:50%;width:10px;height:10px;"></span>Vent &lt; 6 nds</span>
     <span><span class="swatch" style="background:#16a34a;border-radius:50%;width:10px;height:10px;"></span>Vent 6-20 nds</span>
     <span><span class="swatch" style="background:#dc2626;border-radius:50%;width:10px;height:10px;"></span>Vent &gt; 20 nds</span>
+    <span>🌊 Surf : bientôt disponible (nécessite la houle)</span>
   </div>
 
   <footer class="meteo-attribution">
@@ -180,6 +219,53 @@ function renderWidgetBody(forecast: SpotForecast, allForecasts: SpotForecast[]):
     const spotSelect = document.getElementById("spot-select");
     const hourSelect = document.getElementById("hour-select");
     const synthesis = document.getElementById("synthesis");
+    const activitiesEl = document.getElementById("activities");
+    const activitiesTitleEl = document.getElementById("activities-title");
+
+    // Miroir de src/activities.ts — mêmes règles, pour mise à jour côté client
+    // sans recalcul métier (les données par heure sont déjà embarquées).
+    const APOS = String.fromCharCode(39);
+    const AUJOURDHUI = "aujourd" + APOS + "hui";
+    function windRangeM(dayHours) {
+      const speeds = dayHours.map(function (h) { return h.speedKn; });
+      return { min: Math.min.apply(null, speeds), max: Math.max.apply(null, speeds) };
+    }
+    function windRangeReasonM(dayHours, lo, hi) {
+      const r = windRangeM(dayHours);
+      if (r.max < lo) return "vent trop faible (jusqu" + APOS + "à " + r.max.toFixed(1) + " nds aujourd" + APOS + "hui)";
+      if (r.min > hi) return "vent trop fort (à partir de " + r.min.toFixed(1) + " nds aujourd" + APOS + "hui)";
+      return "vent hors de la plage favorable toute la journée";
+    }
+    function windMaxReasonM(dayHours) {
+      const r = windRangeM(dayHours);
+      return "vent trop fort toute la journée (minimum " + r.min.toFixed(1) + " nds)";
+    }
+    const ACTIVITIES = [
+      { id: "peche-a-pied", label: "Pêche à pied", icon: "🦀", matches: (h) => h.heightRatio < 0.15 && h.coefficient > 70, reasonYes: "bon coefficient, estran largement découvert", reasonNo: function (d) { const maxCoef = Math.max.apply(null, d.map(function (h) { return h.coefficient; })); return maxCoef <= 70 ? "coefficient trop faible (max " + maxCoef + " aujourd" + APOS + "hui)" : "la marée ne descend pas assez bas aujourd" + APOS + "hui"; } },
+      { id: "planche-a-voile", label: "Planche à voile", icon: "🏄", matches: (h) => h.speedKn >= 8 && h.speedKn <= 25, reasonYes: "vent porteur", reasonNo: function (d) { return windRangeReasonM(d, 8, 25); } },
+      { id: "wingfoil", label: "Wingfoil", icon: "🪁", matches: (h) => h.speedKn >= 12 && h.speedKn <= 30, reasonYes: "vent suffisant pour le foil", reasonNo: function (d) { return windRangeReasonM(d, 12, 30); } },
+      { id: "catamaran", label: "Catamaran / voile légère", icon: "⛵", matches: (h) => h.speedKn >= 6 && h.speedKn <= 20, reasonYes: "vent modéré, conditions adaptées débutants", reasonNo: function (d) { return windRangeReasonM(d, 6, 20); } },
+      { id: "sup", label: "Stand up paddle", icon: "🏄‍♀️", matches: (h) => h.speedKn < 10 && h.coefficient < 70, reasonYes: "mer plate, peu de courant", reasonNo: function (d) { const r = windRangeM(d); const maxCoef = Math.max.apply(null, d.map(function (h) { return h.coefficient; })); if (maxCoef >= 70 && r.min >= 10) return "vent et courant trop forts (min " + r.min.toFixed(1) + " nds, coef jusqu" + APOS + "à " + maxCoef + ")"; if (maxCoef >= 70) return "courant trop fort toute la journée (coef jusqu" + APOS + "à " + maxCoef + ")"; return windMaxReasonM(d); } },
+      { id: "kayak", label: "Kayak de mer", icon: "🛶", matches: (h) => h.speedKn < 12 && h.coefficient < 80, reasonYes: "mer calme", reasonNo: function (d) { const r = windRangeM(d); const maxCoef = Math.max.apply(null, d.map(function (h) { return h.coefficient; })); if (maxCoef >= 80 && r.min >= 12) return "vent et courant trop forts (min " + r.min.toFixed(1) + " nds, coef jusqu" + APOS + "à " + maxCoef + ")"; if (maxCoef >= 80) return "courant trop fort toute la journée (coef jusqu" + APOS + "à " + maxCoef + ")"; return windMaxReasonM(d); } },
+      { id: "plongee", label: "Plongée / apnée", icon: "🤿", matches: (h) => h.speedKn < 10 && h.coefficient < 60, reasonYes: "bonne visibilité attendue", reasonNo: function (d) { const maxCoef = Math.max.apply(null, d.map(function (h) { return h.coefficient; })); return maxCoef >= 60 ? "courant trop fort pour une bonne visibilité (coef jusqu" + APOS + "à " + maxCoef + ")" : windMaxReasonM(d); } },
+      { id: "baignade", label: "Baignade", icon: "🏊", matches: (h) => h.speedKn < 15, reasonYes: "mer calme", reasonNo: function (d) { return windMaxReasonM(d); } },
+    ];
+    function renderActivities(spot) {
+      const todayStr = new Date().toISOString().slice(0, 10);
+      const dayHours = spot.hours.filter((h) => h.time.indexOf(todayStr) === 0);
+      const results = ACTIVITIES.map((a) => ({
+        activity: a,
+        possible: dayHours.some((h) => a.matches(h)),
+      }));
+      results.sort((a, b) => Number(b.possible) - Number(a.possible));
+      activitiesEl.innerHTML = results.map(function (r) {
+        const a = r.activity;
+        const cls = r.possible ? "activity-yes" : "activity-no";
+        const mark = r.possible ? "✓" : "✗";
+        const reason = r.possible ? a.reasonYes : a.reasonNo(dayHours);
+        return "<li class=" + APOS + cls + APOS + " data-activity=" + APOS + a.id + APOS + "><span class=" + APOS + "mark" + APOS + ">" + mark + "</span> " + a.icon + " " + a.label + " — " + reason + "</li>";
+      }).join(" ");
+    }
 
     for (const spot of DATA.spots) {
       const opt = document.createElement("option");
@@ -301,8 +387,10 @@ function renderWidgetBody(forecast: SpotForecast, allForecasts: SpotForecast[]):
       const h = spot.hours[idx];
 
       synthesis.textContent =
-        "Conditions à " + spot.name + " : vent " + h.speedKn + " nds, marée " + h.phase +
+        "Conditions actuelles à " + spot.name + " : vent " + h.speedKn + " nds, marée " + h.phase +
         " (coef " + h.coefficient + ").";
+      activitiesTitleEl.textContent = "Activités possibles " + AUJOURDHUI + " à " + spot.name + " :";
+      renderActivities(spot);
 
       map.setView([spot.latitude, spot.longitude], 13);
 

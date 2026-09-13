@@ -13,7 +13,7 @@ import { renderEmbeddableWidget } from "./templates.js";
 
 const TARGET_HTML =
   process.env.PUBLISH_TARGET ??
-  path.resolve(process.cwd(), "../public-site/index.html");
+  path.resolve(process.cwd(), "../maisonnettev2/public-site/index.html");
 
 const HEAD_START = "<!-- METEO-MARINE:HEAD:START -->";
 const HEAD_END = "<!-- METEO-MARINE:HEAD:END -->";
