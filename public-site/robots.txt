@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://maisonnette-pecheur-bertheaume.fr/sitemap.xml
