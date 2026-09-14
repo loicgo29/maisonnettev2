@@ -244,8 +244,12 @@ jobs:
           # /backoffice/login n'existe plus (retiré le 2026-09-14, Keycloak
           # via /admin est le seul point d'entrée admin) — ce test testait
           # encore l'ancienne page et échouait systématiquement depuis.
+          # "Administration" n'apparaît qu'après authentification Keycloak
+          # réussie (côté client) : un curl anonyme, comme ici, ne voit que
+          # l'état intermédiaire "Connexion…" rendu côté serveur — c'est lui
+          # qu'il faut chercher, pas le contenu post-auth.
           echo "✓ Testing admin page..."
-          if curl -fsS "$SITE/admin" | grep -q "Administration"; then
+          if curl -fsS "$SITE/admin" | grep -q "Connexion"; then
             echo "✅ Admin page served"
           else
             echo "❌ Admin page unreachable"

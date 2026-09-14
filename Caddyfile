@@ -51,6 +51,19 @@ auth.{$DOMAIN} {
 {$DOMAIN}, www.{$DOMAIN} {
 	encode gzip zstd
 
+	# alo, servi sous /admin/alo (plus de sous-domaine dédié depuis le
+	# 2026-09-14 — un seul domaine à retenir). handle_path retire le
+	# préfixe avant de transmettre : alo-frontend reçoit les requêtes
+	# comme s'il était servi à sa propre racine (aucun changement côté
+	# nginx interne d'alo). Doit précéder `handle /admin*` ci-dessous,
+	# sinon ce dernier interceptait tout /admin/alo/* en premier.
+	# Aucune vérification d'auth ici : alo n'en a pas, et ce chemin est
+	# aussi peu protégé qu'un accès direct par URL — accepté comme
+	# compromis pour ne pas construire de garde dédié.
+	handle_path /admin/alo* {
+		reverse_proxy alo-frontend:80
+	}
+
 	# Admin (réservations/messages) — redirige vers Keycloak OAuth
 	handle /admin* {
 		reverse_proxy backoffice:5173

@@ -15,7 +15,7 @@ import PresenceRestitution from './pages/PresenceRestitution';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/admin/alo">
       <div style={{ minHeight: '100vh', background: colors.background }}>
         <Header />
         <div className="container">

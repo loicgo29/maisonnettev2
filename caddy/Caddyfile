@@ -24,6 +24,13 @@
 		reverse_proxy backend:3001
 	}
 
+	# alo, servi sous /admin/alo (miroir du Caddyfile de prod). Doit
+	# précéder le catch-all ci-dessous, sinon celui-ci intercepterait
+	# tout /admin/alo/* en premier.
+	handle_path /admin/alo* {
+		reverse_proxy alo-frontend:80
+	}
+
 	handle {
 		reverse_proxy frontend:5173
 	}
