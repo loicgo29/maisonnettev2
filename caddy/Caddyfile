@@ -41,7 +41,7 @@ http://alo.maisonnette.localhost, http://alo.localhost {
 		# connecter là rend aussi l'accès à ce sous-domaine.
 		@refuse status 401 403
 		handle_response @refuse {
-			redir * http://maisonnette.localhost:8030/backoffice/login 302
+			redir * http://maisonnette.localhost:8030/admin 302
 		}
 	}
 

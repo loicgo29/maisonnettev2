@@ -15,40 +15,6 @@
 }
 
 # ========================================================================
-# SOUS-DOMAINE BACKOFFICE — backoffice.<domaine>
-# ========================================================================
-backoffice.{$DOMAIN} {
-	encode gzip zstd
-
-	handle /api/* {
-		reverse_proxy backend:3001
-	}
-
-	handle /uploads/* {
-		reverse_proxy backend:3001
-	}
-
-	handle {
-		reverse_proxy backoffice:5173
-	}
-
-	header {
-		X-Content-Type-Options "nosniff"
-		X-Frame-Options "DENY"
-		Referrer-Policy "strict-origin-when-cross-origin"
-		Strict-Transport-Security "max-age=31536000; includeSubDomains"
-		-Server
-	}
-
-	log {
-		output file /data/access.log {
-			roll_size 10MB
-			roll_keep 5
-		}
-	}
-}
-
-# ========================================================================
 # FOURNISSEUR D'IDENTITÉ — auth.<domaine>
 # Keycloak, TLS terminé ici : il tourne en clair sur le réseau interne.
 # ========================================================================
@@ -97,7 +63,7 @@ alo.{$DOMAIN} {
 
 		@refuse status 401 403
 		handle_response @refuse {
-			redir * https://{$DOMAIN}/backoffice/login 302
+			redir * https://{$DOMAIN}/admin 302
 		}
 	}
 
@@ -128,11 +94,6 @@ alo.{$DOMAIN} {
 # ========================================================================
 {$DOMAIN}, www.{$DOMAIN} {
 	encode gzip zstd
-
-	# Backoffice accessible aussi depuis le domaine principal.
-	handle /backoffice* {
-		reverse_proxy backoffice:5173
-	}
 
 	# Admin (réservations/messages) — redirige vers Keycloak OAuth
 	handle /admin* {
