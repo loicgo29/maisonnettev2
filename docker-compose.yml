@@ -38,13 +38,14 @@ services:
       OWNER_EMAIL: contact@maisonnette-pecheur-bertheaume.fr
       OWNER_PHONE: '+33781103889'
       # Realm applicatif, jamais `master` : ce dernier est celui de
-      # l'administration de Keycloak. `host.docker.internal` car Keycloak vit
-      # dans le compose du projet idp, sur un autre réseau Docker.
-      KEYCLOAK_REALM_URL: http://host.docker.internal:9001/realms/maisonnettev2
-      # Keycloak s'annonce en `localhost` dans les jetons qu'il émet, alors que
-      # le conteneur le joint par `host.docker.internal`. Sans cette précision,
-      # le contrôle de l'émetteur rejetterait tous les jetons, valides compris.
-      KEYCLOAK_ISSUER: http://localhost:9001/realms/maisonnettev2
+      # l'administration de Keycloak. Pointe sur le Keycloak de production
+      # (embarqué dans maisonnettev2, pas celui du projet idp) : un seul
+      # Keycloak fait foi, pour ne plus avoir à maintenir deux realms en
+      # parallèle avec le risque de divergence que ça implique.
+      KEYCLOAK_REALM_URL: https://auth.maisonnette-pecheur-bertheaume.fr/realms/maisonnettev2
+      # Même host que KEYCLOAK_REALM_URL ci-dessus : plus de bidouille
+      # host.docker.internal/localhost, ce Keycloak a un nom public unique.
+      KEYCLOAK_ISSUER: https://auth.maisonnette-pecheur-bertheaume.fr/realms/maisonnettev2
       # Identifiant OAuth public : il figure déjà dans l'authUrl que renvoie
       # /api/calendar, le traiter en secret n'apportait rien.
       PRIVATE_GOOGLE_CLIENT_ID: 775094963614-ajspquocfsq0e5qpnlfm0leniia83iij.apps.googleusercontent.com
@@ -91,9 +92,10 @@ services:
       # SvelteKit fige ces valeurs dans le paquet construit : elles doivent
       # arriver ici, pas dans `environment` qui n'agit qu'au démarrage.
       args:
-        # C'est le navigateur qui suit cette URL : localhost, jamais un nom de
-        # conteneur. Realm applicatif, jamais `master`.
-        PUBLIC_AUTH_URL: http://localhost:9001
+        # C'est le navigateur qui suit cette URL — même Keycloak de production
+        # que KEYCLOAK_REALM_URL/KEYCLOAK_ISSUER ci-dessus, plus le Keycloak
+        # local du projet idp. Realm applicatif, jamais `master`.
+        PUBLIC_AUTH_URL: https://auth.maisonnette-pecheur-bertheaume.fr
         PUBLIC_AUTH_REALM: maisonnettev2
         PUBLIC_AUTH_CLIENT_ID: maisonnettev2-frontend
     container_name: maisonnettev2-frontend
