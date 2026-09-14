@@ -3,18 +3,19 @@ import { test, expect, APIRequestContext } from '@playwright/test';
 // Migré depuis alo/app/tests/test_api_bdd.py (pytest, requests, accès direct sans auth).
 //
 // Différences avec l'original :
-// - alo est désormais servi derrière l'authentification du backoffice de
-//   maisonnettev2 (voir tests/e2e/alo-derriere-backoffice.spec.ts) : on se
-//   connecte d'abord au backoffice pour obtenir le cookie, puis on l'attache
-//   à chaque requête vers alo.
+// - alo est servi sous /admin/alo, sur le même domaine que maisonnettev2
+//   (retiré du sous-domaine alo.<domaine> et de la garde forward_auth du
+//   backoffice le 2026-09-14 — voir shared/routing-caddy.md). Il n'a
+//   toujours aucune authentification propre : plus besoin de login ni de
+//   cookie, un appel direct sous ce préfixe suffit.
 // - La taxonomie de `category` a changé depuis l'écriture des tests
 //   originaux : ce n'est plus alimentation/logement/transport/... mais le
 //   mode de partage de la dépense — quotepart|50/50|dette|brico|virement|
 //   trop_plein|regule_periode|divers (vérifié sur /openapi.json de l'image
 //   en cours). Les tests d'origine testaient donc une API qui n'existe plus.
 // - alo n'est pas déployé sur Hetzner (production) : la suite est skippée
-//   proprement si le login backoffice ou la connexion à alo échouent, pour
-//   ne jamais faire échouer la CI de prod.
+//   proprement si la sonde initiale échoue, pour ne jamais faire échouer la
+//   CI de prod.
 //
 // Non migré (voir rapport) : test_healthcheck.py (script manuel redondant),
 // test_telegram_parser.py (composant non exposé par cette intégration),
@@ -23,8 +24,7 @@ import { test, expect, APIRequestContext } from '@playwright/test';
 // de la vraie UI).
 
 const MAISONNETTE_URL = process.env.E2E_URL || 'http://maisonnette.localhost:8030';
-const ALO_URL = process.env.E2E_ALO_URL || 'http://alo.maisonnette.localhost:8030';
-const ADMIN_PWD = process.env.E2E_ADMIN_PWD || 'admin123';
+const ALO_PREFIX = '/admin/alo';
 
 // Node (contrairement à Chromium) ne résout pas *.localhost : on tape
 // directement 127.0.0.1 et on fixe le Host attendu par Caddy pour router
@@ -38,28 +38,14 @@ function resolveLocal(rawUrl: string): { origin: string; host: string } {
 }
 
 const maisonnette = resolveLocal(MAISONNETTE_URL);
-const aloTarget = resolveLocal(ALO_URL);
 
-let cookieHeader: string | null = null;
 let alojoignable = true;
 
 test.beforeAll(async ({ playwright }) => {
   const request = await playwright.request.newContext();
   try {
-    const loginResp = await request.post(`${maisonnette.origin}/api/backoffice/auth/login`, {
+    const probe = await request.get(`${maisonnette.origin}${ALO_PREFIX}/api/health`, {
       headers: { Host: maisonnette.host },
-      data: { username: 'admin', pwd: ADMIN_PWD },
-      timeout: 10000,
-    });
-    if (!loginResp.ok()) {
-      alojoignable = false;
-      return;
-    }
-    const setCookie = loginResp.headers()['set-cookie'] || '';
-    cookieHeader = setCookie.split(';')[0];
-
-    const probe = await request.get(`${aloTarget.origin}/api/health`, {
-      headers: { Host: aloTarget.host, Cookie: cookieHeader },
       timeout: 10000,
     });
     alojoignable = probe.ok();
@@ -70,14 +56,14 @@ test.beforeAll(async ({ playwright }) => {
   }
 });
 
-test.describe('alo — workflow API (derrière le backoffice)', () => {
+test.describe('alo — workflow API (sous /admin/alo)', () => {
   test.beforeEach(() => {
-    test.skip(!alojoignable, 'alo non joignable (login backoffice échoué, ou alo pas déployé ici)');
+    test.skip(!alojoignable, 'alo non joignable (pas déployé ici, ou /admin/alo indisponible)');
   });
 
   async function alo(request: APIRequestContext, method: 'get' | 'post' | 'put' | 'delete', path: string, data?: unknown) {
-    return request[method](`${aloTarget.origin}${path}`, {
-      headers: { Host: aloTarget.host, Cookie: cookieHeader! },
+    return request[method](`${maisonnette.origin}${ALO_PREFIX}${path}`, {
+      headers: { Host: maisonnette.host },
       data,
     });
   }

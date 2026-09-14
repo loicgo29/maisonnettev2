@@ -1,78 +1,19 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Contrôles d'accès et durcissement de la session.
+ * Contrôles d'accès aux API protégées par le backend.
  *
- * Chaque cas correspond à une recommandation de l'OWASP WSTG ou du guide
- * Keycloak, appliquée à cette architecture. Ils échouent si un durcissement
- * acquis est relâché — ce qui, sur ces sujets, ne se voit jamais à l'usage :
- * l'application continue de fonctionner exactement pareil.
+ * Chaque cas correspond à une recommandation de l'OWASP WSTG. Ils échouent si
+ * un durcissement acquis est relâché — ce qui, sur ces sujets, ne se voit
+ * jamais à l'usage : l'application continue de fonctionner exactement pareil.
+ *
+ * Retiré le 2026-09-14 : les tests portant sur le cookie de session
+ * `backoffice_token` et sur la fermeture d'alo via forward_auth — les deux
+ * mécanismes ont été supprimés (auth classique remplacée par Keycloak sur
+ * /admin, alo servi sans garde sous /admin/alo). Voir shared/routing-caddy.md.
  */
 
-const BASE = process.env.E2E_URL || 'http://maisonnette.localhost:8030';
 const API = process.env.E2E_API_URL || 'http://localhost:3001';
-const ALO = process.env.E2E_ALO_URL || 'http://alo.maisonnette.localhost:8030';
-const ADMIN_PWD = process.env.E2E_ADMIN_PWD || 'admin123';
-
-async function seConnecter(page: import('@playwright/test').Page) {
-  await page.goto(`${BASE}/backoffice/login`);
-  await page.fill('#username', 'admin');
-  await page.fill('#pwd', ADMIN_PWD);
-  await page.click('button[type="submit"]');
-  await page.waitForURL((u) => !u.pathname.endsWith('/backoffice/login'), { timeout: 15000 });
-}
-
-test.describe('Session du backoffice', () => {
-  test('le cookie est HttpOnly, SameSite=Strict, et porte le domaine', async ({
-    page,
-    context,
-  }) => {
-    await seConnecter(page);
-    const cookie = (await context.cookies()).find((c) => c.name === 'backoffice_token');
-
-    expect(cookie, 'cookie de session absent').toBeTruthy();
-
-    // HttpOnly : posé en JavaScript, il serait lisible en JavaScript, et une
-    // faille XSS suffirait à emporter la session.
-    expect(cookie!.httpOnly, 'le cookie est lisible par les scripts de la page').toBe(true);
-
-    // Strict : le cookie ne part pas sur une navigation venue d'un autre site.
-    expect(cookie!.sameSite, 'SameSite trop permissif').toBe('Strict');
-
-    // Le point initial marque un cookie de domaine, celui qui atteint alo.
-    expect(cookie!.domain.startsWith('.'), 'cookie host-only : il n’atteindra pas alo').toBe(
-      true
-    );
-  });
-
-  test('le jeton ne circule pas dans le stockage du navigateur', async ({ page }) => {
-    await seConnecter(page);
-    const stockage = await page.evaluate(() => ({
-      local: Object.entries(localStorage).map(([k, v]) => `${k}=${v}`).join('|'),
-      session: Object.entries(sessionStorage).map(([k, v]) => `${k}=${v}`).join('|'),
-    }));
-
-    // Le profil affiché peut y figurer ; un JWT, non — il y serait à la portée
-    // du moindre script tiers.
-    for (const [ou, contenu] of Object.entries(stockage)) {
-      expect(contenu, `un jeton JWT traîne dans ${ou}Storage`).not.toMatch(/eyJ[\w-]+\./);
-    }
-  });
-
-  test('la déconnexion invalide réellement la session', async ({ page, context }) => {
-    await seConnecter(page);
-    await page.goto(`${BASE}/backoffice/logout`);
-    await page.waitForURL('**/backoffice/login', { timeout: 15000 });
-
-    expect(
-      (await context.cookies()).find((c) => c.name === 'backoffice_token'),
-      'le cookie survit à la déconnexion'
-    ).toBeFalsy();
-
-    await page.goto(`${ALO}/api/periods`);
-    expect(page.url(), 'alo reste ouvert après déconnexion').toContain('/backoffice/login');
-  });
-});
 
 test.describe('Contrôle d’accès aux API', () => {
   const routesProtegees = [
@@ -111,21 +52,5 @@ test.describe('Contrôle d’accès aux API', () => {
       headers: { Authorization: `Bearer ${expire}` },
     });
     expect([401, 403]).toContain(r.status());
-  });
-});
-
-test.describe('En-têtes de sécurité', () => {
-  test('les pages du backoffice portent les en-têtes attendus', async ({ page }) => {
-    // Par le navigateur : le client HTTP de Playwright s'appuie sur le
-    // résolveur de Node, qui ignore la convention *.localhost.
-    const reponse = await page.goto(`${BASE}/backoffice/login`);
-    const h = reponse!.headers();
-
-    expect(h['x-content-type-options'], 'sniffing de type MIME non bloqué').toBe('nosniff');
-    expect(h['x-frame-options'], 'la page peut être encadrée').toBeTruthy();
-    expect(h['referrer-policy'], 'politique de référent absente').toBeTruthy();
-    // Le serveur ne doit pas annoncer sa nature : c'est une aide gratuite à qui
-    // cherche une version vulnérable.
-    expect(h['server'], 'le serveur s’identifie').toBeFalsy();
   });
 });
