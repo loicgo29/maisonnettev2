@@ -239,13 +239,16 @@ jobs:
             ((attempt++))
           done
 
-          # Le backoffice doit répondre, sinon le site public est en ligne mais
+          # /admin doit répondre, sinon le site public est en ligne mais
           # l'administration est inaccessible sans que rien ne le signale.
-          echo "✓ Testing backoffice login page..."
-          if curl -fsS "$SITE/backoffice/login" | grep -q "Backoffice Login"; then
-            echo "✅ Backoffice login page served"
+          # /backoffice/login n'existe plus (retiré le 2026-09-14, Keycloak
+          # via /admin est le seul point d'entrée admin) — ce test testait
+          # encore l'ancienne page et échouait systématiquement depuis.
+          echo "✓ Testing admin page..."
+          if curl -fsS "$SITE/admin" | grep -q "Administration"; then
+            echo "✅ Admin page served"
           else
-            echo "❌ Backoffice login page unreachable"
+            echo "❌ Admin page unreachable"
             exit 1
           fi
 
