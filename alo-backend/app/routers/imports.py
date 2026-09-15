@@ -11,9 +11,35 @@ from app.services.sharing_calculator import SharingCalculator
 from app.services.quotepart_importer import parse_quotepart_csv
 from app.services.categorizer import Categorizer
 from app.services.csv_importer import CsvImporter
+from app.config import TELEGRAM_SESSION_PATH, settings
 
 router = APIRouter()
 calculator = SharingCalculator()
+
+# Credentials du compte Telegram personnel utilisé pour lire l'historique des
+# groupes (pas le bot) — depuis l'environnement (TELEGRAM_API_ID/HASH,
+# TELEGRAM_PERSONAL_PHONE), jamais en dur. TELEGRAM_SESSION_PATH pointe dans
+# /app/data (volume persistant) pour survivre aux redéploiements — voir
+# app/config.py.
+TELEGRAM_API_ID = settings.telegram_api_id
+TELEGRAM_API_HASH = settings.telegram_api_hash
+TELEGRAM_PHONE = settings.telegram_personal_phone
+
+# Seul "Comptes Alo" (Gourmich) est encore utilisé (2026-09-13) — les 4
+# autres groupes (Alo Dépenses Alice, Alo Quote Part, Alo 50/50,
+# Alo Dépenses Loïc) sont abandonnés.
+TELEGRAM_GROUPS = {
+    -718152023: {"name": "loic", "id": 1},
+}
+
+# "Comptes Alo" est un groupe partagé : Loïc ET Alice y postent tous les deux
+# (vérifié le 2026-09-13 : 79 messages Loïc, 19 Alitché/Alice sur un
+# échantillon de 100). Router par account_id du GROUPE seul attribuerait à
+# tort les dépenses d'Alice à Loïc — il faut router par expéditeur réel.
+TELEGRAM_SENDER_TO_ACCOUNT = {
+    1556868078: 1,  # Loic
+    1590532553: 2,  # Alitché (Alice)
+}
 
 
 @router.post("/telegram", response_model=ExpenseResponse, status_code=201)
@@ -45,6 +71,7 @@ async def import_telegram_expense(
         source="telegram",
         status="draft",
         comment=req.comment,
+        account_id=req.account_id,
     )
     db.add(db_expense)
     db.flush()
@@ -83,12 +110,8 @@ async def telegram_auth_start():
     """
     from telethon import TelegramClient
 
-    API_ID = 30366159
-    API_HASH = "165a968c795273574e30d881355ba3f7"
-    PHONE = "+33781103889"
-
     try:
-        client = TelegramClient('alo_session', API_ID, API_HASH)
+        client = TelegramClient(TELEGRAM_SESSION_PATH, TELEGRAM_API_ID, TELEGRAM_API_HASH)
         await client.connect()
 
         if await client.is_user_authorized():
@@ -96,15 +119,15 @@ async def telegram_auth_start():
             return {"status": "already_authorized", "message": "Déjà connecté à Telegram"}
 
         # Envoie le code SMS et récupère le hash
-        result = await client.send_code_request(PHONE)
+        result = await client.send_code_request(TELEGRAM_PHONE)
         _telegram_auth_state['phone_code_hash'] = result.phone_code_hash
 
         await client.disconnect()
 
         return {
             "status": "code_sent",
-            "message": "Code SMS envoyé à +33781103889",
-            "phone": PHONE
+            "message": f"Code SMS envoyé à {TELEGRAM_PHONE}",
+            "phone": TELEGRAM_PHONE
         }
 
     except Exception as e:
@@ -119,20 +142,16 @@ async def telegram_auth_confirm(code: str):
     from telethon import TelegramClient
     from telethon.errors import SessionPasswordNeededError
 
-    API_ID = 30366159
-    API_HASH = "165a968c795273574e30d881355ba3f7"
-    PHONE = "+33781103889"
-
     try:
         if 'phone_code_hash' not in _telegram_auth_state:
             raise HTTPException(status_code=400, detail="Veuillez d'abord cliquer sur 'S'authentifier'")
 
-        client = TelegramClient('alo_session', API_ID, API_HASH)
+        client = TelegramClient(TELEGRAM_SESSION_PATH, TELEGRAM_API_ID, TELEGRAM_API_HASH)
         await client.connect()
 
         try:
             await client.sign_in(
-                PHONE,
+                TELEGRAM_PHONE,
                 code,
                 phone_code_hash=_telegram_auth_state['phone_code_hash']
             )
@@ -172,30 +191,18 @@ async def telegram_preview(
     from datetime import datetime as dt
     import re
 
-    API_ID = 30366159
-    API_HASH = "165a968c795273574e30d881355ba3f7"
-    PHONE = "+33781103889"
-
-    groups = {
-        -718152023: {"name": "loic", "id": 1},
-        -4165469698: {"name": "alice", "id": 2},
-        -5164479851: {"name": "alice (quotepart)", "id": 2},
-        -5151201098: {"name": "alice (50/50)", "id": 2},
-        -4118780090: {"name": "loic (dépenses)", "id": 1},
-    }
-
     expenses_preview = []
     duplicates_found = 0
 
     try:
-        client = TelegramClient('alo_session', API_ID, API_HASH)
+        client = TelegramClient(TELEGRAM_SESSION_PATH, TELEGRAM_API_ID, TELEGRAM_API_HASH)
         await client.connect()
 
         if not await client.is_user_authorized():
             await client.disconnect()
             raise HTTPException(status_code=401, detail="Session expirée")
 
-        for group_id, account in groups.items():
+        for group_id, account in TELEGRAM_GROUPS.items():
             try:
                 async for message in client.iter_messages(group_id, limit=None):
                     if not message.text:
@@ -234,12 +241,17 @@ async def telegram_preview(
                                 break
 
                     if parsed:
+                        # Route par expéditeur réel plutôt que par groupe
+                        # (groupe partagé Loïc/Alice, cf. TELEGRAM_SENDER_TO_ACCOUNT)
+                        account_id = TELEGRAM_SENDER_TO_ACCOUNT.get(message.sender_id, account["id"])
+                        account_name = "loic" if account_id == 1 else "alice"
+
                         # Vérife si le doublon existe déjà (sans label pour éviter les faux positifs)
                         existing = db.query(Expense).filter(
                             Expense.date == msg_date,
                             Expense.amount == Decimal(str(parsed["amount"])),
                             Expense.source == "telegram",
-                            Expense.account_id == account["id"],
+                            Expense.account_id == account_id,
                         ).first()
 
                         if existing:
@@ -249,8 +261,8 @@ async def telegram_preview(
                                 "date": str(msg_date),
                                 "label": parsed["label"],
                                 "amount": f"{parsed['amount']:.2f}",
-                                "account": account["name"],
-                                "account_id": account["id"],
+                                "account": account_name,
+                                "account_id": account_id,
                                 "is_duplicate": False
                             })
             except Exception:
@@ -296,6 +308,7 @@ async def _fetch_telegram_messages(client, groups, start_date, end_date):
     from datetime import datetime as dt
 
     messages_to_import = []
+    unknown_senders = set()
     categorizer = Categorizer()
 
     for group_id, account in groups.items():
@@ -310,6 +323,13 @@ async def _fetch_telegram_messages(client, groups, start_date, end_date):
                     continue
                 if end_date and msg_date > dt.fromisoformat(end_date).date():
                     continue
+
+                # Route par expéditeur réel plutôt que par groupe (groupe
+                # partagé Loïc/Alice) ; repli sur le compte du groupe si
+                # l'expéditeur n'est pas dans le mapping connu.
+                account_id = TELEGRAM_SENDER_TO_ACCOUNT.get(message.sender_id, account['id'])
+                if message.sender_id not in TELEGRAM_SENDER_TO_ACCOUNT:
+                    unknown_senders.add(message.sender_id)
 
                 # Parse la dépense
                 patterns = [
@@ -346,11 +366,14 @@ async def _fetch_telegram_messages(client, groups, start_date, end_date):
                         'date': msg_date,
                         'label': parsed['label'],
                         'amount': parsed['amount'],
-                        'account_id': account['id'],
+                        'account_id': account_id,
                         'category': category
                     })
         except Exception:
             pass
+
+    if unknown_senders:
+        print(f"⚠️  Expéditeurs Telegram inconnus (repli sur le compte du groupe) : {unknown_senders}")
 
     return messages_to_import
 
@@ -374,33 +397,19 @@ async def telegram_import(
     from telethon import TelegramClient
     from datetime import datetime as dt
 
-    # Config Telegram
-    API_ID = 30366159
-    API_HASH = "165a968c795273574e30d881355ba3f7"
-    PHONE = "+33781103889"
-
-    # Groupes Telegram
-    groups = {
-        -718152023: {"name": "loic", "id": 1},
-        -4165469698: {"name": "alice", "id": 2},
-        -5164479851: {"name": "alice (quotepart)", "id": 2},
-        -5151201098: {"name": "alice (50/50)", "id": 2},
-        -4118780090: {"name": "loic (dépenses)", "id": 1},
-    }
-
     try:
-        client = TelegramClient('alo_session', API_ID, API_HASH)
+        client = TelegramClient(TELEGRAM_SESSION_PATH, TELEGRAM_API_ID, TELEGRAM_API_HASH)
         await client.connect()
 
         if not await client.is_user_authorized():
             await client.disconnect()
             raise HTTPException(
                 status_code=401,
-                detail="Session Telegram expirée. Relancez le script en CLI: uv run python app/telegram_bot/import_history.py"
+                detail="Session Telegram expirée. Relancez l'authentification via /api/imports/telegram/auth/start"
             )
 
         # ÉTAPE 1 : Récupère tous les messages AVANT transactions DB
-        messages_to_import = await _fetch_telegram_messages(client, groups, start_date, end_date)
+        messages_to_import = await _fetch_telegram_messages(client, TELEGRAM_GROUPS, start_date, end_date)
         await client.disconnect()
 
         # ÉTAPE 2 : Traite les messages avec transactions DB

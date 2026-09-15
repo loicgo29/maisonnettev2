@@ -15,6 +15,16 @@ from services.categorizer import Categorizer
 client = APIClient()
 categorizer = Categorizer()
 
+# Le groupe "Comptes Alo" est partagé : Loïc ET Alice y postent (vérifié le
+# 2026-09-13, échantillon 100 messages : 79 Loïc / 19 Alitché-Alice). Sans ce
+# mapping, le bot n'envoyait aucun account_id et toutes les dépenses
+# restaient non attribuées (account_id NULL en base), quel que soit
+# l'expéditeur réel.
+TELEGRAM_SENDER_TO_ACCOUNT = {
+    1556868078: 1,  # Loic
+    1590532553: 2,  # Alitché (Alice)
+}
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Commande /start."""
@@ -75,12 +85,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Catégorise automatiquement
     category = categorizer.categorize(parsed.label)
 
+    # Attribution par expéditeur réel du message, pas par le groupe (partagé).
+    account_id = TELEGRAM_SENDER_TO_ACCOUNT.get(update.message.from_user.id)
+
     # Importe la dépense
     result = await client.import_telegram_expense(
         label=parsed.label,
         amount=parsed.amount,
         category=category,
         comment=parsed.comment,
+        account_id=account_id,
     )
 
     if result:

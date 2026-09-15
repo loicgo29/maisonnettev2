@@ -22,6 +22,7 @@ class APIClient:
         amount: str,
         category: str = "divers",
         comment: Optional[str] = None,
+        account_id: Optional[int] = None,
     ) -> Optional[dict]:
         """
         POST /api/imports/telegram avec les données de la dépense.
@@ -33,6 +34,7 @@ class APIClient:
             "category": category,
             "date": str(date.today()),
             "comment": comment,
+            "account_id": account_id,
         }
 
         try:

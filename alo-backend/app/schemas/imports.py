@@ -9,6 +9,10 @@ class TelegramImportRequest(BaseModel):
     category: Optional[str] = None
     date: date
     comment: Optional[str] = None
+    # Absent (None) pour un expéditeur inconnu du bot — la dépense reste non
+    # attribuée plutôt que d'être assignée à tort à un compte (voir
+    # TELEGRAM_SENDER_TO_ACCOUNT côté bot et routers/imports.py).
+    account_id: Optional[int] = None
 
 
 class CsvImportRequest(BaseModel):

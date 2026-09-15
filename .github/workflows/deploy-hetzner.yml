@@ -39,6 +39,9 @@ jobs:
           KC_ADMIN_PASSWORD: ${{ secrets.KC_ADMIN_PASSWORD }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+          TELEGRAM_PERSONAL_PHONE: ${{ secrets.TELEGRAM_PERSONAL_PHONE }}
           MAREE_API_KEY: ${{ secrets.MAREE_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           PUBLIC_CALENDAR_ID: ${{ secrets.PUBLIC_CALENDAR_ID }}
@@ -59,6 +62,9 @@ jobs:
           KC_DB_PASSWORD=${{ env.KC_DB_PASSWORD }}
           KC_ADMIN_PASSWORD=${{ env.KC_ADMIN_PASSWORD }}
           TELEGRAM_BOT_TOKEN=${{ env.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_API_ID=${{ env.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH=${{ env.TELEGRAM_API_HASH }}
+          TELEGRAM_PERSONAL_PHONE=${{ env.TELEGRAM_PERSONAL_PHONE }}
           MAREE_API_KEY=${{ env.MAREE_API_KEY }}
           GOOGLE_API_KEY=${{ env.GOOGLE_API_KEY }}
           PUBLIC_CALENDAR_ID=${{ env.PUBLIC_CALENDAR_ID }}

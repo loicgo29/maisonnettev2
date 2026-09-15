@@ -164,6 +164,12 @@ services:
       API_PORT: 8000
       ENVIRONMENT: production
       DEBUG: 'false'
+      # Compte Telegram personnel (Telethon), utilisé par l'import
+      # d'historique — distinct du bot (TELEGRAM_BOT_TOKEN, service
+      # alo-telegram-bot ci-dessous).
+      TELEGRAM_API_ID: ${TELEGRAM_API_ID:?TELEGRAM_API_ID manquant}
+      TELEGRAM_API_HASH: ${TELEGRAM_API_HASH:?TELEGRAM_API_HASH manquant}
+      TELEGRAM_PERSONAL_PHONE: ${TELEGRAM_PERSONAL_PHONE:?TELEGRAM_PERSONAL_PHONE manquant}
     depends_on:
       postgres:
         condition: service_healthy

@@ -143,6 +143,12 @@ services:
       API_PORT: 8000
       ENVIRONMENT: production
       DEBUG: 'false'
+      # Optionnels en local : seul l'import d'historique Telegram en a
+      # besoin, pas le démarrage de base — contrairement à la prod
+      # (docker-compose.prod.yml), où ils sont requis.
+      TELEGRAM_API_ID: ${TELEGRAM_API_ID:-0}
+      TELEGRAM_API_HASH: ${TELEGRAM_API_HASH:-}
+      TELEGRAM_PERSONAL_PHONE: ${TELEGRAM_PERSONAL_PHONE:-}
     depends_on:
       postgres-maisonnettev2:
         condition: service_healthy

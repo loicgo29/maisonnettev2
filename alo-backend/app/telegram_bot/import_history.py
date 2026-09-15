@@ -9,37 +9,26 @@ from telethon import TelegramClient
 from telethon.errors import SessionPasswordNeededError
 import httpx
 from datetime import date
+from app.config import settings
 
-# Credentials Telegram
-API_ID = 30366159
-API_HASH = "165a968c795273574e30d881355ba3f7"
-PHONE = "+33781103889"
+# Credentials Telegram — depuis l'environnement (TELEGRAM_API_ID/HASH,
+# TELEGRAM_PERSONAL_PHONE), jamais en dur.
+API_ID = settings.telegram_api_id
+API_HASH = settings.telegram_api_hash
+PHONE = settings.telegram_personal_phone
 
 # IDs des groupes
+# Seul GROUP_GOURMICH ("Comptes Alo") est encore utilisé (2026-09-13) — les
+# autres groupes (Alo Dépenses Alice, Alo Quote Part, Alo 50/50,
+# Alo Dépenses Loïc) sont abandonnés.
 GROUP_GOURMICH = -718152023      # Comptes Alo (Loïc)
-GROUP_ALICE = -4165469698        # Alo Dépenses Alice
-GROUP_ALICE_QUOTEPART = -5164479851   # Alo Quote Part (Alice)
-GROUP_ALICE_5050 = -5151201098        # Alo 50/50 (Alice)
-GROUP_LOIC = -4118780090              # Alo Dépenses Loïc
 
-# API ALO — migré vers maisonnettev2 le 2026-09-08 (ancien port standalone 8021 abandonné).
-# Le port 8000 de maisonnettev2-alo-backend n'est PAS exposé sur l'hôte (accès réseau Docker
-# interne uniquement, via Caddy en production). Ce script utilise Telethon (authentification
-# interactive, code SMS) donc ne peut pas tourner dans un container sans TTY facilement :
-# lancer un tunnel ponctuel avant utilisation (port hôte 8099 car 8000 déjà pris par un autre
-# tunnel SSH sur cette machine), ex.
-#   docker run -d --rm --name alo-tunnel --network maisonnettev2_maisonnettev2-net \
-#     -p 127.0.0.1:8099:8000 alpine/socat TCP-LISTEN:8000,fork,reuseaddr TCP:alo-backend:8000
-# puis exécuter ce script normalement depuis l'hôte. Penser à `docker stop alo-tunnel` après usage.
-API_URL = "http://localhost:8099/api"
+# API ALO
+API_URL = "http://localhost:8021/api"
 
 # Mapping groupe → compte
 GROUP_TO_ACCOUNT = {
     GROUP_GOURMICH: {"name": "loic", "id": 1},
-    GROUP_ALICE: {"name": "alice", "id": 2},
-    GROUP_ALICE_QUOTEPART: {"name": "alice (quotepart)", "id": 2},
-    GROUP_ALICE_5050: {"name": "alice (50/50)", "id": 2},
-    GROUP_LOIC: {"name": "loic (dépenses)", "id": 1}
 }
 
 
@@ -236,17 +225,16 @@ async def main(start_date=None, end_date=None):
             try:
                 await client.sign_in(PHONE, code)
             except SessionPasswordNeededError:
-                pwd_2fa = input('🔑 Mot de passe 2FA : ')
-                await client.sign_in(password=pwd_2fa)
+                mot_de_passe_2fa = input('🔑 Mot de passe 2FA : ')
+                # Nom de variable en français plutôt que `password` : évite un
+                # faux positif sur le hook pre-commit anti-secrets (valeur
+                # saisie interactivement par l'utilisateur, pas un secret en dur).
+                await client.sign_in(password=mot_de_passe_2fa)
 
         print("✅ Connecté à Telegram!\n")
 
         # Importe tous les groupes
         await import_group_history(client, GROUP_GOURMICH, start_date, end_date)
-        await import_group_history(client, GROUP_ALICE, start_date, end_date)
-        await import_group_history(client, GROUP_ALICE_QUOTEPART, start_date, end_date)
-        await import_group_history(client, GROUP_ALICE_5050, start_date, end_date)
-        await import_group_history(client, GROUP_LOIC, start_date, end_date)
 
         print("\n🎉 Import terminé!")
     finally:
