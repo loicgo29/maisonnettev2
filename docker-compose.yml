@@ -98,6 +98,8 @@ services:
         PUBLIC_AUTH_URL: https://auth.maisonnette-pecheur-bertheaume.fr
         PUBLIC_AUTH_REALM: maisonnettev2
         PUBLIC_AUTH_CLIENT_ID: maisonnettev2-frontend
+        # En dev local : pas d'authentification requise (comme ALO)
+        PUBLIC_REQUIRE_AUTH: 'false'
     container_name: maisonnettev2-frontend
     environment:
       # Configuration
@@ -174,6 +176,8 @@ services:
     container_name: maisonnettev2-alo-telegram-bot
     command: ['uv', 'run', 'python', '-m', 'telegram_bot.bot']
     restart: unless-stopped
+    profiles:
+      - manual
     environment:
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:?TELEGRAM_BOT_TOKEN manquant — voir .env.example}
       TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
