@@ -16,10 +16,17 @@ export type TypeMessage =
   | 'ARRIVEE_OK'
   | 'PLANTES'
   | 'CHECKOUT'
-  | 'RETOUR';
+  | 'RETOUR'
+  | 'RELANCE_ACOMPTE'
+  | 'RELANCE_SOLDE';
 
-/** Point de référence à partir duquel le délai est compté. */
-type Ancre = 'CREATION' | 'ARRIVEE' | 'DEPART' | 'MILIEU_SEJOUR';
+/**
+ * Point de référence à partir duquel le délai est compté.
+ * ACOMPTE_MIN est un cas particulier : la relance d'acompte part à la
+ * première des deux échéances atteintes (création + 10 j, ou arrivée - 10 j),
+ * pas à un délai simple par rapport à une seule ancre.
+ */
+type Ancre = 'CREATION' | 'ARRIVEE' | 'DEPART' | 'MILIEU_SEJOUR' | 'ACOMPTE_MIN';
 
 export interface RegleMessage {
   type: TypeMessage;
@@ -92,6 +99,26 @@ export const REGLES_MESSAGES: RegleMessage[] = [
     heure: 10,
     cochePardefaut: true,
   },
+  {
+    type: 'RELANCE_ACOMPTE',
+    libelle: "Relance de l'acompte (Leboncoin, Direct, Autre)",
+    // decalageJours ignoré pour cette ancre : le calcul réel (J+10 création
+    // ou J-10 arrivée, la première échéance atteinte) vit dans
+    // calculerDateEnvoi. Ne concerne pas Airbnb/Booking, qui encaissent
+    // eux-mêmes — filtré dans messagesSejour.ts, pas ici.
+    ancre: 'ACOMPTE_MIN',
+    decalageJours: 0,
+    heure: 10,
+    cochePardefaut: true,
+  },
+  {
+    type: 'RELANCE_SOLDE',
+    libelle: 'Relance du solde (Leboncoin, Direct, Autre)',
+    ancre: 'ARRIVEE',
+    decalageJours: -3,
+    heure: 10,
+    cochePardefaut: true,
+  },
 ];
 
 /**
@@ -120,6 +147,23 @@ export function calculerDateEnvoi(
     case 'MILIEU_SEJOUR': {
       const duree = reservation.dateFin.getTime() - reservation.dateDebut.getTime();
       base = new Date(reservation.dateDebut.getTime() + duree / 2);
+      break;
+    }
+    case 'ACOMPTE_MIN': {
+      const creationPlus10 = new Date(reservation.createdAt);
+      creationPlus10.setDate(creationPlus10.getDate() + 10);
+      const arriveeMoins10 = new Date(reservation.dateDebut);
+      arriveeMoins10.setDate(arriveeMoins10.getDate() - 10);
+      base = creationPlus10.getTime() < arriveeMoins10.getTime() ? creationPlus10 : arriveeMoins10;
+
+      // Plancher au lendemain de la réservation : pour un séjour réservé à
+      // moins de 10 jours de l'arrivée, `arrivée - 10` tombe avant que la
+      // réservation n'existe. Le moteur ignore toute date passée de plus de
+      // deux jours, donc sans ce plancher une réservation de dernière minute
+      // ne recevrait aucune relance — silencieusement.
+      const lendemainCreation = new Date(reservation.createdAt);
+      lendemainCreation.setDate(lendemainCreation.getDate() + 1);
+      if (base.getTime() < lendemainCreation.getTime()) base = lendemainCreation;
       break;
     }
   }

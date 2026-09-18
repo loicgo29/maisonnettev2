@@ -14,6 +14,7 @@ import { requireRole } from '../middleware/requireRole.js';
 import { REGLES_MESSAGES } from '../config/messages.js';
 import { envoyerUnMessage, executerPassage, construireApercu } from '../services/messagesSejour.js';
 import { texteBrut } from '../templates/messages/index.js';
+import { importerReservationsDepuisCalendrier } from '../services/calendrierImport.js';
 
 const router = Router();
 
@@ -70,12 +71,29 @@ router.get('/reservations', async (req: AuthRequest, res: Response): Promise<voi
   }
 });
 
+/** Import depuis le calendrier public : rattrape les réservations jamais saisies à la main. */
+router.post(
+  '/reservations/importer-calendrier',
+  async (_req: AuthRequest, res: Response): Promise<void> => {
+    try {
+      const resultat = await importerReservationsDepuisCalendrier();
+      res.json(resultat);
+    } catch (erreur) {
+      res.status(500).json({
+        error: 'Import impossible',
+        details: erreur instanceof Error ? erreur.message : String(erreur),
+      });
+    }
+  }
+);
+
 /** Saisie manuelle : les réservations viennent d'Airbnb, Booking ou Leboncoin. */
 router.post('/reservations', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const {
       giteId, clientNom, clientPrenom, clientEmail, clientTelephone,
       plateforme, dateDebut, dateFin, montantTotal, notesInternes,
+      appelerParPrenom, nombreLits, attentesClient,
       messages,
     } = req.body;
 
@@ -107,6 +125,12 @@ router.post('/reservations', async (req: AuthRequest, res: Response): Promise<vo
         montantTotal: Number(montantTotal ?? 0),
         statut: 'CONFIRMED',
         notesInternes: notes,
+        appelerParPrenom: Boolean(appelerParPrenom),
+        // "" du formulaire (case "pas d'info" cochée) doit rester null, pas 0.
+        nombreLits: nombreLits === '' || nombreLits === undefined || nombreLits === null
+          ? null
+          : Number(nombreLits),
+        attentesClient: attentesClient?.trim() || null,
       },
     });
 
@@ -129,7 +153,11 @@ router.post('/reservations', async (req: AuthRequest, res: Response): Promise<vo
 
 router.patch('/reservations/:id', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { statut, acompteVerse, soldeVerse, notesInternes, clientEmail } = req.body;
+    const {
+      statut, acompteVerse, soldeVerse, notesInternes, clientEmail,
+      clientNom, clientPrenom, clientTelephone, montantTotal, plateforme,
+      appelerParPrenom, nombreLits, attentesClient,
+    } = req.body;
     const reservation = await prisma.reservation.update({
       where: { id: req.params.id },
       data: {
@@ -138,6 +166,18 @@ router.patch('/reservations/:id', async (req: AuthRequest, res: Response): Promi
         ...(soldeVerse !== undefined && { soldeVerse }),
         ...(notesInternes !== undefined && { notesInternes }),
         ...(clientEmail !== undefined && { clientEmail: clientEmail || null }),
+        // Complète les réservations importées du calendrier, saisies au départ
+        // sans e-mail ni montant (le calendrier ne porte pas cette info).
+        ...(clientNom !== undefined && { clientNom }),
+        ...(clientPrenom !== undefined && { clientPrenom }),
+        ...(clientTelephone !== undefined && { clientTelephone }),
+        ...(montantTotal !== undefined && { montantTotal: Number(montantTotal) }),
+        ...(plateforme !== undefined && { plateforme }),
+        ...(appelerParPrenom !== undefined && { appelerParPrenom: Boolean(appelerParPrenom) }),
+        ...(nombreLits !== undefined && {
+          nombreLits: nombreLits === '' || nombreLits === null ? null : Number(nombreLits),
+        }),
+        ...(attentesClient !== undefined && { attentesClient: attentesClient?.trim() || null }),
       },
     });
     res.json(reservation);
@@ -166,6 +206,7 @@ router.get('/messages', async (req: AuthRequest, res: Response): Promise<void> =
             clientEmail: true,
             dateDebut: true,
             dateFin: true,
+            montantTotal: true,
             gite: { select: { nom: true, adresse: true } },
           },
         },

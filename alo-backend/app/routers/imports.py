@@ -286,7 +286,15 @@ async def telegram_preview(
 def _map_category_to_model(yaml_category: str) -> str:
     """Mappe les catégories YAML aux catégories du modèle Expense."""
     mapping = {
-        "alimentation": "50/50",
+        # L'alimentation relève de la quote-part, pas du 50/50 : elle se
+        # répartit au prorata des repas pris, pas à parts égales.
+        #
+        # Le mappage vers "50/50" (corrigé le 2026-09-15) était contourné en
+        # déplaçant certaines enseignes dans la liste YAML `quotepart`
+        # (kerbio, graine de bio, gie douar…) — d'où des incohérences visibles
+        # en base : Biocoop, Leclerc et La Fourche apparaissaient tantôt en
+        # quotepart, tantôt en 50/50, pour 3 293 € mal classés sur 2026.
+        "alimentation": "quotepart",
         "logement": "50/50",
         "enfants": "50/50",
         "transport": "50/50",

@@ -57,6 +57,7 @@ model MessageSejour {
   reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
 
   // CANAL | GUIDE | RAPPEL_ARRIVEE | ARRIVEE_OK | PLANTES | CHECKOUT | RETOUR
+  // | RELANCE_ACOMPTE | RELANCE_SOLDE
   type          String
   // EMAIL | SMS | WHATSAPP — tout part par e-mail en v1
   canal         String      @default("EMAIL")
@@ -72,6 +73,12 @@ model MessageSejour {
   erreur        String?
   sujet         String?
   corps         String?     @db.Text
+  // RELANCE_ACOMPTE / RELANCE_SOLDE seulement : ces deux types ne partent
+  // jamais tout seuls (argent en jeu), même avec MESSAGES_AUTO=true. Le
+  // moteur notifie Loïc par ntfy avec le texte prêt à envoyer, puis pose ce
+  // drapeau pour ne pas re-notifier à chaque passage horaire tant que le
+  // statut reste PLANIFIE (envoi manuel depuis /admin/messages).
+  notifie       Boolean     @default(false)
 
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -100,6 +107,17 @@ model Reservation {
   montantTotal            Float
   stripePaymentIntentId   String?  // Stripe payment tracking
   googleCalendarEventId   String?  // Google Calendar event link
+
+  // true si les échanges avec ce client tutoient / l'appellent par son
+  // prénom — Leboncoin et le direct s'y prêtent, Airbnb et Booking restent
+  // plus formels par défaut.
+  appelerParPrenom        Boolean  @default(false)
+  // Absent (null) = pas encore renseigné, distinct de 0 qui affirmerait un
+  // studio sans lit — la case "pas d'info" du formulaire correspond à null.
+  nombreLits              Int?
+  // Demandes du client hors trame standard : vélo à prévoir, arrivée à une
+  // heure inhabituelle, etc. Relu à la main, jamais par le moteur de messages.
+  attentesClient          String?  @db.Text
 
   // Suivi des paiements, utile aux réservations directes et Leboncoin :
   // Airbnb et Booking encaissent eux-mêmes. Affiché dans le backoffice, il ne
@@ -143,7 +161,13 @@ model aloAccounts {
   id              Int                @id
   name            String
   institution     String?
-  owner           AloAccountOwner
+  // varchar et non l'enum AloAccountOwner : en production cette colonne est
+  // un `character varying` contenant de vrais prénoms ("loic", "alice"), pas
+  // les valeurs adulte1/adulte2/commun de l'enum. Le déclarer en enum faisait
+  // planter Prisma dès qu'il lisait une vraie ligne — dormant seulement parce
+  // que le module /api/alo est désactivé en prod (ALO_ENABLED). Constaté le
+  // 2026-09-15 en restaurant un dump de prod en local.
+  owner           String
   current_balance Decimal?  @db.Decimal(10, 2)
   updated_at      DateTime?
   expenses        aloExpenses[]
@@ -191,6 +215,12 @@ model aloPeriods {
 // Enums PostgreSQL du schéma `alo`, propriété d'alo (SQLAlchemy les crée).
 // Prisma doit les déclarer pour lire les colonnes : sans cela il attend des
 // String et échoue sur « incompatible value ».
+//
+// AloAccountOwner n'est plus rattaché à aucun champ (accounts.owner est un
+// varchar en production, cf. commentaire du modèle) mais reste déclaré : le
+// type existe en base des deux côtés, et le retirer d'ici ferait générer à
+// Prisma un DROP TYPE qui s'exécuterait aussi en production, sur un schéma
+// qui appartient à SQLAlchemy.
 enum AloAccountOwner {
   adulte1
   adulte2

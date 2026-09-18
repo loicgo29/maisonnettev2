@@ -17,12 +17,33 @@
 			pret = true;
 			return;
 		}
+
+		// DEV MODE: Bypass Keycloak completely (no crypto.subtle needed on HTTP/Tailscale)
+		// TODO: Remove this in production
+		const bypassAuth = true;
+
+		// DEV MODE: Create a dummy token so API calls work without Keycloak
+		// Try to get from cookie first (set by +layout.server.ts)
+		if (bypassAuth && !sessionStorage.getItem('admin_jeton_acces')) {
+			let token = '';
+			const cookies = document.cookie.split('; ').find(c => c.startsWith('jeton='));
+			if (cookies) {
+				token = cookies.split('=')[1];
+			} else {
+				token = 'dev-token-' + Date.now();
+			}
+			sessionStorage.setItem('admin_jeton_acces', token);
+		}
+
 		const t = jeton();
-		if (!t) {
+		if (!t && !bypassAuth) {
 			await demarrerConnexion(location.pathname);
 			return;
 		}
-		nomUtilisateur = chargeUtile(t)?.preferred_username ?? chargeUtile(t)?.email ?? '';
+
+		if (t) {
+			nomUtilisateur = chargeUtile(t)?.preferred_username ?? chargeUtile(t)?.email ?? '';
+		}
 		pret = true;
 	});
 </script>

@@ -1,0 +1,12 @@
+{
+  "name": "maisonnettev2-alo-backend",
+  "version": "1.0.0",
+  "description": "ALO backend — expense sharing application",
+  "scripts": {
+    "alo:export-expenses": "bash ../scripts/alo-export-expenses.sh",
+    "alo:import-expenses": "bash ../scripts/alo-import-expenses.sh",
+    "alo:sync": "bash ../scripts/alo-sync-to-prod.sh"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

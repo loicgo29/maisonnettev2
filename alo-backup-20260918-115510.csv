@@ -1,0 +1,704 @@
+
+> maisonnettev2-alo-backend@1.0.0 alo:export-expenses
+> bash ../scripts/alo-export-expenses.sh
+
+📥 Exporting expenses updated since: 2000-01-01 00:00:00
+📊 Found 660 new/updated expenses
+id,date,amount,label,category,source,status,comment,sharing_mode,account_id,period_id,created_at,updated_at
+84,2026-09-12,59.00,Marché,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.643866,2026-09-15T18:08:20.842061
+85,2026-09-06,30.00,Leroy,brico,telegram,draft,,,1,,2026-09-15T14:53:46.671418,2026-09-15T14:53:46.671424
+86,2026-09-05,54.00,bricolage,brico,telegram,draft,,,1,,2026-09-15T14:53:46.699167,2026-09-15T14:53:46.699170
+87,2026-09-02,50.00,marches,quotepart,telegram,draft,,,1,,2026-09-15T14:53:46.704498,2026-09-15T18:08:20.842061
+88,2026-09-02,110.00,Marché,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.713169,2026-09-15T18:08:20.842061
+89,2026-08-29,67.00,Marché,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.724192,2026-09-15T18:08:20.842061
+90,2026-08-28,118.00,Leclerc,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.730066,2026-09-15T18:08:20.842061
+91,2026-08-26,27.63,salaire Carole août,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.734144,2026-09-15T18:08:20.842061
+92,2026-08-22,9.00,Marché,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.742585,2026-09-15T18:08:20.842061
+93,2026-08-22,128.00,Marché,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.749943,2026-09-15T18:08:20.842061
+94,2026-08-21,146.00,farine,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.757756,2026-09-15T14:53:46.757759
+95,2026-08-20,103.00,Sunday vitamines,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.761759,2026-09-15T18:08:20.842061
+96,2026-08-20,184.00,Kerbio,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.765714,2026-09-15T14:53:46.765723
+97,2026-08-18,56.00,Marché,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.779066,2026-09-15T18:08:20.842061
+98,2026-08-12,80.00,Casto Wedi,brico,telegram,draft,,,2,,2026-09-15T14:53:46.791443,2026-09-15T18:08:20.842061
+99,2026-08-12,86.24,paiement en ligne casto,brico,telegram,draft,,,1,,2026-09-15T14:53:46.801358,2026-09-15T18:08:20.842061
+100,2026-08-08,84.00,Marché,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.814597,2026-09-15T18:08:20.842061
+101,2026-08-05,25.00,Marché,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.825235,2026-09-15T18:08:20.842061
+102,2026-08-01,22.00,Marché,quotepart,telegram,draft,,,2,,2026-09-15T14:53:46.843414,2026-09-15T18:08:20.842061
+103,2026-08-01,14.00,Fromage,quotepart,telegram,draft,,,1,,2026-09-15T14:53:46.855034,2026-09-15T18:12:04.522157
+106,2026-05-15,47.50,Carrefour,50/50,telegram,draft,,quotepart,1,,2026-05-24T11:38:07.968935,2026-07-11T14:14:52.649716
+107,2026-05-20,63.20,Leclerc,50/50,telegram,draft,,quotepart,2,,2026-05-24T11:38:08.041707,2026-07-11T14:14:52.649718
+108,2026-01-30,418.05,CB La Fourche Rue Des Fre,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782678,2026-05-25T12:48:49.292574
+109,2026-04-02,348.94,CB La Fourche Seine Et Marn,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782684,2026-05-25T12:48:49.292581
+110,2026-02-28,320.22,CB La Fourche Rue Des Fre,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782686,2026-05-25T12:48:49.292582
+111,2026-04-07,297.86,CB Sp Weightworld F Clonmel,quotepart,csv_import,draft,Fortuneo: Loisirs & Sorties / Loisirs & Sorties - Autres,,5,,2026-05-24T12:19:29.782687,2026-05-25T12:48:49.292583
+112,2026-05-04,294.05,CB Kerbio Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782688,2026-05-25T12:48:49.292583
+113,2026-04-07,245.00,Vir Inst Agneau,quotepart,csv_import,draft,"Fortuneo: Retraits, Chq. et Vir. / Virements",,5,,2026-05-24T12:19:29.782690,2026-05-25T12:48:49.292584
+115,2026-05-14,193.50,Vir Inst Viande Et Pate,quotepart,csv_import,draft,"Fortuneo: Retraits, Chq. et Vir. / Virements",,5,,2026-05-24T12:19:29.782692,2026-05-25T12:48:49.292584
+116,2026-02-24,185.28,CB Biocoop Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782693,2026-05-25T12:48:49.292585
+117,2026-03-02,181.99,CB Graine De Bio Pont L Abbe,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782695,2026-05-25T12:48:49.292586
+118,2026-04-22,156.44,CB Biocoop Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782696,2026-05-25T12:48:49.292586
+119,2026-01-23,148.37,CB Kerbio Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782697,2026-05-25T12:48:49.292587
+120,2026-04-10,144.22,CB Kerbio Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782698,2026-05-25T12:48:49.292587
+121,2026-03-09,142.62,CB Biocoop Le Relecq Ker,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782700,2026-05-25T12:48:49.292588
+122,2026-03-19,137.71,CB Kerbio Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782701,2026-05-25T12:48:49.292588
+123,2026-04-25,137.29,CB Leclerc Gouesnou Gouesnou,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782702,2026-05-25T12:48:49.292589
+124,2026-04-02,133.00,CB Domaine Hermiton Montlaur En D,quotepart,csv_import,draft,Fortuneo: Loisirs & Sorties / Sports d'hiver,,5,,2026-05-24T12:19:29.782703,2026-05-25T12:48:49.292589
+125,2026-02-12,132.49,CB Kerbio Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782705,2026-05-25T12:48:49.292590
+126,2026-02-20,123.74,CB Kerbio Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782706,2026-05-25T12:48:49.292591
+127,2026-01-09,122.84,CB Kerbio Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782707,2026-05-25T12:48:49.292591
+128,2026-02-23,120.84,CB Kingemballage Croissy Beaubo,50/50,csv_import,draft,Fortuneo: Loisirs & Sorties / Loisirs & Sorties - Autres,,5,,2026-05-24T12:19:29.782708,2026-05-25T12:48:49.292592
+129,2026-01-29,120.33,CB Biocoop Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782710,2026-05-25T12:48:49.292592
+130,2026-02-09,118.46,CB Kerbio Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782711,2026-05-25T12:48:49.292593
+131,2026-03-30,115.88,CB Biocoop Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782712,2026-05-25T12:48:49.292593
+132,2026-03-26,115.46,CB Biocoop Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782713,2026-05-25T12:48:49.292594
+133,2026-04-18,113.59,CB La Maison Du Pei Brest,quotepart,csv_import,draft,Fortuneo: Logement / Décoration,,5,,2026-05-24T12:19:29.782714,2026-05-25T12:48:49.292594
+134,2026-01-19,111.86,CB Leclerc Gouesnou Gouesnou,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782716,2026-05-25T12:48:49.292595
+135,2026-03-12,108.25,CB Biocoop Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782717,2026-05-25T12:48:49.292596
+136,2026-01-14,107.86,CB Kerbio Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782718,2026-05-25T12:48:49.292596
+137,2026-04-15,102.73,CB Kerbio Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782719,2026-05-25T12:48:49.292597
+138,2026-01-17,102.28,CB Kerbio Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782721,2026-05-25T12:48:49.292597
+139,2026-01-02,101.50,Vir Inst Aquaself,quotepart,csv_import,draft,"Fortuneo: Retraits, Chq. et Vir. / Virements",,5,,2026-05-24T12:19:29.782722,2026-05-25T12:48:49.292598
+140,2026-01-21,99.57,CB Biocoop Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782723,2026-05-25T12:48:49.292598
+141,2026-05-09,91.19,CB Leclerc Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782724,2026-05-25T12:48:49.292599
+142,2026-04-07,87.46,CB Kerbio St Renan,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782726,2026-05-25T12:48:49.292599
+143,2026-03-16,81.86,CB Leclerc Le Relecq Ker,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782727,2026-05-25T12:48:49.292600
+144,2026-03-16,80.59,CB Biocoop Le Relecq Ker,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782728,2026-05-25T12:48:49.292600
+145,2026-05-19,80.00,CB Zettle_*racault Ploudalmezeau,quotepart,csv_import,draft,Fortuneo: Achats & Shopping / Livres,,5,,2026-05-24T12:19:29.782729,2026-05-25T12:48:19.647946
+147,2026-05-06,75.47,CB Biocoop Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782731,2026-05-25T12:48:49.292601
+148,2026-03-23,75.13,CB Kerbio R Droite Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782733,2026-05-25T12:48:49.292602
+149,2026-03-05,74.01,CB Biocoop Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782734,2026-05-25T12:48:49.292602
+150,2026-02-07,71.44,CB Kerbio Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782735,2026-05-25T12:48:49.292603
+151,2026-01-07,69.44,CB Biocoop Le Relecq Ker,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782736,2026-05-25T12:48:49.292603
+152,2026-02-14,65.42,CB Crowdfarming Madrid,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782737,2026-05-25T12:48:49.292604
+153,2026-01-12,64.25,CB Domaine Hermiton Montlaur En D,quotepart,csv_import,draft,Fortuneo: Loisirs & Sorties / Sports d'hiver,,5,,2026-05-24T12:19:29.782739,2026-05-25T12:48:49.292604
+154,2026-02-09,63.95,CB Mv Brest Kerga Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782740,2026-05-25T12:48:49.292605
+155,2026-04-13,63.39,CB Kerbio Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782741,2026-05-25T12:48:49.292605
+156,2026-05-16,61.70,CB Biocoop Plouzane,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782742,2026-05-25T12:48:49.292606
+157,2026-02-13,58.85,CB Leclerc Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782743,2026-05-25T12:48:49.292606
+158,2026-02-04,54.79,CB Biocoop Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782744,2026-05-25T12:48:49.292607
+159,2026-03-14,52.55,CB Crowdfarming Madrid,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782746,2026-05-25T12:48:49.292607
+160,2026-03-06,52.49,CB Mv Brest Kerga Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782747,2026-05-25T12:48:49.292608
+161,2026-05-19,51.20,CB Savez Vous Plan St Pol De Leon,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Restaurants,,5,,2026-05-24T12:19:29.782748,2026-05-25T12:48:49.292609
+162,2026-05-11,50.80,CB Gie Douar Bev La Roche Mauri,quotepart,csv_import,draft,Fortuneo: Loisirs & Sorties / Loisirs & Sorties - Autres,,5,,2026-05-24T12:19:29.782749,2026-05-25T12:48:49.292609
+163,2026-05-11,50.35,CB Biocoop Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782750,2026-05-25T12:48:49.292610
+164,2026-03-31,42.58,CB Total Brest,quotepart,csv_import,draft,Fortuneo: Auto & Transports / Carburant,,5,,2026-05-24T12:19:29.782751,2026-05-25T12:48:49.292610
+165,2026-02-02,39.90,CB Leclerc Le Relecq Ker,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782753,2026-05-25T12:48:49.292611
+166,2026-02-02,39.19,CB Crowdfarming Madrid,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782754,2026-05-25T12:48:49.292611
+167,2026-02-02,37.94,CB Crowdfarming Madrid,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782755,2026-05-25T12:48:49.292612
+168,2026-04-01,36.11,CB Biocoop Le Relecq Kerh,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782756,2026-05-25T12:48:49.292612
+169,2026-04-01,33.00,CB Sncf Voyageurs Paris,quotepart,csv_import,draft,Fortuneo: Auto & Transports / Billets de train,,5,,2026-05-24T12:19:29.782758,2026-05-25T12:48:49.292613
+170,2026-03-28,32.65,CB Crowdfarming Madrid,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782759,2026-05-25T12:48:49.292613
+172,2026-01-07,32.40,CB Leclerc Le Relecq Ker,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782761,2026-05-25T12:48:49.292614
+173,2026-04-13,30.90,CB Zettle_*kerjean Brest,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Alimentation - Autres,,5,,2026-05-24T12:19:29.782762,2026-05-25T12:48:19.647950
+174,2026-01-21,30.50,CB Hpy*kokopelli Le Mas D'azil,50/50,csv_import,draft,Fortuneo: Achats & Shopping / Cadeaux,,5,,2026-05-24T12:19:29.782763,2026-05-25T12:48:49.292614
+175,2026-04-10,28.30,CB Crowdfarming Madrid,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782765,2026-05-25T12:48:49.292615
+176,2026-03-31,27.01,CB Finis Terra Brest,quotepart,csv_import,draft,Fortuneo: Loisirs & Sorties / Sorties culturelles,,5,,2026-05-24T12:19:29.782766,2026-05-25T12:48:49.292615
+178,2026-01-26,14.48,CB Brico Plougastel Da,quotepart,csv_import,draft,Fortuneo: Achats & Shopping / Achats & Shopping - Autres,,5,,2026-05-24T12:19:29.782768,2026-05-25T12:48:49.292616
+179,2026-04-20,13.47,CB Bouchbiominou Plouzane,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782769,2026-05-25T12:48:49.292617
+180,2026-04-04,13.19,CB Hostinger.com Larnaka,dette,csv_import,draft,Fortuneo: Dépenses pro / Services en ligne,,1,,2026-05-24T12:19:29.782771,2026-05-25T13:05:21.350518
+181,2026-02-28,12.29,CB Leclerc Gouesnou Gouesnou,quotepart,csv_import,draft,Fortuneo: Alimentation & Restau. / Supermarché / Epicerie,,5,,2026-05-24T12:19:29.782772,2026-05-25T12:48:49.292618
+182,2026-03-11,2.90,Ann Carte La Fourche Rue Des Fre,quotepart,csv_import,draft,Fortuneo: Entrées d'argent / Remboursements,,5,,2026-05-24T12:19:29.782773,2026-05-25T12:48:49.292618
+183,2026-04-03,8.10,Ann Carte La Fourche Seine Et Marn,quotepart,csv_import,draft,Fortuneo: Entrées d'argent / Remboursements,,5,,2026-05-24T12:19:29.782774,2026-05-25T12:48:49.292619
+184,2026-04-28,100.00,Vir Virement Avec Fortuneo Compt,virement,csv_import,draft,Fortuneo: Entrées d'argent / Virements internes,,1,,2026-05-24T12:19:29.782775,2026-05-24T14:52:32.975248
+185,2026-04-25,100.00,Vir Inst Madame Vasseur Alice,virement,csv_import,draft,Fortuneo: Entrées d'argent / Autres rentrées,,2,,2026-05-24T12:19:29.782776,2026-05-24T12:19:29.782777
+186,2026-01-29,100.00,Vir Inst Madame Vasseur Alice,virement,csv_import,draft,Fortuneo: Entrées d'argent / Autres rentrées,,2,,2026-05-24T12:19:29.782778,2026-05-24T12:19:29.782778
+187,2026-03-17,162.69,Ann Carte La Fourche Rue Des Fre,quotepart,csv_import,draft,Fortuneo: Entrées d'argent / Remboursements,,5,,2026-05-24T12:19:29.782779,2026-05-25T12:48:49.292619
+188,2026-02-01,300.00,Vir Inst Madame Vasseur Alice,virement,csv_import,draft,Fortuneo: Entrées d'argent / Autres rentrées,,2,,2026-05-24T12:19:29.782780,2026-05-24T12:19:29.782781
+189,2026-05-04,700.00,Vir Madame Vasseur Alice,virement,csv_import,draft,Fortuneo: Entrées d'argent / Remboursements,,2,,2026-05-24T12:19:29.782781,2026-05-24T12:19:29.782782
+190,2026-04-30,700.00,Vir M Gourmelon Loic,virement,csv_import,draft,Fortuneo: Entrées d'argent / Remboursements,,1,,2026-05-24T12:19:29.782782,2026-05-24T12:19:29.782783
+191,2026-04-02,700.00,Vir Madame Vasseur Alice,virement,csv_import,draft,Fortuneo: Entrées d'argent / Remboursements,,2,,2026-05-24T12:19:29.782784,2026-05-24T12:19:29.782784
+192,2026-03-31,700.00,Vir M Gourmelon Loic,virement,csv_import,draft,Fortuneo: Entrées d'argent / Remboursements,,1,,2026-05-24T12:19:29.782785,2026-05-24T12:19:29.782785
+193,2026-03-02,700.00,Vir Madame Vasseur Alice,virement,csv_import,draft,Fortuneo: Entrées d'argent / Remboursements,,2,,2026-05-24T12:19:29.782786,2026-05-24T12:19:29.782787
+194,2026-03-02,700.00,Vir M Gourmelon Loic,virement,csv_import,draft,Fortuneo: Entrées d'argent / Remboursements,,1,,2026-05-24T12:19:29.782787,2026-05-24T12:19:29.782788
+195,2026-02-02,700.00,Vir Madame Vasseur Alice,virement,csv_import,draft,Fortuneo: Entrées d'argent / Remboursements,,2,,2026-05-24T12:19:29.782789,2026-05-24T12:19:29.782789
+196,2026-02-02,700.00,Vir M Gourmelon Loic,virement,csv_import,draft,Fortuneo: Entrées d'argent / Remboursements,,1,,2026-05-24T12:19:29.782790,2026-05-24T12:19:29.782790
+199,2026-05-19,82.00,Biocoop,50/50,telegram,draft,,quotepart,1,,2026-05-24T12:23:08.056907,2026-07-11T14:25:27.945280
+200,2026-05-14,55.00,Marche,50/50,telegram,draft,,quotepart,1,,2026-05-24T12:23:08.075668,2026-07-11T14:14:52.649718
+201,2026-05-13,123.00,Biocoop,50/50,telegram,draft,,quotepart,1,,2026-05-24T12:23:08.093599,2026-07-11T14:25:27.945282
+202,2026-04-23,12.00,Câble viriliseur,divers,telegram,draft,,quotepart,1,,2026-05-24T12:23:08.111796,2026-09-15T15:04:16.841769
+203,2026-04-17,92.00,Biocoop,50/50,telegram,draft,,quotepart,1,,2026-05-24T12:23:08.130177,2026-07-11T14:25:27.945283
+206,2026-03-27,62.00,BIOCOoop,divers,telegram,draft,,50/50,1,,2026-05-24T12:23:08.183008,2026-07-11T14:14:36.719425
+207,2026-03-12,96.00,Courses,50/50,telegram,draft,,quotepart,1,,2026-05-24T12:23:08.200799,2026-07-11T14:14:52.649718
+208,2026-02-27,85.00,euros,divers,telegram,draft,,50/50,1,,2026-05-24T12:23:08.218498,2026-07-11T14:14:36.719426
+210,2026-01-31,167.00,Biocoop,50/50,telegram,draft,,quotepart,1,,2026-05-24T12:23:08.258570,2026-07-11T14:25:27.945283
+211,2026-01-17,55.00,e (sans pinces et sushi,divers,telegram,draft,,50/50,1,,2026-05-24T12:23:08.275904,2026-07-11T14:14:36.719426
+465,2026-01-02,14.00,crowdfarming,divers,telegram,draft,,quotepart,2,,2026-05-24T12:23:14.532080,2026-07-11T14:14:36.719426
+588,2026-05-17,18.00,Tonio,divers,telegram,draft,,50/50,2,,2026-05-24T12:23:17.260733,2026-07-11T14:14:36.719426
+589,2026-05-17,6.00,Shitaque,divers,telegram,draft,,50/50,2,,2026-05-24T12:23:17.285552,2026-07-11T14:14:36.719427
+590,2026-05-17,10.00,Marché fromage,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.305593,2026-07-11T14:14:52.649720
+591,2026-05-14,42.00,Parapharmacie Lafayette,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.324130,2026-07-11T14:14:52.649720
+592,2026-05-14,423.00,La fourche,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.341745,2026-07-11T14:25:27.945284
+593,2026-05-14,15.00,Marché kerinou,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.359520,2026-07-11T14:14:52.649721
+594,2026-04-28,128.57,Kerbio,brico,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.378476,2026-07-11T14:25:27.945285
+595,2026-04-28,174.86,Poisson,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.397808,2026-07-11T14:25:27.945285
+596,2026-04-28,136.00,Salaire Carole,50/50,telegram,draft,,50/50,2,,2026-05-24T12:23:17.416030,2026-07-11T14:27:03.789081
+597,2026-04-20,25.00,Marché kerinou Blons,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.434545,2026-07-11T14:14:52.649721
+598,2026-04-08,20.00,Leclerc,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.454545,2026-07-11T14:14:52.649721
+599,2026-04-08,40.00,Kerbio,brico,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.473825,2026-07-11T14:25:27.945285
+600,2026-03-29,216.10,Carole,50/50,telegram,draft,,50/50,2,,2026-05-24T12:23:17.491647,2026-07-11T14:27:03.789083
+601,2026-02-28,109.00,Carole février,50/50,telegram,draft,,50/50,2,,2026-05-24T12:23:17.509743,2026-07-11T14:27:03.789083
+602,2026-02-01,216.10,Carole janvier,50/50,telegram,draft,,50/50,2,,2026-05-24T12:23:17.528029,2026-07-11T14:27:03.789083
+603,2026-01-18,165.52,Poisson,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.545776,2026-07-11T14:25:27.945286
+604,2026-01-17,15.00,Action,divers,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.563894,2026-07-11T14:14:36.719429
+605,2026-01-04,65.00,Alice Marché,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.582207,2026-07-11T14:14:52.649721
+606,2026-05-15,20.00,Pourboire menuisier,50/50,telegram,draft,,50/50,2,,2026-05-24T12:23:17.648772,2026-07-11T14:28:56.655142
+607,2026-05-08,63.00,Hadenn,divers,telegram,draft,,50/50,2,,2026-05-24T12:23:17.669431,2026-07-11T14:14:36.719430
+608,2026-04-28,33.56,Parapharmacie Leclerc,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.688939,2026-07-11T14:14:52.649722
+609,2026-04-21,11.45,Aromazone,50/50,telegram,draft,,50/50,2,,2026-05-24T12:23:17.708594,2026-07-11T14:25:27.945286
+610,2026-04-18,57.84,Magasin vert,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.727577,2026-07-11T14:25:27.945286
+611,2026-04-10,19.00,Lidl,50/50,telegram,draft,,50/50,2,,2026-05-24T12:23:17.757794,2026-07-11T14:14:52.649722
+612,2026-04-05,141.00,Pharmacie du bocage,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.775527,2026-07-11T14:14:52.649722
+613,2026-04-05,25.00,Hadenn,divers,telegram,draft,,50/50,2,,2026-05-24T12:23:17.793005,2026-07-11T14:14:36.719431
+614,2026-03-13,53.00,Maison du bananier,divers,telegram,draft,,50/50,2,,2026-05-24T12:23:17.810427,2026-07-11T14:14:36.719431
+615,2026-03-05,46.00,Easypharmacie,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.828910,2026-07-11T14:14:52.649722
+616,2026-02-22,145.00,vitamines Naturitas,50/50,telegram,draft,,50/50,2,,2026-05-24T12:23:17.846872,2026-07-11T14:25:27.945286
+617,2026-02-22,39.00,terreau et engrais,50/50,telegram,draft,,50/50,2,,2026-05-24T12:23:17.864599,2026-07-11T14:14:52.649722
+618,2026-02-21,50.00,plantes Plougonvelin,divers,telegram,draft,,50/50,2,,2026-05-24T12:23:17.883365,2026-07-11T14:14:36.719432
+620,2026-02-16,259.00,Le loupp,divers,telegram,draft,,50/50,1,,2026-05-24T12:23:17.921013,2026-07-11T14:14:36.719432
+621,2026-02-12,23.00,Pharmacie,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.939183,2026-07-11T14:14:52.649723
+622,2026-01-29,30.00,huiles essentielles et flacons pour tous,divers,telegram,draft,,quotepart,2,,2026-05-24T12:23:17.957810,2026-07-11T14:14:36.719433
+623,2026-01-24,42.00,Pots,divers,telegram,draft,,50/50,2,,2026-05-24T12:23:17.975530,2026-07-11T14:14:36.719433
+624,2026-01-21,35.00,savons,divers,telegram,draft,,50/50,2,,2026-05-24T12:23:17.992728,2026-07-11T14:14:36.719433
+625,2026-01-21,10.00,Artemisia,divers,telegram,draft,,50/50,2,,2026-05-24T12:23:18.010091,2026-07-11T14:14:36.719433
+627,2026-01-18,60.00,vitrine,divers,telegram,draft,,50/50,2,,2026-05-24T12:23:18.044939,2026-07-11T14:14:36.719433
+628,2026-01-11,201.00,Sunday,50/50,telegram,draft,,50/50,2,,2026-05-24T12:23:18.062347,2026-07-11T14:27:51.192257
+629,2026-01-09,56.00,Pharmacie,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:18.079928,2026-07-11T14:14:52.649723
+630,2026-01-07,52.00,pharmacie,50/50,telegram,draft,,quotepart,2,,2026-05-24T12:23:18.097778,2026-07-11T14:14:52.649723
+631,2025-01-01,5.63,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/1iWQnfzEvZyrlZ8UFuGg3HO2aQNOtfh0v/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1iWQnfzEvZyrlZ8UFuGg3HO2aQNOtfh0v/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747162,2026-05-25T12:48:49.292620
+632,2025-01-01,9.90,Amazon,brico,csv_import,draft,Amazon,brico,1,,2026-05-24T19:12:46.747167,2026-05-25T12:48:49.292620
+633,1900-08-10,10.89,Cedeo,brico,csv_import,draft,"https://drive.google.com/file/d/1dloOBCbVW7dZHXW9VakMtudxTK9n_wzv/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1dloOBCbVW7dZHXW9VakMtudxTK9n_wzv/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747168,2026-05-25T12:48:49.292621
+634,1900-08-09,11.99,Amazon,brico,csv_import,draft,"https://drive.google.com/file/d/1h6oZFpqYB3KMsyOoX5UWSTWzQ5vVxkIF/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1h6oZFpqYB3KMsyOoX5UWSTWzQ5vVxkIF/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747169,2026-05-25T12:48:49.292621
+635,2025-01-01,12.99,Amazon,brico,csv_import,draft,multimetre,brico,1,,2026-05-24T19:12:46.747171,2026-05-25T12:48:49.292622
+636,2023-08-14,13.52,Cedeo,brico,csv_import,draft,"https://drive.google.com/file/d/1JDayfBp45bmYNt_5W-tjiUFxaBSCF2Zx/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1JDayfBp45bmYNt_5W-tjiUFxaBSCF2Zx/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747172,2026-05-25T12:48:49.292622
+637,1900-08-14,14.04,Amazon,brico,csv_import,draft,"https://drive.google.com/file/d/123ES5FM8_pWvg7nJvvZ66mHELrIadBDx/view?usp=drive_link
+🔗 https://drive.google.com/file/d/123ES5FM8_pWvg7nJvvZ66mHELrIadBDx/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747173,2026-05-25T12:48:49.292623
+638,2025-01-01,14.14,Amazon,brico,csv_import,draft,Amazon,brico,1,,2026-05-24T19:12:46.747174,2026-05-25T12:48:49.292624
+639,1900-08-14,15.03,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/1QcM_UiLS7b9Ogrln953lVSMp4gdyoxer/view?usp=sharing
+🔗 https://drive.google.com/file/d/1QcM_UiLS7b9Ogrln953lVSMp4gdyoxer/view?usp=sharing",brico,1,,2026-05-24T19:12:46.747175,2026-05-25T12:48:49.292624
+640,2025-01-01,15.82,Amazon,brico,csv_import,draft,Amazon,brico,1,,2026-05-24T19:12:46.747176,2026-05-25T12:48:49.292625
+641,2025-01-01,17.28,Amazon,brico,csv_import,draft,vélo,brico,1,,2026-05-24T19:12:46.747177,2026-05-25T12:48:49.292625
+642,1900-08-04,17.30,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/15kX5EwLWgitqHZVArutXTApT5CcFjfRB/view?usp=drive_link
+🔗 https://drive.google.com/file/d/15kX5EwLWgitqHZVArutXTApT5CcFjfRB/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747178,2026-05-25T12:48:49.292626
+643,1900-08-04,17.55,Amazon,brico,csv_import,draft,"https://drive.google.com/file/d/14QS0wNpUIl8fzdOq3SH669hwq2448ahL/view?usp=drive_link
+🔗 https://drive.google.com/file/d/14QS0wNpUIl8fzdOq3SH669hwq2448ahL/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747179,2026-05-25T12:48:49.292626
+644,1900-08-17,17.80,Amazon,brico,csv_import,draft,"https://drive.google.com/file/d/1IadH3vNvVLhSoTsGJ7bh3O2XJVFKBdwl/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1IadH3vNvVLhSoTsGJ7bh3O2XJVFKBdwl/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747180,2026-05-25T12:48:49.292627
+645,1900-08-17,17.80,Amazon,brico,csv_import,draft,"https://drive.google.com/file/d/18yldCk-5pRIULZXo2IMZFE3GZR-IhlnZ/view?usp=drive_link
+🔗 https://drive.google.com/file/d/18yldCk-5pRIULZXo2IMZFE3GZR-IhlnZ/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747181,2026-05-25T12:48:49.292627
+646,2025-01-01,18.99,Amazon,brico,csv_import,draft,fibre verre,brico,1,,2026-05-24T19:12:46.747182,2026-05-25T12:48:49.292628
+647,1900-08-18,19.90,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/15tbqIA1JlJSjAOvcvoPeEcMDq64JfF4T/view?usp=sharing
+🔗 https://drive.google.com/file/d/15tbqIA1JlJSjAOvcvoPeEcMDq64JfF4T/view?usp=sharing",brico,1,,2026-05-24T19:12:46.747183,2026-05-25T12:48:49.292629
+648,2025-01-01,21.44,Amazon,brico,csv_import,draft,Amazon,brico,1,,2026-05-24T19:12:46.747184,2026-05-25T12:48:49.292629
+649,1900-08-04,25.00,Amazon,brico,csv_import,draft,"https://drive.google.com/file/d/1B6dZoko6V-Q1-Y6rAYILPvzPkj4Iyka9/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1B6dZoko6V-Q1-Y6rAYILPvzPkj4Iyka9/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747185,2026-05-25T12:48:49.292630
+650,2025-01-01,26.80,Amazon,brico,csv_import,draft,Amazon,brico,1,,2026-05-24T19:12:46.747186,2026-05-25T12:48:49.292630
+651,1900-08-14,30.26,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/1bgJPdcD7SPnyQDbQw7VTAxaiE-H4aVxy/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1bgJPdcD7SPnyQDbQw7VTAxaiE-H4aVxy/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747187,2026-05-25T12:48:49.292631
+652,1900-08-14,31.82,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/1RWYJQMTCbeCmSZCQrHaPD56rTNLXRQUn/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1RWYJQMTCbeCmSZCQrHaPD56rTNLXRQUn/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747188,2026-05-25T12:48:49.292631
+653,2025-01-01,33.82,Amazon,brico,csv_import,draft,Amazon,brico,1,,2026-05-24T19:12:46.747189,2026-05-25T12:48:49.292632
+654,1900-08-17,33.88,Amazon,brico,csv_import,draft,"https://drive.google.com/file/d/1FDWt6RmpPMzyZQFIShqljAQLkxIhJfkA/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1FDWt6RmpPMzyZQFIShqljAQLkxIhJfkA/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747190,2026-05-25T12:48:49.292632
+655,2025-01-01,33.95,cedeo,brico,csv_import,draft,cedeo,brico,1,,2026-05-24T19:12:46.747192,2026-05-25T12:48:49.292633
+656,1900-08-16,34.34,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/1NdETnAp_ZXGujDFOgcLPhVv0J8IrJ-zc/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1NdETnAp_ZXGujDFOgcLPhVv0J8IrJ-zc/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747193,2026-05-25T12:48:49.292633
+657,1900-08-07,34.75,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/1Gkn-SDxcnKtb_Wu2ERw0Jqt_jGuXP9u5/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1Gkn-SDxcnKtb_Wu2ERw0Jqt_jGuXP9u5/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747194,2026-05-25T12:48:49.292634
+658,1900-08-17,40.90,Amazon,brico,csv_import,draft,"https://drive.google.com/file/d/16wLI9jdwt51MXhGn26DbIMc904Xy61X2/view?usp=drive_link
+🔗 https://drive.google.com/file/d/16wLI9jdwt51MXhGn26DbIMc904Xy61X2/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747195,2026-05-25T12:48:49.292634
+659,1900-08-10,45.01,CDL,brico,csv_import,draft,"https://drive.google.com/file/d/1s50yXRsP0e0RKKBA2MM3b_8EItHeXN2c/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1s50yXRsP0e0RKKBA2MM3b_8EItHeXN2c/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747196,2026-05-25T12:48:49.292635
+660,1900-08-11,47.00,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/1E90s5Jld_TOuhOb8FrRQOKlROJWG2HPT/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1E90s5Jld_TOuhOb8FrRQOKlROJWG2HPT/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747197,2026-05-25T12:48:49.292636
+661,1900-08-23,49.76,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/1FxBh3DZOnuvgrvLAbhxDVAqB0vMgcv5b/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1FxBh3DZOnuvgrvLAbhxDVAqB0vMgcv5b/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747198,2026-05-25T12:48:49.292636
+662,1900-08-06,49.89,Amazon,brico,csv_import,draft,"https://drive.google.com/file/d/1ySXebnVGiXLbj7cfxoP2TM1CnA5PrrXG/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1ySXebnVGiXLbj7cfxoP2TM1CnA5PrrXG/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747199,2026-05-25T12:48:49.292637
+663,1900-08-08,49.99,Amazon,brico,csv_import,draft,"https://drive.google.com/file/d/1XescixA8Ocm6SqDomxXORhJyVHuZllct/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1XescixA8Ocm6SqDomxXORhJyVHuZllct/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747200,2026-05-25T12:48:49.292637
+664,2025-01-01,51.98,Amazon,brico,csv_import,draft,Amazon,brico,1,,2026-05-24T19:12:46.747201,2026-05-25T12:48:49.292638
+665,2025-01-01,52.66,cedeo,brico,csv_import,draft,cedeo,brico,1,,2026-05-24T19:12:46.747202,2026-05-25T12:48:49.292638
+666,1900-08-09,52.99,Amazon,brico,csv_import,draft,"https://drive.google.com/file/d/1tjrrURxiKUfsSWfXxPkMQWLsMei5BPpt/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1tjrrURxiKUfsSWfXxPkMQWLsMei5BPpt/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747203,2026-05-25T12:48:49.292639
+667,2025-01-01,69.83,cedeo,brico,csv_import,draft,cedeo,brico,1,,2026-05-24T19:12:46.747204,2026-05-25T12:48:49.292639
+668,2025-01-01,72.50,Amazon,brico,csv_import,draft,outillage consommable,brico,1,,2026-05-24T19:12:46.747206,2026-05-25T12:48:49.292640
+669,2025-01-01,83.80,cedeo,brico,csv_import,draft,cedeo,brico,1,,2026-05-24T19:12:46.747207,2026-05-25T12:48:49.292640
+670,2025-01-01,122.72,cedeo,brico,csv_import,draft,cedeo,brico,1,,2026-05-24T19:12:46.747208,2026-05-25T12:48:49.292641
+671,1900-08-10,127.14,Cedeo,brico,csv_import,draft,"https://drive.google.com/file/d/1gjhOjYjH-ENPkSATVYZbsilmiGSJRa90/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1gjhOjYjH-ENPkSATVYZbsilmiGSJRa90/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747209,2026-05-25T12:48:49.292641
+672,1900-08-10,141.49,Cedeo,brico,csv_import,draft,"https://drive.google.com/file/d/1cFqNY_gv-yadr89WS_1LTFjzY2Uabdl0/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1cFqNY_gv-yadr89WS_1LTFjzY2Uabdl0/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747211,2026-05-25T12:48:49.292642
+673,1900-08-09,146.69,Cedeo,brico,csv_import,draft,"https://drive.google.com/file/d/1gQUpqiWNhWs64_2wm1Owjf6txCX_ZjEK/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1gQUpqiWNhWs64_2wm1Owjf6txCX_ZjEK/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747212,2026-05-25T12:48:49.292642
+674,1900-08-02,167.50,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/1Ovf9OtcMbzP4Rgcchg_sChtLGSENNZpa/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1Ovf9OtcMbzP4Rgcchg_sChtLGSENNZpa/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747213,2026-05-25T12:48:49.292643
+675,2023-08-14,208.49,Cedeo,brico,csv_import,draft,"https://drive.google.com/file/d/1652Skrg9DzBOtXF35uEVnTImNNi7HyTl/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1652Skrg9DzBOtXF35uEVnTImNNi7HyTl/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747214,2026-05-25T12:48:49.292644
+676,1900-08-12,225.00,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/1AgNYQl2rjLsinKMS9INld3Qw33Umrnf5/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1AgNYQl2rjLsinKMS9INld3Qw33Umrnf5/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747215,2026-05-25T12:48:49.292644
+677,2025-01-01,249.29,Amazon,brico,csv_import,draft,broyeur végétaux,brico,1,,2026-05-24T19:12:46.747216,2026-05-25T12:48:49.292645
+678,1900-08-12,282.53,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/1akKNXUVQ3feyAEvdhXhIIhZWStwax5q4/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1akKNXUVQ3feyAEvdhXhIIhZWStwax5q4/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747217,2026-05-25T12:48:49.292645
+679,1900-08-12,282.53,Leroy,brico,csv_import,draft,"https://drive.google.com/file/d/1-0bwQXqm9ejjeGnXnPBf1O-4QA6MDJ2K/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1-0bwQXqm9ejjeGnXnPBf1O-4QA6MDJ2K/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747218,2026-05-25T12:48:49.292646
+680,1900-08-06,449.97,cdiscount,brico,csv_import,draft,"https://drive.google.com/file/d/1dp_GGmS0FHVLHDvml2bsV5SL8moEsxTx/view?usp=sharing
+🔗 https://drive.google.com/file/d/1dp_GGmS0FHVLHDvml2bsV5SL8moEsxTx/view?usp=sharing",brico,1,,2026-05-24T19:12:46.747219,2026-05-25T12:48:49.292646
+681,1900-08-17,483.45,Amazon,brico,csv_import,draft,"https://drive.google.com/file/d/1uiaN-eXReiseav_zXy3KyYbo_RAjtgg-/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1uiaN-eXReiseav_zXy3KyYbo_RAjtgg-/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747220,2026-05-25T12:48:49.292647
+682,2025-01-01,556.42,cedeo,brico,csv_import,draft,cedeo,brico,1,,2026-05-24T19:12:46.747221,2026-05-25T12:48:49.292647
+683,2025-01-01,667.70,cedeo,brico,csv_import,draft,cedeo,brico,1,,2026-05-24T19:12:46.747222,2026-05-25T12:48:49.292648
+684,1900-08-09,692.08,Leroux,brico,csv_import,draft,"https://drive.google.com/file/d/1xRW5eSfx4HOwVI-K4NviLB_UZBUfqZZk/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1xRW5eSfx4HOwVI-K4NviLB_UZBUfqZZk/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747223,2026-05-25T12:48:49.292648
+685,1900-08-10,701.15,CDL,brico,csv_import,draft,"https://drive.google.com/file/d/1-z7PnIw1UP7gJfPjRs4fX3qx8lOSzEai/view?usp=drive_link
+🔗 https://drive.google.com/file/d/1-z7PnIw1UP7gJfPjRs4fX3qx8lOSzEai/view?usp=drive_link",brico,1,,2026-05-24T19:12:46.747224,2026-05-25T12:48:49.292649
+686,2025-01-01,942.22,cedeo,brico,csv_import,draft,cedeo,brico,1,,2026-05-24T19:12:46.747225,2026-05-25T12:48:49.292650
+687,2025-01-01,50.00,Brico,brico,csv_import,draft,vmc 50 e,brico,1,,2026-05-24T19:12:46.747226,2026-05-25T12:48:49.292650
+688,2025-01-01,49.99,Brico,brico,csv_import,draft,"defonceuse : 49,99 €",brico,1,,2026-05-24T19:12:46.747227,2026-05-25T12:48:49.292651
+689,2025-01-01,146.69,Brico,brico,csv_import,draft,Cedeo 146.69,brico,1,,2026-05-24T19:12:46.747228,2026-05-25T12:48:49.292651
+690,2025-01-01,24.40,Brico,brico,csv_import,draft,"24,40 € Leroy Merlin rail et montant placo",brico,1,,2026-05-24T19:12:46.747229,2026-05-25T12:48:49.292652
+691,2025-01-01,45.00,Brico,brico,csv_import,draft,45 € Leroy Merlin,brico,1,,2026-05-24T19:12:46.747230,2026-05-25T12:48:49.292652
+692,2025-01-01,47.00,Brico,brico,csv_import,draft,47 e Leroy,brico,1,,2026-05-24T19:12:46.747231,2026-05-25T12:48:49.292653
+693,2025-01-01,282.53,Brico,brico,csv_import,draft,282.53 leroy,brico,1,,2026-05-24T19:12:46.747232,2026-05-25T12:48:49.292653
+694,2025-01-01,225.00,Brico,brico,csv_import,draft,leroy placo 225.00€,brico,1,,2026-05-24T19:12:46.747233,2026-05-25T12:48:49.292654
+695,2025-01-01,373.82,Brico,brico,csv_import,draft,Maxoutil scie,brico,1,,2026-05-24T19:12:46.747234,2026-05-25T12:48:49.292654
+696,2025-01-01,41.25,casto,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747235,2026-05-25T12:48:49.292655
+697,2025-01-01,77.20,Amazon,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747236,2026-05-25T12:48:49.292655
+698,2023-10-17,507.57,Leroy,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747237,2026-05-25T12:48:49.292656
+699,2023-10-18,45.44,Amazon,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747238,2026-05-25T12:48:49.292656
+700,2023-10-20,85.80,elec,brico,csv_import,draft,2 disjoncteurs,brico,1,,2026-05-24T19:12:46.747239,2026-05-25T12:48:49.292657
+701,2025-01-01,100.07,cedeo,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747240,2026-05-25T12:48:49.292658
+702,2025-01-01,77.20,Casto,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747241,2026-05-25T12:48:49.292658
+703,2025-01-01,95.60,"95,6 brico dépôt",brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747242,2026-05-25T12:48:49.292659
+704,2025-01-01,66.50,"Brico dépôt 65,5",brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747243,2026-05-25T12:48:49.292659
+705,2025-01-01,27.60,brico amazon,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747244,2026-05-25T12:48:49.292660
+706,2025-01-01,89.95,harnais amazon,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747245,2026-05-25T12:48:49.292660
+707,2025-01-01,39.99,corde amazon,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747246,2026-05-25T12:48:49.292661
+708,2025-01-01,7.76,vis,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747247,2026-05-25T12:48:49.292661
+709,2025-01-01,33.99,boite vis,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747248,2026-05-25T12:48:49.292662
+710,2025-01-01,23.99,domino,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747249,2026-05-25T12:48:49.292662
+711,2025-01-01,165.11,girafe,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747250,2026-05-25T12:48:49.292663
+712,2025-01-01,42.42,colle peinture,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747251,2026-05-25T12:48:49.292664
+713,2025-01-01,51.42,ss,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747252,2026-05-25T12:48:49.292664
+714,2025-01-01,7.80,flexible,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747253,2026-05-25T12:48:49.292665
+715,2025-01-01,26.41,niveau,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747254,2026-05-25T12:48:49.292665
+716,2025-01-01,40.98,SdB,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747255,2026-05-25T12:48:49.292666
+717,2025-01-01,9.99,connecteur RJ 45,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747256,2026-05-25T12:48:49.292666
+718,2025-01-01,29.69,panneau de brassage,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747257,2026-05-25T12:48:49.292667
+719,2025-01-01,12.88,cedeo,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747258,2026-05-25T12:48:49.292667
+720,2025-01-01,18.13,cedeo,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747259,2026-05-25T12:48:49.292668
+721,2025-01-01,25.48,cedeo,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747260,2026-05-25T12:48:49.292668
+722,2025-01-01,20.28,cedeo,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747261,2026-05-25T12:48:49.292669
+723,2025-01-01,123.94,cdl elec,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747262,2026-05-25T12:48:49.292670
+724,2025-01-01,25.44,cdl elec,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747263,2026-05-25T12:48:49.292670
+725,2025-01-01,14.45,leroy,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747264,2026-05-25T12:48:49.292671
+726,2025-01-01,45.01,leroy,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747265,2026-05-25T12:48:49.292671
+727,2025-01-01,10.57,leroy,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747266,2026-05-25T12:48:49.292672
+728,2025-01-01,60.00,60 euros,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747267,2026-05-25T12:48:49.292672
+729,2025-01-01,195.00,195 euros,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747268,2026-05-25T12:48:49.292673
+730,2025-01-01,420.00,420 euros,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747269,2026-05-25T12:48:49.292673
+731,2025-01-01,550.00,Payé semaine dernière à Yoann 550 euros,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747270,2026-05-25T12:48:49.292674
+732,2025-01-01,500.00,Payé semaine dernière yo 500,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747271,2026-05-25T12:48:49.292674
+733,2025-01-01,220.00,Payé cette semaine pour 2 jours 220,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747272,2026-05-25T12:48:49.292675
+734,2025-01-01,378.00,Tapisserie 378,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747274,2026-05-25T12:48:49.292676
+735,2025-01-01,350.00,Payé Yoann derniere semaine (20 octobre),brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747275,2026-05-25T12:48:49.292676
+736,2025-01-01,350.00,Payé semaine dernière yoann,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747276,2026-05-25T12:48:49.292677
+737,2025-01-01,130.00,130 euros journée de Yoann hier,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747277,2026-05-25T12:48:49.292677
+738,2025-01-01,18.00,Divers,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747278,2026-05-25T12:48:49.292678
+739,2025-01-01,390.00,Yoann 3 jours la semaine dernière plus une demi-journée aujourd'hui 330 + 60 = 390 euros,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747279,2026-05-25T12:48:49.292678
+740,2025-02-28,28.23,CARTE 21/01 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747280,2026-05-25T12:48:49.292679
+741,2025-02-28,195.67,CARTE 20/01 CDL ELEC GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747281,2026-05-25T12:48:49.292679
+742,2025-02-28,160.21,CARTE 22/01 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747282,2026-05-25T12:48:49.292680
+743,2025-02-28,100.92,CARTE 23/01 LA MAISON DU PEI BREST,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747283,2026-05-25T12:48:49.292680
+744,2025-02-28,34.80,CARTE 24/01 SAS CASTREC 0 MILIZAC,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747284,2026-05-25T12:48:49.292681
+745,2025-02-28,13.57,CARTE 25/01 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747285,2026-05-25T12:48:49.292681
+746,2025-02-28,6.40,CARTE 25/01 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747286,2026-05-25T12:48:49.292682
+747,2025-02-28,64.88,CARTE 28/01 Contorion SAS Drusenheim,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747287,2026-05-25T12:48:49.292683
+748,2025-02-28,88.92,CARTE 28/01 MANOMANO 75017 PARIS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747288,2026-05-25T12:48:49.292683
+749,2025-02-28,51.74,CARTE 28/01 LIDL GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747289,2026-05-25T12:48:49.292684
+750,2025-02-28,54.47,CARTE 06/02 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747290,2026-05-25T12:48:49.292684
+751,2025-02-28,63.53,CARTE 08/02 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747291,2026-05-25T12:48:49.292685
+752,2025-02-28,66.83,CARTE 11/02 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747292,2026-05-25T12:48:49.292685
+753,2025-02-28,13.97,CARTE 11/02 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747293,2026-05-25T12:48:49.292686
+754,2025-02-28,29.70,CARTE 11/02 MANOMANO 75017 PARIS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747294,2026-05-25T12:48:49.292686
+755,2025-02-28,107.67,CARTE 12/02 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747295,2026-05-25T12:48:49.292687
+756,2025-02-28,78.43,CARTE 14/02 MANOMANO 75017 PARIS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747296,2026-05-25T12:48:49.292687
+757,2025-02-28,41.92,CARTE 14/02 CEDEO BREST,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747297,2026-05-25T12:48:49.292688
+758,2025-02-20,100.00,VIR Virement avec Fortuneo Compt,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747298,2026-05-25T12:48:49.292689
+759,2025-02-15,150.00,VIR INST becasse,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747299,2026-05-25T12:48:49.292689
+760,2025-02-04,443.21,VIR total brico erreur fin janvi,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747300,2026-05-25T12:48:49.292690
+761,2025-01-31,113.16,CARTE 20/12 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747301,2026-05-25T12:48:49.292690
+762,2025-01-31,26.99,CARTE 06/01 CEDEO BREST,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747302,2026-05-25T12:48:49.292691
+763,2025-01-31,8.04,CARTE 06/01 CEDEO BREST,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747303,2026-05-25T12:48:49.292691
+764,2025-01-31,110.37,CARTE 08/01 CEDEO BREST,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747304,2026-05-25T12:48:49.292692
+765,2025-01-31,90.30,CARTE 08/01 CDL ELEC GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747305,2026-05-25T12:48:49.292692
+766,2025-01-31,5.75,CARTE 09/01 BRICORAMA RENNES,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747306,2026-05-25T12:48:49.292693
+767,2025-01-31,61.08,CARTE 14/01 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747307,2026-05-25T12:48:49.292693
+768,2025-01-31,706.64,CARTE 16/01 MANOMANO 75017 PARIS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747308,2026-05-25T12:48:49.292694
+769,2025-01-31,289.27,CARTE 17/01 LA MAISON DU PEI BREST,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747309,2026-05-25T12:48:49.292694
+770,2025-01-31,34.78,CARTE 17/01 CDL ELEC GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747310,2026-05-25T12:48:49.292695
+771,2025-01-31,20.01,CARTE 17/01 CEDEO BREST,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747311,2026-05-25T12:48:49.292696
+772,2025-01-31,39.26,CARTE 19/01 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747312,2026-05-25T12:48:49.292696
+773,2025-01-31,17.36,CARTE 19/01 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747313,2026-05-25T12:48:49.292697
+774,2024-12-31,364.40,CARTE 13/12 .DONVAL PROFIBOI BREST,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747314,2026-05-25T12:48:49.292697
+775,2024-12-31,12.89,CARTE 14/12 CASTORAMA BREST,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747315,2026-05-25T12:48:49.292698
+776,2024-12-31,13.90,CARTE 14/12 CASTORAMA BREST 1485/,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747316,2026-05-25T12:48:49.292698
+777,2024-12-31,150.00,CARTE 16/12 LA MAISON DU PEI BREST,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747317,2026-05-25T12:48:49.292699
+778,2024-12-31,21.23,CARTE 17/12 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747318,2026-05-25T12:48:49.292699
+779,2024-12-31,6.95,CARTE 18/12 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747319,2026-05-25T12:48:49.292700
+780,2025-12-24,3987.45,Loic récupère le pret d'Alice,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747320,2026-05-25T12:48:49.292700
+781,2025-12-24,3561.00,Loic récupère les paiements Brico D'alice,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747321,2026-05-25T12:48:49.292701
+782,2025-12-24,36.00,Loic récupère les paiements Brico D'alice [13/07/2025 18:21]-Alice Mon Cœur a dépensé 36 € chez ambrées,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747322,2026-05-25T12:48:49.292702
+783,2025-10-22,17.96,cedeo,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747323,2026-05-25T12:48:49.292702
+784,2025-10-23,79.25,Cedeo,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747324,2026-05-25T12:48:49.292703
+785,2025-10-24,19.09,Cedeo,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747325,2026-05-25T12:48:49.292703
+786,2025-10-22,15.48,Cedeo,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747326,2026-05-25T12:48:49.292704
+787,2025-10-21,67.99,Cedeo,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747327,2026-05-25T12:48:49.292704
+788,2025-10-21,53.96,Cedeo,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747328,2026-05-25T12:48:49.292705
+789,2025-10-16,75.44,Cedeo,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747329,2026-05-25T12:48:49.292705
+790,2025-09-19,150.32,Cedeo,brico,csv_import,draft,,brico,1,,2026-05-24T19:12:46.747330,2026-05-25T12:48:49.292706
+791,2025-12-11,15.59,Brico,brico,csv_import,draft,"7 Pièces Poulie de Levage Mouflage, Roulette à Rainure en V, Roulette de Levage, Roue Gorge Poulies Cable pour Cordes Rail Portail Coulissan",brico,1,,2026-05-24T19:12:46.747331,2026-05-25T12:48:49.292706
+792,2025-12-08,4.13,Brico,brico,csv_import,draft,RAM - Support radiateur fonte - Support à visser pour radiateur en fonte type rideau - Longueur axe 90 mm - Longueur totale 120 mm - Ram,brico,1,,2026-05-24T19:12:46.747332,2026-05-25T12:48:49.292707
+793,2025-12-08,19.99,Brico,brico,csv_import,draft,"VANCOCO 1/2 ""(15×21) Robinet Thermostatique + Robinet de Retour Kit Complet, Raccord Étanche, Régulateur de Radiateur, Coude en Équerre, Blanc, Sonde Liquide, Protection Anti-Gel, Norme EN215",brico,1,,2026-05-24T19:12:46.747333,2026-05-25T12:48:49.292707
+794,2025-12-08,154.39,Brico,brico,csv_import,draft,"VEVOR Sableuse Pneumatiques en Acier, Machine de Sablage Rouge avec Cabine Sablage 40 L, Sableuse Professionnel pour le Nettoyage de Surface, le Sculpture, la Élimination de la Rouille et la Remise",brico,1,,2026-05-24T19:12:46.747334,2026-05-25T12:48:49.292708
+795,2025-12-08,599.90,Brico,brico,csv_import,draft,"Einhell Compresseur à air TE-AC 430/90/10 (3000 W, Cuve de 90 L, Pression 10bar, Débit d'aspiration 430 l/min, Réducteur de pression)",brico,1,,2026-05-24T19:12:46.747335,2026-05-25T12:48:49.292709
+796,2025-12-08,12.69,Brico,brico,csv_import,draft,"2 Ans Assurance dommage accidentel pour Un Outil de 550 EUR à 599,99 EUR",brico,1,,2026-05-24T19:12:46.747336,2026-05-25T12:48:49.292709
+797,2025-12-07,14.95,Brico,brico,csv_import,draft,"Clé de montage étagée universelle avec douille carrée 1/2"" 5 tailles pour sanitaires et radiateurs WIESEMANN 1893 I 81116",brico,1,,2026-05-24T19:12:46.747337,2026-05-25T12:48:49.292710
+798,2025-11-26,15.70,Brico,brico,csv_import,draft,"TFA Dostmann thermomètre numérique, 30.3072.01.90, température extérieure par capteur sans fil, température intérieure, fonction maxi/mini, Amazon Exclusive, noir",brico,1,,2026-05-24T19:12:46.747338,2026-05-25T12:48:49.292710
+799,2025-11-24,8.39,Brico,brico,csv_import,draft,KS TOOLS Cutter Universel à Lame Sécable - Magasin de 6 Lames - 25 mm,brico,1,,2026-05-24T19:12:46.747339,2026-05-25T12:48:49.292711
+800,2025-11-24,12.33,Brico,brico,csv_import,draft,Kit de réducteur à filetage pour radiateurs de style rétro et radiateurs à colonnes traditionnels de 1 pouce Wärmer System,brico,1,,2026-05-24T19:12:46.747340,2026-05-25T12:48:49.292711
+801,2025-11-24,12.33,Brico,brico,csv_import,draft,Kit de réducteur à filetage pour radiateurs de style rétro et radiateurs à colonnes traditionnels de 1 pouce Wärmer System,brico,1,,2026-05-24T19:12:46.747341,2026-05-25T12:48:49.292712
+802,2025-11-22,11.98,Brico,brico,csv_import,draft,Bosch Professional cutter classique de 18 mm,brico,1,,2026-05-24T19:12:46.747342,2026-05-25T12:48:49.292712
+803,2025-11-12,8.64,Brico,brico,csv_import,draft,"Ram - Support à Visser pour Radiateur Rideau, 65mm",brico,1,,2026-05-24T19:12:46.747343,2026-05-25T12:48:49.292713
+804,2025-11-12,12.98,Brico,brico,csv_import,draft,Kit de réducteur à filetage pour radiateurs de style rétro et radiateurs à colonnes traditionnels de 1 pouce Wärmer System,brico,1,,2026-05-24T19:12:46.747344,2026-05-25T12:48:49.292713
+805,2025-11-11,4.38,Brico,brico,csv_import,draft,"Tecuro Joint plat en caoutchouc pour filtre d’évier, 8,9 cm, Ø 113 mm",brico,1,,2026-05-24T19:12:46.747345,2026-05-25T12:48:49.292714
+806,2025-11-05,20.00,Brico,brico,csv_import,draft,Jardibric - Raccord PVC Récupérateur d'Eau pour Descente de Gouttière - À Fixer sur Gouttière Ø80 mm - Sortie Ø35 mm - Optimisez votre Système de Récupération des Eaux de Pluie (Gris),brico,1,,2026-05-24T19:12:46.747346,2026-05-25T12:48:49.292715
+807,2025-11-04,44.99,Brico,brico,csv_import,draft,"Iris Ohyama, Boite Rangement Hermétique Plastique, 30L, Lot de 4, Transparent, Couvercle, Joint Etanche, Clips de Fermeture, Empilable, pour Exterieur, Garage, Vetement, Anti Poussiere, WSB-30",brico,1,,2026-05-24T19:12:46.747347,2026-05-25T12:48:49.292715
+808,2025-11-04,29.90,Brico,brico,csv_import,draft,"Stanley Boîte de rangement FatMax (44,29 cm x 35,60 cm x 11,00 cm, compartiments profonds, fermetures en plastique robustes, amovibles, couvercle résistant aux rayures et aux chocs) 1-97-521",brico,1,,2026-05-24T19:12:46.747348,2026-05-25T12:48:49.292716
+809,2025-11-04,23.69,Brico,brico,csv_import,draft,EMSea 10pcs Vis de Purge en Laiton Radiateur Chauffage Contrôle Fileté Rotatif Kit de Réparation pour Bouchon de Soupape Purge Réduisant Pression de Ventilation,brico,1,,2026-05-24T19:12:46.747349,2026-05-25T12:48:49.292716
+810,2025-11-01,11.99,Brico,brico,csv_import,draft,"Bande d'Etanchéité en Silicone, 10m Transparent Bande d'étanchéité Auto-adhésive Bas Strip -Bise joint de fond de porte Imperméable Coupe-vent Anti-poussière",brico,1,,2026-05-24T19:12:46.747350,2026-05-25T12:48:49.292717
+811,2025-10-31,11.22,Brico,brico,csv_import,draft,Mousse filtrante d'origine Aspirateur 12012937 BOSCH,brico,1,,2026-05-24T19:12:46.747351,2026-05-25T12:48:49.292717
+812,2025-10-14,39.52,Brico,brico,csv_import,draft,Kit de fixation pour radiateurs fonte Réf C13900313,brico,1,,2026-05-24T19:12:46.747352,2026-05-25T12:48:49.292718
+813,2025-10-05,44.99,Brico,brico,csv_import,draft,"Iris Ohyama, Boite Rangement Hermétique Plastique, 30L, Lot de 4, Transparent, Couvercle, Joint Etanche, Clips de Fermeture, Empilable, pour Exterieur, Garage, Vetement, Anti Poussiere, WSB-30",brico,1,,2026-05-24T19:12:46.747353,2026-05-25T12:48:49.292718
+814,2025-10-04,23.33,Brico,brico,csv_import,draft,Festool Abrasif Granat STF D90/6 P60 GR/50,brico,1,,2026-05-24T19:12:46.747354,2026-05-25T12:48:49.292719
+815,2025-10-04,16.71,Brico,brico,csv_import,draft,Festool Abrasif Granat STF V93/6 P80 GR/50,brico,1,,2026-05-24T19:12:46.747355,2026-05-25T12:48:49.292719
+816,2025-10-04,19.19,Brico,brico,csv_import,draft,Festool Abrasif Granat STF V93/6 P60 GR/50,brico,1,,2026-05-24T19:12:46.747356,2026-05-25T12:48:49.292720
+817,2025-10-01,16.67,Brico,brico,csv_import,draft,Makita 165396-7 - Butée de sécurité fixe pour scie sabre JR3050T JR3060T,brico,1,,2026-05-24T19:12:46.747357,2026-05-25T12:48:49.292721
+818,2025-09-16,5.98,Brico,brico,csv_import,draft,"Plaque gravée pour nom et numéro boîte aux lettres autocollante 10x2,5cm personnalisée 1 à 3 lignes Alu Brossé",brico,1,,2026-05-24T19:12:46.747358,2026-05-25T12:48:49.292721
+819,2025-09-14,16.11,Brico,brico,csv_import,draft,"fischer - Cheville autoforeuse pour plaques de carton-plâtre DuoBlade + vis/Boîte de 25 chevilles + 25 vis à bois aggloméré 4,5x40",brico,1,,2026-05-24T19:12:46.747359,2026-05-25T12:48:49.292722
+820,2025-09-14,3.19,Brico,brico,csv_import,draft,Pansements universel famille Mercurochrome - x50,brico,1,,2026-05-24T19:12:46.747360,2026-05-25T12:48:49.292722
+821,2025-08-25,36.06,Brico,brico,csv_import,draft,Festool Plateau de ponçage ST-STF 125/8-M4-J W-HT,brico,1,,2026-05-24T19:12:46.747362,2026-05-25T12:48:49.292723
+822,2025-08-22,127.99,Brico,brico,csv_import,draft,"Bosch Electroménager Série 4, BGC21HYG1, aspirateur traîneau sans Sac Pro Hygiène, Filtre hygiénique UltraAllergie, Puissant et Compact, 550 Watts, Accessoire pour Matelas Inclus, Blanc",brico,1,,2026-05-24T19:12:46.747363,2026-05-25T12:48:49.292723
+823,2025-08-21,5.95,Brico,brico,csv_import,draft,"Elco 74505-92 Paquet de 50 enveloppes sans fenêtre Format C5 Brun, Kraft",brico,1,,2026-05-24T19:12:46.747364,2026-05-25T12:48:49.292724
+824,2025-08-21,5.91,Brico,brico,csv_import,draft,Calligraphe (gamme correspondance Clairefontaine) 5665C - Paquet de 100 Enveloppes Blanches DL-110x220mm - Auto-Adhésives - 80g/m²,brico,1,,2026-05-24T19:12:46.747365,2026-05-25T12:48:49.292724
+825,2025-08-21,4.15,Brico,brico,csv_import,draft,OXFORD Correspondance Enveloppes avec distributeur Boite de 100 Blanc,brico,1,,2026-05-24T19:12:46.747366,2026-05-25T12:48:49.292725
+826,2025-08-21,13.99,Brico,brico,csv_import,draft,Lifeswonderful - Lot de 16 Embouts Ronds Transparents - pour Pieds De Meubles - Différentes Tailles (28mm),brico,1,,2026-05-24T19:12:46.747367,2026-05-25T12:48:49.292725
+827,2025-08-12,12.90,Brico,brico,csv_import,draft,"Fischer Big Pack Duopower, 536382, 6x30 mm 240 pz",brico,1,,2026-05-24T19:12:46.747368,2026-05-25T12:48:49.292726
+828,2025-08-12,13.63,Brico,brico,csv_import,draft,fischer - Cheville bi-matière et multi-matériaux DUOPOWER 8x65 / Boîte de 50,brico,1,,2026-05-24T19:12:46.747369,2026-05-25T12:48:49.292726
+829,2025-08-11,26.99,Brico,brico,csv_import,draft,"WORKPRO Pistolet à Calfeutrer Silicone en Métal avec 2 Modes de Rapport de Poussée, Transmission de Force 9:1 et 18:1, Pistolet à Cartouche pour Cartouches de Silicone et d'Adhésif de 295ml",brico,1,,2026-05-24T19:12:46.747370,2026-05-25T12:48:49.292727
+830,2025-08-09,3.55,Brico,brico,csv_import,draft,Sader Colle Contact Type Néoprène – Sans Solvant et Sans Odeur – Colle Extra Forte Tous Matériaux – Intérieur et Extérieur Sous Abri – Prise Immédiate – Translucide – Tube 30 ml,brico,1,,2026-05-24T19:12:46.747371,2026-05-25T12:48:49.292728
+831,2025-08-07,13.95,Brico,brico,csv_import,draft,"MIRTUX Pack d’accessoires compatible avec Roomba E5 E6 i1 i3 i3+ i7 e5154 e5158 j7 - Kit complet de pièces de rechange - Comprend brosses latérales, filtres et rouleaux extracteurs de remplacement",brico,1,,2026-05-24T19:12:46.747372,2026-05-25T12:48:49.292728
+832,2025-08-04,10.99,Brico,brico,csv_import,draft,"40 Pièces Crochet de Manteau Métal Crochets de Patères Manteau de Porte, Rétro Crochet Mural Crochet Patere avec 80 Vis Pour Cuisine Salon Chambre Derrière la Porte (Bronze）",brico,1,,2026-05-24T19:12:46.747373,2026-05-25T12:48:49.292729
+833,2025-07-31,11.99,Brico,brico,csv_import,draft,"Folishine Câble Ethernet 10 m, Cat7 Internet haute vitesse avec connecteur RJ45 plaqué or, câble LAN blindé pour commutateur de réseau, plus rapide que Cat5/Cat5e/Cat6-Blanc",brico,1,,2026-05-24T19:12:46.747374,2026-05-25T12:48:49.292729
+834,2025-12-12,39.90,Brico,brico,csv_import,draft,XL Bol chantant fait main au Népal – set tibétain pour la méditation – Yoga – Fuseau avec du cuir – Box de papier Lokta,brico,1,,2026-05-24T19:12:46.747375,2026-05-25T12:48:49.292730
+835,2025-12-11,41.50,Brico,brico,csv_import,draft,"travelite beautycase Coque Dure Bagage à Main, Bali, Valise cosmétique avec Organiseur et Fonction d'accrochage, 36 cm, 17 litres",brico,1,,2026-05-24T19:12:46.747376,2026-05-25T12:48:49.292730
+836,2025-12-08,38.99,Brico,brico,csv_import,draft,"QeeLink Tablier de travail en cuir avec 6 poches à outils, tablier de soudure robuste pour homme et femme, résistant à la chaleur, 61 cm x 91 cm, réglable de taille M à XXL",brico,1,,2026-05-24T19:12:46.747377,2026-05-25T12:48:49.292731
+837,2025-12-08,19.99,Brico,brico,csv_import,draft,"VANCOCO 1/2 '(15×21) Robinet Thermostatique + Robinet de Retour Kit Complet, Raccord Étanche, Régulateur de Radiateur, Coude en Équerre, Blanc, Sonde Liquide, Protection Anti-Gel, Norme EN215",brico,1,,2026-05-24T19:12:46.747378,2026-05-25T12:48:49.292731
+838,2025-12-07,14.95,Brico,brico,csv_import,draft,Clé de montage étagée universelle avec douille carrée 1/2' 5 tailles pour sanitaires et radiateurs WIESEMANN 1893 I 81116,brico,1,,2026-05-24T19:12:46.747382,2026-05-25T12:48:49.292732
+839,2025-12-03,25.49,Brico,brico,csv_import,draft,UGREEN Câble USB C vers DisplayPort 1.4 8K 60Hz 4K 240Hz Compatible avec iPhone 17 Pro Max Air iPhone 16 Plus Pro Max MacBook M4 M3 iPad Air Galaxy S25 S24 Tab S9 Câble Type C DP Thunderbolt 4 3 (3M),brico,1,,2026-05-24T19:12:46.747383,2026-05-25T12:48:49.292732
+840,2025-12-02,17.90,Brico,brico,csv_import,draft,"Champion Mixte Legacy Crew Socks X6 Chaussettes De Sport, Blanc1, 39-42 EU",brico,1,,2026-05-24T19:12:46.747384,2026-05-25T12:48:49.292733
+841,2025-12-01,22.43,Brico,brico,csv_import,draft,"Rolling Square inCharge XL 30cm - Cable Usb c Charge Rapide, 100 W - Chargeur Usb c Universel 6 en 1 pour Appareils Mobiles avec Usb c + Cable Lightning et Micro Usb, Idéal comme Cadeau Homme, Blanc",brico,1,,2026-05-24T19:12:46.747385,2026-05-25T12:48:49.292733
+842,2025-12-01,10.99,Brico,brico,csv_import,draft,"Anker cable iPhone USB C, câble 310 USB-C vers Lightning, certifié MFi, câble de charge rapide iPhone 14 Plus 14 14 Pro Max 13 13 Pro 12 11 X XS XR",brico,1,,2026-05-24T19:12:46.747386,2026-05-25T12:48:49.292734
+843,2025-11-29,17.14,Brico,brico,csv_import,draft,UGREEN Câble USB C vers DisplayPort 1.4 8K 60Hz 4K 240Hz Compatible avec iPhone 17 Pro Max Air iPhone 16 Plus Pro Max MacBook M4 M3 iPad Air Galaxy S25 S24 Tab S9 Câble Type C DP Thunderbolt 4 3 (2M),brico,1,,2026-05-24T19:12:46.747387,2026-05-25T12:48:49.292734
+844,2025-11-29,18.99,Brico,brico,csv_import,draft,"SABRENT Support pour Mac Mini, Support de Montage VESA pour Mac Mini, Support Mural M1, Fixation sous Un Bureau avec vis pour cloison sèche Chevilles Inclus (BK-MABM)",brico,1,,2026-05-24T19:12:46.747388,2026-05-25T12:48:49.292735
+845,2025-11-28,11.39,Brico,brico,csv_import,draft,"TOCOL Verre Trempé pour iPhone 14 Pro, Dépoussiérage Automatique, Sans Bulles, Dureté 9H, Couverture Complète Protection écran, Coques de Téléphone Compatibles, 2 Pièces",brico,1,,2026-05-24T19:12:46.747389,2026-05-25T12:48:49.292736
+846,2025-11-28,35.36,Brico,brico,csv_import,draft,UGREEN 100W 6 Ports Chargeur USB C Rapide Station de Charge Bureau GaN Tech 65W Compatible avec iPhone 17 Pro Max Air 16 Plus 15 14 13 12 11 iPad Mini MacBook Pro Air M4 M3 M2 M1 Galaxy S25 S24 S23,brico,1,,2026-05-24T19:12:46.747390,2026-05-25T12:48:49.292736
+847,2025-11-28,6.64,Brico,brico,csv_import,draft,"ivoler [4 pièces Caméra Arrière Protecteur pour iPhone 14 Pro/15 Pro /16 Pro/iPhone 14 Pro Max /15 Pro Max /16 Pro Max Caméra, Protection Camera [Anti Rayures] Ultra Résistant Film Verre Trempé",brico,1,,2026-05-24T19:12:46.747391,2026-05-25T12:48:49.292737
+848,2025-11-28,18.99,Brico,brico,csv_import,draft,Panasonic KX-TG1611FRC Téléphone solo sans fil DECT sans répondeur Bleu [Version Française],brico,1,,2026-05-24T19:12:46.747392,2026-05-25T12:48:49.292737
+849,2025-11-27,109.98,Brico,brico,csv_import,draft,Sodastream DUO Machine à Eau Pétillante et Soda pour Carafe en Verre | Pack 1 Carafe en Verre 1L + 1 Bouteille 1L Finition Acier Inoxydable Lave-Vaisselle + 1 Recharge de Gaz 60L à Clipser | Noire,brico,1,,2026-05-24T19:12:46.747393,2026-05-25T12:48:49.292738
+850,2025-11-27,5.09,Brico,brico,csv_import,draft,"2 Ans Extension de Garantie pour Un Petit Appareil ménager de 100 EUR à 149,99 EUR",brico,1,,2026-05-24T19:12:46.747394,2026-05-25T12:48:49.292738
+851,2025-11-26,21.99,Brico,brico,csv_import,draft,"Anker Chargeur USB C (Nano II 65 W), Station 3 Ports, PPS, Rapide, Bloc d'alimentation USB C Compact pour iPhone 16/iPhone 16 Pro Max,MacBook,iPad,Steam Deck,Galaxy S20,Dell XPS 13,Note 20/10+,Pixel",brico,1,,2026-05-24T19:12:46.747395,2026-05-25T12:48:49.292739
+852,2025-11-25,699.99,Brico,brico,csv_import,draft,"Samsung Ecran PC Odyssey G91F 49’’ 144Hz, 1ms, Dalle VA Incurvée 1000R, DWQHD : 5120 x 1440, 2500:1, AMD FreeSync Premium Pro, Auto Source Switch +, Pied Ajustable, DisplayPort, HDMI, LS49FG916EUXEN",brico,1,,2026-05-24T19:12:46.747396,2026-05-25T12:48:49.292739
+853,2025-11-25,5.12,Brico,brico,csv_import,draft,"Câble Multi USB, 3 en 1 Câble Universel Rapide [1.2M] Cable Multi Chargeur USBC Nylon Tressé Micro USB Type C Lightning Cable pour iPhone, Samsung, Redmi, Huawei, Sony, LG, Nokia, Android, OnePlus",brico,1,,2026-05-24T19:12:46.747397,2026-05-25T12:48:49.292740
+854,2025-11-25,84.99,Brico,brico,csv_import,draft,"ARES WING Support Mural Moniteur pour PC et TV – Écrans de 17 à 49 Pouces – Bras Ergonomique Ajustable avec Inclinaison et Pivot, Supporte Moniteur de 20 kg-VESA 75/100, Blanc",brico,1,,2026-05-24T19:12:46.747398,2026-05-25T12:48:49.292740
+855,2025-11-24,6.82,Brico,brico,csv_import,draft,Le carnet du soudeur : 50 tableaux préremplis + 50 pages de notes afin de retrouver rapidement et avoir toujours ses réglages à portée de main !: Cahier de notes et de réglages pour soudeur,brico,1,,2026-05-24T19:12:46.747399,2026-05-25T12:48:49.292741
+856,2025-11-24,28.50,Brico,brico,csv_import,draft,"200W Chargeur USB C, Chargeur Rapide avec GaN III Tech, 8 Ports PD QC PPS Prise Multiple, 65W Adaptateur Chargeur Laptop Compatible avec MacBook Pro/Air Laptop, iPhone, iPad Pro, Galaxy, SteamDeck",brico,1,,2026-05-24T19:12:46.747400,2026-05-25T12:48:49.292741
+857,2025-11-21,26.59,Brico,brico,csv_import,draft,"SwitchBot IP65 Hygromètre Thermomètre Intérieur Extérieur, Portée Bluetooth de 100m, Capteur d'Humidité/Dewpoint/VPD/Absolu, Stockage de Données Gratuit à Exporter, 2 Ans de Durée de vie des Piles",brico,1,,2026-05-24T19:12:46.747402,2026-05-25T12:48:49.292742
+858,2025-11-21,37.10,Brico,brico,csv_import,draft,"JBL Clip 5, Enceinte Bluetooth ultra-portable, mousqueton intégré, son JBL Pro, basses percutantes, 12 heures d'autonomie, fonction Playtime Boost, résistante à l'eau et à la poussière IP67, en gris",brico,1,,2026-05-24T19:12:46.747403,2026-05-25T12:48:49.292743
+859,2025-11-21,10.50,Brico,brico,csv_import,draft,"Gütermann Fil à coudre, extra résistant, en polyester, 100 m, pour machine à coudre, indéchirable et anti-UV, gris",brico,1,,2026-05-24T19:12:46.747404,2026-05-25T12:48:49.292743
+860,2025-11-19,5.99,Brico,brico,csv_import,draft,Max,brico,1,,2026-05-24T19:12:46.747405,2026-05-25T12:48:49.292744
+861,2025-11-01,17.99,Brico,brico,csv_import,draft,"HYOJCWU 5 Pièces Tuteur Monstera, 42cm Tuteur Coco avec Bande, Serre-câble et Ficelle, Tuteurs Sphaigne Extensible jusqu'à 160cm, pour La Maison Jardin",brico,1,,2026-05-24T19:12:46.747406,2026-05-25T12:48:49.292744
+862,2025-10-27,16.90,Brico,brico,csv_import,draft,"Cache verre de lampe d'origine Four, cuisinière 00187384, 00174079 BOSCH Four, cuisinière 00187384, 00174079 BOSCH",brico,1,,2026-05-24T19:12:46.747407,2026-05-25T12:48:49.292745
+863,2025-10-27,10.44,Brico,brico,csv_import,draft,"Philips Ampoule E14 40 W Four forme de goutte Diamètre 29 mm, résistantes à max. 300 °C. Lot de 2 blanc chaud",brico,1,,2026-05-24T19:12:46.747408,2026-05-25T12:48:49.292745
+864,2025-10-23,15.60,Brico,brico,csv_import,draft,"Planche à découper en titane – Planche à découper double face en acier inoxydable de qualité alimentaire, facile à nettoyer, antirouille, antidérapante (37 x 24 cm)",brico,1,,2026-05-24T19:12:46.747409,2026-05-25T12:48:49.292746
+865,2025-10-20,27.25,Brico,brico,csv_import,draft,"APT Boule d’attelage de remorque, 50 mm de diamètre, boulon M16 droit à embout sphérique",brico,1,,2026-05-24T19:12:46.747410,2026-05-25T12:48:49.292746
+866,2025-10-19,5.99,Brico,brico,csv_import,draft,Max,brico,1,,2026-05-24T19:12:46.747411,2026-05-25T12:48:49.292747
+867,2025-10-16,17.99,Brico,brico,csv_import,draft,"KINGLAKE 4 Pièces 60 cm Attache pour Arbre Fruitier, Attache Tuteur Arbre Résistantes, Sangle pour Arbre Réglables, Lien Tuteur Arbre avec Boucle pour la Prise en Charge des Arbres Arbustes",brico,1,,2026-05-24T19:12:46.747412,2026-05-25T12:48:49.292747
+868,2025-10-16,11.99,Brico,brico,csv_import,draft,"WESTWOOD FOX Gants de jardinage en cuir résistant aux épines, gants de travail robustes pour homme et femme, outils de jardin, mécanicien, jardinier, antidérapants, cadeau de protection (Rouge, M)",brico,1,,2026-05-24T19:12:46.747413,2026-05-25T12:48:49.292748
+869,2025-10-16,21.79,Brico,brico,csv_import,draft,KOTARBAU® Forke Fourche à fumier Fourche à foin 4 dents 4 dents Fourche à foin Fourche à foin Fourche à foin Fourche à foin Fourche à foin Fourche à foin Fourche à,brico,1,,2026-05-24T19:12:46.747414,2026-05-25T12:48:49.292748
+870,2025-10-16,11.99,Brico,brico,csv_import,draft,"KINGLAKE 5 Pièces Attaches pour Tuteu Arbres 35CM, Attache Branches Arbre Vert, Liens pour Attache Les Arbres, Accroche Tuteur Arbre pour Le Soutien des Arbres Plantes Fruitier",brico,1,,2026-05-24T19:12:46.747415,2026-05-25T12:48:49.292749
+871,2025-10-16,13.99,Brico,brico,csv_import,draft,"Tenn Well Sangles de Fixation pour Arbre de Jardin, 20M Sangle de Soutien en Nylon Solide pour Grandes Plantes, Piquets, Greffes et Lissage (Vert)",brico,1,,2026-05-24T19:12:46.747416,2026-05-25T12:48:49.292750
+872,2025-10-16,1.62,Brico,brico,csv_import,draft,Sanytol - Lingettes Multi-Usages Désinfectantes Eucalyptus x 72 lingettes,brico,1,,2026-05-24T19:12:46.747417,2026-05-25T12:48:49.292750
+873,2025-10-16,25.95,Brico,brico,csv_import,draft,"Massette très longue 3LB (1,3 kg) avec manche en fibre de verre 2K par WIESEMANN 1893 | gamme ENFORCE | tête forgée et trempée par induction | 80478",brico,1,,2026-05-24T19:12:46.747418,2026-05-25T12:48:49.292751
+874,2025-10-16,17.99,Brico,brico,csv_import,draft,Apple EarPods avec connecteur Lightning ​​​​​​​,brico,1,,2026-05-24T19:12:46.747419,2026-05-25T12:48:49.292751
+875,2025-10-16,5.59,Brico,brico,csv_import,draft,"Tiger Balm - BAUME DU TIGRE Rouge à effet chauffant - Contient du camphre et du menthol - Pour sportifs, avant l'effort ou les tensions du quotidien, Réduit les tensions par le massage - 19 g",brico,1,,2026-05-24T19:12:46.747420,2026-05-25T12:48:49.292752
+876,2025-10-14,2.85,Brico,brico,csv_import,draft,"MERCUROCHROME - Sparadrap Microporeux Pansement Adhésif - 5 m x 2,5 cm - Spécial peaux sensibles",brico,1,,2026-05-24T19:12:46.747421,2026-05-25T12:48:49.292752
+877,2025-10-14,0.99,Brico,brico,csv_import,draft,"Urgo - Sparadrap avec Dévidoir - Fixation Pansements/Dispositifs - Microporeux - 9,14 m x 2,5 cm",brico,1,,2026-05-24T19:12:46.747422,2026-05-25T12:48:49.292753
+878,2025-10-14,10.50,Brico,brico,csv_import,draft,"DIM Chaussettes Homme EcoDIM Talon/Pointes Renforcés x5, Noir, 39-42",brico,1,,2026-05-24T19:12:46.747423,2026-05-25T12:48:49.292753
+879,2025-10-14,21.52,Brico,brico,csv_import,draft,JACK & JONES Boxers Pack de 3 Boxers Black l Black l,brico,1,,2026-05-24T19:12:46.747424,2026-05-25T12:48:49.292754
+880,2025-10-12,7.99,Brico,brico,csv_import,draft,"Vention Lot de 2 Adaptateurs Plaqués Or 2,5 mm Femelle vers Jack Stéréo 3,5 mm Mâle Connecteur Métallique Audio pour Casque Audio et Écouteurs, Supporte la Fonction Micro",brico,1,,2026-05-24T19:12:46.747425,2026-05-25T12:48:49.292754
+881,2025-10-10,9.88,Brico,brico,csv_import,draft,"50-cm = 0,5-mètre 3-mm d'épaisseur de chaîne en acier inoxydable à maillons courts V4A lien court de NietFullThings en un seul morceau chaîne d'ancrage DIN 5685 DIN 766 0,5-m",brico,1,,2026-05-24T19:12:46.747426,2026-05-25T12:48:49.292755
+882,2025-10-10,6.99,Brico,brico,csv_import,draft,"ZKAPOR Câble USB C vers USB C Court 50CM, Câble Type c 100W PD Cordon Type C Charge Rapide Compatible avec iPhone 15/15 Pro Max, Samsung Galaxy S23 /S22, Pad Pro, Air, Huawei P40 /Mate 60, Pixel",brico,1,,2026-05-24T19:12:46.747427,2026-05-25T12:48:49.292755
+883,2025-10-10,5.69,Brico,brico,csv_import,draft,"GRIFEMA GA1001-1, Cadenas Code 4 Chiffres - Cadenas de Sécurité Résistant Aux Intempéries, Cadenas à Combinaison pour Casier, Valise, Garage, Portail, École, Alliage de Zinc, Noir",brico,1,,2026-05-24T19:12:46.747428,2026-05-25T12:48:49.292756
+884,2025-10-10,5.99,Brico,brico,csv_import,draft,"RAVIAD Câble USB C vers Lightning Court 50CM [MFi Certifié] Cable iPhone USB C Charge Rapide Power Delivery Compatible avec iPhone 14 13 12 11 Pro Max Mini XR XS Max X 10 8 7 SE 2020, Pad-Gris",brico,1,,2026-05-24T19:12:46.747429,2026-05-25T12:48:49.292757
+885,2025-10-10,5.69,Brico,brico,csv_import,draft,"ZKAPOR Câble USB C Court 50CM, Cable USB C Charge Rapide 3A Nylon Tressé Chargeur Type C pour iPhone 15/15 Pro Max, Samsung Galaxy S23/S22/S21/S10, Note 10, Huawei P40/P30, Google Pixel",brico,1,,2026-05-24T19:12:46.747430,2026-05-25T12:48:49.292757
+886,2025-10-09,134.99,Brico,brico,csv_import,draft,Xiaomi Redmi Note 14 6+128GB 6.67' 4G Midnight Black NFC EU,brico,1,,2026-05-24T19:12:46.747431,2026-05-25T12:48:49.292758
+887,2025-10-09,7.99,Brico,brico,csv_import,draft,"ARRYNN Coque pour Xiaomi Redmi Note 14 4G avec Protection écran en Verre trempé,Etui de Protection Redmi Note 14 Antichoc Housse Ultra Premium TPU Silicone Liquide Case - Violet",brico,1,,2026-05-24T19:12:46.747432,2026-05-25T12:48:49.292758
+888,2025-10-09,34.99,Brico,brico,csv_import,draft,"CREATIVE Pebble V3 – Enceintes de Bureau 2.0 avec Bluetooth 5.0, Clear Dialog, 8W RMS, 16W Crête, Alimentées par USB-C, Convertisseur USB-A Inclus, Noir",brico,1,,2026-05-24T19:12:46.747433,2026-05-25T12:48:49.292759
+889,2025-10-09,54.99,Brico,brico,csv_import,draft,"Logitech C920s HD Pro Webcam Streaming, Full HD 1080p/30ips, Appels Vidéos, Audio Clair, Correction Automatique de la Lumière, Volet de Protection, Skype, Zoom, Camera PC/Mac/Portable/Tablette/XBox",brico,1,,2026-05-24T19:12:46.747434,2026-05-25T12:48:49.292759
+890,2025-10-08,6.59,Brico,brico,csv_import,draft,"2 Ans Assurance dommage accidentel pour Un Appareil électronique Portable de 250 EUR à 299,99 EUR",brico,1,,2026-05-24T19:12:46.747435,2026-05-25T12:48:49.292760
+891,2025-10-08,285.99,Brico,brico,csv_import,draft,"Bose QuietComfort Ultra Headphones, Casque sans Fil à réduction de Bruit avec Audio Spatial, Casque Bluetooth Confortable, Jusqu’à 24 h d’autonomie de la Batterie, Bleu Sidéral - Édition Limitée",brico,1,,2026-05-24T19:12:46.747436,2026-05-25T12:48:49.292760
+892,2025-10-05,5.99,Brico,brico,csv_import,draft,"RAVIAD Câble USB C vers Lightning Court 50CM [MFi Certifié] Cable iPhone USB C Charge Rapide Power Delivery Compatible avec iPhone 14 13 12 11 Pro Max Mini XR XS Max X 10 8 7 SE 2020, Pad-Gris",brico,1,,2026-05-24T19:12:46.747437,2026-05-25T12:48:49.292761
+893,2025-10-04,87.49,Brico,brico,csv_import,draft,Kingston XS1000 1TB SSD Externe USB 3.2 Gen 2 Disque SSD externe portable Rouge-SXS1000R/1000G,brico,1,,2026-05-24T19:12:46.747438,2026-05-25T12:48:49.292761
+894,2025-10-03,86.37,Brico,brico,csv_import,draft,"Poêle plate Woll Diamond Lite, diamètre 24 cm, hauteur 5 cm, avec poignée amovible - convient à la céramique, au gaz, à l'électricité, aux halogènes - ne convient pas à l'induction, poêle en aluminium moulé, résistant au four, anthracite",brico,1,,2026-05-24T19:12:46.747439,2026-05-25T12:48:49.292762
+895,2025-10-03,9.99,Brico,brico,csv_import,draft,"Grattoir Plaque Vitrocéramique Induction Professionnel 15 Pièce Lames de rechange inclus avec le Grattoir à verre, Idéal pour Nettoyer, vers la beauté",brico,1,,2026-05-24T19:12:46.747440,2026-05-25T12:48:49.292762
+896,2025-10-01,22.28,Brico,brico,csv_import,draft,"Bsioff Batterie de Rechange, 18 V, 5,0 Ah, Compatible avec Bosch Professional Serie, 5000 mAh, pour Pro Core série BAT609, BAT609G, BAT618, BAT618G, BAT619",brico,1,,2026-05-24T19:12:46.747441,2026-05-25T12:48:49.292763
+897,2025-10-01,17.30,Brico,brico,csv_import,draft,StarTech.com Câble USB-C vers USB-C avec Power Delivery 5A de 50 cm - Cordon USB 2.0 Type-C certifié USB-IF - Noir (USB2C5C50CM),brico,1,,2026-05-24T19:12:46.747442,2026-05-25T12:48:49.292763
+898,2025-10-01,56.82,Brico,brico,csv_import,draft,"Bahco P51 - professionalHedge Shear 22in, Multicolore",brico,1,,2026-05-24T19:12:46.747443,2026-05-25T12:48:49.292764
+899,2025-10-01,13.99,Brico,brico,csv_import,draft,Gonicc Sécateur de Jardin Lame franche en Acier et Titane(GPPS-1003). Ciseaux à Fleurs Coupe Bypass Bois Sec. Poignées Ergonomiques,brico,1,,2026-05-24T19:12:46.747444,2026-05-25T12:48:49.292765
+900,2025-10-01,6.52,Brico,brico,csv_import,draft,deleyCON 15cm Câble USB-C - Câble de Charge & Données - Nylon + Connecteur Métallique - C vers A - Compatible avec Apple Samsung Google Huawei Xiaomi Tablet Laptop PC - Gris,brico,1,,2026-05-24T19:12:46.747445,2026-05-25T12:48:49.292765
+901,2025-10-01,11.99,Brico,brico,csv_import,draft,"WESTWOOD FOX Gants de jardinage en cuir résistant aux épines, gants de travail robustes pour homme et femme, outils de jardin, mécanicien, jardinier, antidérapants, cadeau de protection (Rouge, M)",brico,1,,2026-05-24T19:12:46.747446,2026-05-25T12:48:49.292766
+902,2025-10-01,17.99,Brico,brico,csv_import,draft,"Philips ampoule LED Standard Giant E27 200W, 3452 lumens, (Ø x L) 9,5 cm x 16,5 cm, Blanc Chaud Dépolie, Verre",brico,1,,2026-05-24T19:12:46.747447,2026-05-25T12:48:49.292766
+903,2025-10-01,10.99,Brico,brico,csv_import,draft,Spear & Jackson 50045 Couteau désherbeur affûté tout Acier,brico,1,,2026-05-24T19:12:46.747448,2026-05-25T12:48:49.292767
+904,2025-10-01,27.99,Brico,brico,csv_import,draft,"PALONE Raquette Electrique Insectes Raquette Moustique Electrique 4000V Rechargeable Via USB, Tuer Moustiques et Insectes Volants, Anti Moustique Intérieur et Extérieur (1PC)",brico,1,,2026-05-24T19:12:46.747449,2026-05-25T12:48:49.292767
+905,2025-09-21,6.89,Brico,brico,csv_import,draft,"NEW'C Lot de 3, Verre Trempé pour iPhone 14 Pro (6,1), Film Protection écran -sans Bulles d'air -Ultra Résistant (0,33mm HD Ultra Transparent) Dureté 9H Glass",brico,1,,2026-05-24T19:12:46.747450,2026-05-25T12:48:49.292768
+906,2025-09-21,8.99,Brico,brico,csv_import,draft,"JETech Protection Objectif Caméra Arrière pour iPhone 14 Pro 6,1 Pouces et iPhone 14 Pro Max 6,7 Pouces, Film en Verre Trempé 9H, Ultra HD, Lot de 3",brico,1,,2026-05-24T19:12:46.747451,2026-05-25T12:48:49.292768
+907,2025-09-21,59.00,Brico,brico,csv_import,draft,"Bellroy Tech Kit Compact (chargeur, câbles, souris, batterie externe, clés USB, dongles) - Navy",brico,1,,2026-05-24T19:12:46.747452,2026-05-25T12:48:49.292769
+908,2025-09-19,5.99,Brico,brico,csv_import,draft,Max,brico,1,,2026-05-24T19:12:46.747453,2026-05-25T12:48:49.292769
+909,2025-09-17,83.95,Brico,brico,csv_import,draft,Head Racket Gravity Motion 2022 Raquette de Padel Taille Unique,brico,1,,2026-05-24T19:12:46.747454,2026-05-25T12:48:49.292770
+910,2025-09-17,54.99,Brico,brico,csv_import,draft,"Relaxdays Porte tuyau arrosage support tuyau arrosage fonte fer HxlxP: 50 x 32 x 20 cm, bronze",brico,1,,2026-05-24T19:12:46.747455,2026-05-25T12:48:49.292770
+911,2025-08-30,17.99,Brico,brico,csv_import,draft,"Beurer PO 30 - Oxymètre de pouls digital pour la mesure de la saturation en oxygène dans le sang et le pouls, 61 x 36 x 32 mm, 57 gr, blanc et argent",brico,1,,2026-05-24T19:12:46.747456,2026-05-25T12:48:49.292771
+912,2025-08-29,79.99,Brico,brico,csv_import,draft,"MANSCAPED® The Handyman™ Rasoir Compact pour le Visage – Rasoir Électrique sans Fil pour Homme Format Voyage avec Batterie USB-C Rechargeable, Niveleur pour Poils Longs & Lames à Grille Étanches",brico,1,,2026-05-24T19:12:46.747457,2026-05-25T12:48:49.292772
+913,2025-08-25,5.72,Brico,brico,csv_import,draft,"Kimmel Soucoupe pour Pot de Fleurs, diamètre : 16 cm, Marron, Petit",brico,1,,2026-05-24T19:12:46.747458,2026-05-25T12:48:49.292772
+914,2025-08-25,11.42,Brico,brico,csv_import,draft,"Tipp-Ex Correction Mini Pocket Mouse Rubans Correcteurs - Très Résistant - 6 m x 5 mm, Lot de 2 Blisters de 3",brico,1,,2026-05-24T19:12:46.747459,2026-05-25T12:48:49.292773
+915,2025-08-25,1.69,Brico,brico,csv_import,draft,"BIC Mines Graphite Large Avec Etuis Refermables Pour Portes-mines - Mines de 2 mm HB, Blister de 1 Etui de 6 Mines",brico,1,,2026-05-24T19:12:46.747460,2026-05-25T12:48:49.292773
+916,2025-08-25,4.73,Brico,brico,csv_import,draft,"BIC 4 Couleurs Original - Stylos-Bille Rétractables Pointe Moyenne (1,0 mm) - Certifié NF Environnement - Pack de 2+1",brico,1,,2026-05-24T19:12:46.747461,2026-05-25T12:48:49.292774
+917,2025-08-25,8.35,Brico,brico,csv_import,draft,"Faber-Castell Porte-mine Grip 1345 99 - Épaisseur de la mine : 0,5 mm (noir avec 24 mines de rechange)",brico,1,,2026-05-24T19:12:46.747462,2026-05-25T12:48:49.292774
+918,2025-08-25,5.89,Brico,brico,csv_import,draft,"Post-it Marque-Pages en Papier, Pack de 10 Blocs, 50 Marque-Pages par Bloc, 12.7 mm x 44.4 mm, Couleurs Assorties - Pour Marquer, Surligner ou Codifier des Informations",brico,1,,2026-05-24T19:12:46.747463,2026-05-25T12:48:49.292775
+919,2025-08-24,17.89,Brico,brico,csv_import,draft,"VinDox Lot de 8 filtres pour Fontaine d'eau de Chat avec 8 éponges, Filtre de Rechange pour Fontaine d'eau 71oz/2.1L PLWF002 Capsule d'eau pour Chien",brico,1,,2026-05-24T19:12:46.747464,2026-05-25T12:48:49.292775
+920,2025-08-22,12.49,Brico,brico,csv_import,draft,XCover 3 Ans de Protection Contre Les Dommages Accidentels et l'extension de Garantie de 100€ à 149.99€,brico,1,,2026-05-24T19:12:46.747465,2026-05-25T12:48:49.292776
+921,2025-08-19,5.99,Brico,brico,csv_import,draft,Max,brico,1,,2026-05-24T19:12:46.747466,2026-05-25T12:48:49.292777
+922,2025-08-17,121.99,Brico,brico,csv_import,draft,"HYCHIKA Taille Haie Telescopique Electrique 900W, Elagueuse sur Perche, Electric Hedge Trimmer, Extensible 200-250 cm, Double Interrupteur et Double Poignée, pour Tailler Les Haies et Arbustes",brico,1,,2026-05-24T19:12:46.747467,2026-05-25T12:48:49.292777
+923,2025-08-17,5.69,Brico,brico,csv_import,draft,"2 Ans Assurance dommage accidentel pour Un Outil électrique de 100 EUR à 149,99 EUR",brico,1,,2026-05-24T19:12:46.747468,2026-05-25T12:48:49.292778
+924,2025-08-15,6.99,Brico,brico,csv_import,draft,"Homéa, Tête de Balai Bois Zèbre Fibres de Coco+PVC 29 cm Usage Extérieur, Zebra Wood",brico,1,,2026-05-24T19:12:46.747469,2026-05-25T12:48:49.292778
+925,2025-08-02,27.99,Brico,brico,csv_import,draft,"VEVOR Sangle à Cliquet Lot de 4 Sangles d'Arrimage Résistance à la Rupture Maximale 998 kg 0,025 x 4,6 m pour Sécuriser Cargaisons, Appareils Électroménagers, Équipement de Jardin, Motos, Déménagement",brico,1,,2026-05-24T19:12:46.747470,2026-05-25T12:48:49.292779
+926,2025-08-02,7.90,Brico,brico,csv_import,draft,"JBL T110 – Ecouteurs intra-auriculaires filaires – Son Pure Bass de JBL et bouton de contrôle – Connectivité : câble Jack 3,5 mm – Couleur : Bleu",brico,1,,2026-05-24T19:12:46.747471,2026-05-25T12:48:49.292779
+927,2025-08-02,17.99,Brico,brico,csv_import,draft,Apple EarPods avec connecteur Lightning ​​​​​​​,brico,1,,2026-05-24T19:12:46.747472,2026-05-25T12:48:49.292780
+928,2025-07-19,5.99,Brico,brico,csv_import,draft,Max,brico,1,,2026-05-24T19:12:46.747473,2026-05-25T12:48:49.292780
+929,2025-07-02,29.99,Brico,brico,csv_import,draft,UGREEN 130W Chargeur Allume Cigare USB C 3 Ports 45W PPS PD QC 3.0 Chargeur Voiture Charge Rapide AFC Compatible avec iPhone 16 Plus Pro Max 15 MacBook Pro Air iPad Galaxy S24 S23 Ultra Steam Deck,brico,1,,2026-05-24T19:12:46.747474,2026-05-25T12:48:49.292781
+930,2025-06-27,1.59,Brico,brico,csv_import,draft,"WC Net Intense Gel WC Fraîcheur Océane, 700ml",brico,1,,2026-05-24T19:12:46.747475,2026-05-25T12:48:49.292781
+931,2025-06-27,9.00,Brico,brico,csv_import,draft,"Rowenta Lot de 4 sacs Hygiène+, Compatibles avec les aspirateurs traineau Compact Power, Power XXL, Silence Force, X-Trem Power ZR200520 Blanc",brico,1,,2026-05-24T19:12:46.747476,2026-05-25T12:48:49.292782
+932,2025-06-25,18.99,Brico,brico,csv_import,draft,Apple EarPods avec connecteur Lightning ​​​​​​​,brico,1,,2026-05-24T19:12:46.747477,2026-05-25T12:48:49.292782
+933,2025-06-19,5.99,Brico,brico,csv_import,draft,Max,brico,1,,2026-05-24T19:12:46.747478,2026-05-25T12:48:49.292783
+934,2025-06-02,30.99,Brico,brico,csv_import,draft,"VEVOR Toile de Paillage Anti-Mauvaises Herbes 1x50 m Géotextile Tissé Anti Repousse Herbe sous Gravier 100 g/m² Toile PP Perméable Résistant à la Déchirure pour Aménagement Paysager, Couvre-Sol, Noir",brico,1,,2026-05-24T19:12:46.747479,2026-05-25T12:48:49.292784
+935,2025-06-02,12.30,Brico,brico,csv_import,draft,"GardenMate Lot de 50 piquets de Fixation en Acier H150mm, L25mm, Ø2,9mm, 4260313266340",brico,1,,2026-05-24T19:12:46.747480,2026-05-25T12:48:49.292784
+936,2025-05-27,14.99,Brico,brico,csv_import,draft,shengo Lot de 2 Rouleaux de Brosse pour iRobot - Accessoires de Rechange pour iRobot E I & J série E5 E6 i7 i7+ i6 i6+ i3 i3+ i4 i4+ i8 i8 Plus J7 J7+,brico,1,,2026-05-24T19:12:46.747481,2026-05-25T12:48:49.292785
+937,2025-05-26,26.99,Brico,brico,csv_import,draft,Batterie Externe USB C Power Bank 26800mAh Batterie Externe Quick Charge Compacte Autorisé en Avion avec 4 Port Smart E Sorties et 3 Entrées Compatible avec Téléphone,brico,1,,2026-05-24T19:12:46.747482,2026-05-25T12:48:49.292785
+938,2025-05-21,49.90,Brico,brico,csv_import,draft,"CORSAIR IRONCLAW RGB Wired FPS/MOBA Souris de Jeu - 18 000 DPI - 7 Boutons Programmables - Conçue Pour Les Grandes Mains - Compatible iCUE - PC, Mac, PS5, PS4, Xbox - Noir",brico,1,,2026-05-24T19:12:46.747483,2026-05-25T12:48:49.292786
+939,2025-05-19,5.99,Brico,brico,csv_import,draft,Max,brico,1,,2026-05-24T19:12:46.747484,2026-05-25T12:48:49.292786
+940,2025-05-17,13.99,Brico,brico,csv_import,draft,"Anker PowerLine III câble Lightning de 90 cm certifié MFi avec connecteurs renforcés et garantie à vie pour iPhone X, Xs, Xr, Xs Max, 8, 8 Plus, 7, 7 Plus, 6, 6 Plus, etc.",brico,1,,2026-05-24T19:12:46.747485,2026-05-25T12:48:49.292787
+941,2025-05-15,14.39,Brico,brico,csv_import,draft,UGREEN 240W Câble USB C vers USB C PD 3.1 5A 48V 180W 140 W Charge Rapide Nylon Tressé Compatible avec MacBook iPad Ordinateur Portable de Jeu iPhone 16 Galaxy S24 Plus Ultra (2M),brico,1,,2026-05-24T19:12:46.747486,2026-05-25T12:48:49.292787
+942,2025-05-13,20.56,Brico,brico,csv_import,draft,"SUDEERY Multiprise 4 prises avec USB C, 4 ports USB, avec interrupteur, protection contre les surtensions avec câble de 3 m, pour cuisine, noir",brico,1,,2026-05-24T19:12:46.747487,2026-05-25T12:48:49.292788
+943,2025-05-13,10.99,Brico,brico,csv_import,draft,Cable iPhone Chargeur iPhone [2m/Lot de 3] Cable Lightning USB MFi Certifié Nylon Tressé Cordon iPhone Charge Rapide Fil Ultra Solide pour iPhone 14 Pro Max 13 12 11 XR XS X 8 7 Plus Se iPad,brico,1,,2026-05-24T19:12:46.747488,2026-05-25T12:48:49.292788
+944,2025-05-13,27.59,Brico,brico,csv_import,draft,"Anker Chargeur USB C (Nano II 65 W), station 3 ports, PPS, Rapide, bloc d'alimentation USB C compact pour MacBook Pro, iPad Pro, Steam Deck, Galaxy S20, Dell XPS 13, Note 20/10+, iPhone 16/15, Pixel",brico,1,,2026-05-24T19:12:46.747489,2026-05-25T12:48:49.292789
+945,2025-05-13,14.99,Brico,brico,csv_import,draft,"Bosch Professional 7 pièces CYL-3 Jeu de forets à béton Set (pour béton, Ø 4/5/6/6/7/8/10 mm, accessoires perceuse à percussion)",brico,1,,2026-05-24T19:12:46.747490,2026-05-25T12:48:49.292789
+946,2025-05-13,17.18,Brico,brico,csv_import,draft,deleyCON 1x Infrarouge Détecteur de Mouvement - pour l'intérieur et l'extérieur Portée jusqu'à 12m à 180° Rotatif Inclinable IP44 Protection Contre Les Projections d'eau Blanc,brico,1,,2026-05-24T19:12:46.747491,2026-05-25T12:48:49.292790
+947,2025-05-11,92.00,Brico,brico,csv_import,draft,Compatible avec Dacia Jogger 2021-2024 Barres de toit Fly modèle barres de toit 3 barres de toit grises,brico,1,,2026-05-24T19:12:46.747492,2026-05-25T12:48:49.292790
+948,2025-05-08,8.79,Brico,brico,csv_import,draft,Clauss 18856 Outil de peintre 14-en-1 anti-adhérent au titane avec tournevis plat et cruciforme,brico,1,,2026-05-24T19:12:46.747493,2026-05-25T12:48:49.292791
+949,2025-05-05,59.99,Brico,brico,csv_import,draft,"Anker 565 Hub USB-C 11 en 1 Docking Station avec Ports de données USB-C et USB-A 10 Gbps HDMI 4K DisplayPort, 100 W PD, 2 données USB 2.0, Ethernet, AUX, microSD & SD, pour MacBook Pro et Plus",brico,1,,2026-05-24T19:12:46.747494,2026-05-25T12:48:49.292792
+950,2025-05-05,9.99,Brico,brico,csv_import,draft,"Logitech Desk Mat - Studio Series, Large Tapis de Bureau Multifonctionnel et Etendu, Protection Bureau avec Base Anti-Dérapage, Design Durable et Imperméable - Gris",brico,1,,2026-05-24T19:12:46.747495,2026-05-25T12:48:49.292792
+951,2025-05-04,55.73,Brico,brico,csv_import,draft,"CHERRY KC 6000 Slim, disposition française, clavier AZERTY, clavier filaire, mécanisme à ciseaux pour une frappe parfaite, design ultra-plat, noir",brico,1,,2026-05-24T19:12:46.747496,2026-05-25T12:48:49.292793
+952,2025-05-04,69.93,Brico,brico,csv_import,draft,"R-Go HE Souris Ergonomique Filaire, Grande Taille, avec Le Logiciel Anti-TMS, Prévention tendinite, Souris Verticale, Clic Silencieux, pour Windows/MacOS/Linux, 2400 DPI réglable et 5 Boutons, Noir",brico,1,,2026-05-24T19:12:46.747497,2026-05-25T12:48:49.292793
+953,2025-05-04,15.99,Brico,brico,csv_import,draft,Lifeswonderful - Lot de 16 Embouts Ronds Transparents - pour Pieds De Meubles - Différentes Tailles,brico,1,,2026-05-24T19:12:46.747498,2026-05-25T12:48:49.292794
+954,2025-04-29,11.99,Brico,brico,csv_import,draft,"LEAGY mSATA Adaptateur SSD vers USB 3.0, Mini SATA Utilisez comme disque flash portable/disque dur externe 50 mm Mini PCIe Solid State Drive Reader Converter",brico,1,,2026-05-24T19:12:46.747499,2026-05-25T12:48:49.292794
+955,2025-04-22,34.99,Brico,brico,csv_import,draft,"SEBSON Réglette LED Cuisine 50cm avec Prise 230V et Interrupteur, Blanc Neutre 4000K, 8W, 700lm, Lampe de Placard - Éclairage sous Meuble pour Cuisine, Chambre à Coucher",brico,1,,2026-05-24T19:12:46.747501,2026-05-25T12:48:49.292795
+956,2025-04-19,5.99,Brico,brico,csv_import,draft,Max,brico,1,,2026-05-24T19:12:46.747502,2026-05-25T12:48:49.292795
+957,2025-04-18,5.98,Brico,brico,csv_import,draft,"Plaque gravée pour nom et numéro boîte aux lettres autocollante 10x2,5cm personnalisée 1 à 3 lignes Alu Brossé",brico,1,,2026-05-24T19:12:46.747503,2026-05-25T12:48:49.292796
+958,2025-04-18,3.70,Brico,brico,csv_import,draft,Plaque PAS DE PUBLICITÉ MERCI Adhésive PVC Pour Boîte Aux Lettres - Plaque Stop Pub - 8 cm x 2 cm - 21 Couleurs Disponibles (Bordeaux),brico,1,,2026-05-24T19:12:46.747504,2026-05-25T12:48:49.292796
+959,2025-04-18,3.70,Brico,brico,csv_import,draft,Plaque PAS DE PUBLICITÉ MERCI Adhésive PVC Pour Boîte Aux Lettres - Plaque Stop Pub - 8 cm x 2 cm - 21 Couleurs Disponibles (Gris Mat),brico,1,,2026-05-24T19:12:46.747505,2026-05-25T12:48:49.292797
+960,2025-04-15,19.94,Brico,brico,csv_import,draft,La Religion civile 2.0: Contre les nouveaux despotismes,brico,1,,2026-05-24T19:12:46.747506,2026-05-25T12:48:49.292798
+961,2025-04-15,16.99,Brico,brico,csv_import,draft,"KAIWEETS Détecteur de Tension sans Contact, Testeur de Tension avec Double Sensibilité 12V/48V-1000V, Écran LCD, Test de Fil de Phase/Neutre, Lampe de Poche, Alarme sonore",brico,1,,2026-05-24T19:12:46.747507,2026-05-25T12:48:49.292798
+962,2025-04-15,23.00,Brico,brico,csv_import,draft,Une famille américaine: De la grande pauvreté aux ors de la Maison Blanche,brico,1,,2026-05-24T19:12:46.747508,2026-05-25T12:48:49.292799
+963,2025-03-19,5.99,Brico,brico,csv_import,draft,Max,brico,1,,2026-05-24T19:12:46.747509,2026-05-25T12:48:49.292799
+964,2025-03-16,6.99,Brico,brico,csv_import,draft,"RAVIAD Câble iPhone Chargeur iPhone, [Certifié MFi] Fil Lightning Nylon Tressé Ultra Résistant pour iPhone 13/12/11/Pro/X/XS/XR/8/8 Plus/7/7 Plus/6s/6s Plus/6/6 Plus/SE/5s/5-1.2m/4ft Gris",brico,1,,2026-05-24T19:12:46.747510,2026-05-25T12:48:49.292800
+965,2025-02-19,5.99,Brico,brico,csv_import,draft,Max,brico,1,,2026-05-24T19:12:46.747511,2026-05-25T12:48:49.292800
+966,2025-02-13,10.49,Brico,brico,csv_import,draft,"EasyULT NGFF vers USB 3.0 (Aucun câble requis) pour SSD Portable,Adaptateur M.2 SSD vers USB 3.0 5 Gbps pour M.2 SSD M.2 Key B B+M Type,Lecteur de Cartes de Disque Dur NGFF Converter",brico,1,,2026-05-24T19:12:46.747512,2026-05-25T12:48:49.292801
+967,2025-02-13,7.99,Brico,brico,csv_import,draft,"REAL LUVIXA Derma Roller Aiguilles en acier inoxydable 0,5mm, rouleau à barbe, rouleau à micro-aiguille pour la peau et les cheveux, utilisation pour hommes et femmes",brico,1,,2026-05-24T19:12:46.747513,2026-05-25T12:48:49.292801
+968,2025-02-13,4.47,Brico,brico,csv_import,draft,"Zenitech CAP710129 Couvercle d'attente j17, Blanc",brico,1,,2026-05-24T19:12:46.747514,2026-05-25T12:48:49.292802
+969,2025-02-13,5.90,Brico,brico,csv_import,draft,"Swiffer XXL Attrape & Retient Kit De Dépoussiérage avec 1 Manche Télescopique Et 2 Recharges Plumeau Attrape-Poussière, Attrape Et Retient Jusqu’À 3 Fois Plus De Cheveux Et Poussière",brico,1,,2026-05-24T19:12:46.747515,2026-05-25T12:48:49.292802
+970,2025-02-11,22.99,Brico,brico,csv_import,draft,KNIPEX BiX Coupe-tube pour les tubes en plastique de Ø 20 à 50 mm 90 22 10 BK,brico,1,,2026-05-24T19:12:46.747516,2026-05-25T12:48:49.292803
+971,2025-02-09,6.90,Brico,brico,csv_import,draft,"OPPO - Câble de Charge VOOC et SuperVOOC USB A/USB C, Câble Chargeur Téléphone Portable, Longueur 1m, Vitesse de Chargement et Synchronisation Rapides, Design Compact, Blanc",brico,1,,2026-05-24T19:12:46.747517,2026-05-25T12:48:49.292803
+972,2025-02-04,19.99,Brico,brico,csv_import,draft,Mivos Lot de 2 Truelles d'Angle en Acier Inoxydable 120 x 60 mm - Truelle d'Angle Intérieure et Extérieure en Acier Inoxydable - Spatule d'Angle avec Poignée Souple - Fabriquée en UE,brico,1,,2026-05-24T19:12:46.747518,2026-05-25T12:48:49.292804
+973,2025-02-04,11.79,Brico,brico,csv_import,draft,"fischer - Cheville rallongée en nylon SX Plus 8x65 pour profondeur d'ancrage supérieure, tous matériaux/Boite de 50",brico,1,,2026-05-24T19:12:46.747519,2026-05-25T12:48:49.292805
+974,2025-02-04,26.28,Brico,brico,csv_import,draft,"Swiffer Duster, Plumeau Attrape- Poussière, 54 Recharges (3x18 Recharges) Dépoussiérantes, Attrape Et Retient Jusqu’À 3 Fois Plus De Cheveux Et Poussière Qu’Un Plumeau Ordinaire",brico,1,,2026-05-24T19:12:46.747520,2026-05-25T12:48:49.292805
+975,2025-01-27,17.95,Brico,brico,csv_import,draft,Loutil Parfait COATING ROLLER ROLL'ENDUIT WITH FRAME 180 mm,brico,1,,2026-05-24T19:12:46.747521,2026-05-25T12:48:49.292806
+976,2025-01-27,6.99,Brico,brico,csv_import,draft,"Unnderwiss Cable sata to usb Adaptateur SSD/HDD Compatible avec les disques durs externes et internes, 2,5 pouces Compatible avec les systèmes d'exploitation Windows, Mac et Linux",brico,1,,2026-05-24T19:12:46.747522,2026-05-25T12:48:49.292806
+977,2025-01-23,9.34,Brico,brico,csv_import,draft,"Bosch Accessories Lame plongeante HCS PAIZ 32 EPC (Bois, Accessoires pour Outils Oscillants StarlockPlus et StarlockMax)",brico,1,,2026-05-24T19:12:46.747523,2026-05-25T12:48:49.292807
+978,2025-01-22,24.97,Brico,brico,csv_import,draft,"S&R Disque Diamant 125 à Meuler le Béton. Meule Abrasive à Poncer Béton, Pierre, Granit. 2 rangées diamantés",brico,1,,2026-05-24T19:12:46.747524,2026-05-25T12:48:49.292807
+979,2025-01-22,20.34,Brico,brico,csv_import,draft,"STANLEY Bac à Enduit en Acier Inoxydable 305 mm - Robuste et Résistant - Forme Incurvée avec Bords Fins et Solides - Peu Emcombrant STHT0-05867, Argent",brico,1,,2026-05-24T19:12:46.747525,2026-05-25T12:48:49.292808
+980,2025-01-19,5.99,Brico,brico,csv_import,draft,Max,brico,1,,2026-05-24T19:12:46.747526,2026-05-25T12:48:49.292808
+981,2025-01-18,9.75,Brico,brico,csv_import,draft,"Amazon Basics Câble USB-2.0 type C vers Lightning (certifié MFi), 0.9 m, blanc",brico,1,,2026-05-24T19:12:46.747527,2026-05-25T12:48:49.292809
+982,2025-01-18,12.74,Brico,brico,csv_import,draft,UGREEN Câble Lightning vers USB C MFi Certifié Nylon Tressé Chargeur iPhone Rapide Compatible avec iPhone 14 Plus Pro Max 13 12 11 SE 2022 XR XS iPad Pro 2017 AirPods Pro (1M),brico,1,,2026-05-24T19:12:46.747528,2026-05-25T12:48:49.292809
+983,2025-01-18,9.20,Brico,brico,csv_import,draft,"Amazon Basics Câble USB-C vers Lightning en nylon tressé, chargeur certifié MFi pour iPhone 13/12/11/X/XS/XR/8 - gris foncé, 1,8 m",brico,1,,2026-05-24T19:12:46.747529,2026-05-25T12:48:49.292810
+984,2025-01-17,12.99,Brico,brico,csv_import,draft,"JETech Verre Trempé Anti-Espion pour iPhone 14 Pro 6,1 Pouces avec Protecteur Objectif Caméra Arrière, Couverture Complète, Film Protection Écran, 2 Pièces Chacun",brico,1,,2026-05-24T19:12:46.747530,2026-05-25T12:48:49.292810
+985,2025-01-14,21.99,Brico,brico,csv_import,draft,"Veehoo Tapis Chauffant pour Animaux, Chien Chat Tapis Chauffant Température 35-43℃ Coussin Chauffant électrique Imperméable avec Câble Anti-Morsure Housse en Flanelle Amovible, 40 x 50cm",brico,1,,2026-05-24T19:12:46.747531,2026-05-25T12:48:49.292811
+986,2025-01-12,14.00,Brico,brico,csv_import,draft,Ressort à cintrer cuivre 12x14 extérieur Virax 251014,brico,1,,2026-05-24T19:12:46.747532,2026-05-25T12:48:49.292812
+987,2025-01-12,17.99,Brico,brico,csv_import,draft,Apple EarPods avec connecteur Lightning ​​​​​​​,brico,1,,2026-05-24T19:12:46.747533,2026-05-25T12:48:49.292812
+988,2025-01-12,40.36,Brico,brico,csv_import,draft,"Otterbox Defender XT Coque pour iPhone 14 Pro avec MagSafe, Antichoc, Anti-Chute, Robuste, supporte 5 x Plus de Chutes Que la Norme Militaire, Noir, Livré sans Emballage",brico,1,,2026-05-24T19:12:46.747534,2026-05-25T12:48:49.292813
+989,2025-01-09,20.99,Brico,brico,csv_import,draft,"30m Corde en Acier Inoxydable à Suspendre Kit, 3mm Câble en acier inoxydable enduit de PVC avec Tendeur de corde M5 et Crochets, pour Corde à Linge, Suspension Lumineuse, Plante Grimpante, Rambarde",brico,1,,2026-05-24T19:12:46.747535,2026-05-25T12:48:49.292813
+990,2025-01-09,23.99,Brico,brico,csv_import,draft,"Angooni Lot de 65 Corde Cable Acier Inoxydable de 35 m - Tendeur de câble en acier inoxydable 304 - Avec œillets - Tuteurs pour plantes grimpantes, cordes à linge, lumières suspendues",brico,1,,2026-05-24T19:12:46.747536,2026-05-25T12:48:49.292814
+991,2025-01-08,2.99,Brico,brico,csv_import,draft,"Savy 4807020 Pinceau plat toute peinture Fibres Synthétiques largeur 20 mm, Violet",brico,1,,2026-05-24T19:12:46.747537,2026-05-25T12:48:49.292814
+992,2025-01-08,2.99,Brico,brico,csv_import,draft,Savy 1643020 Pinceau radiateur virole coudée 20 mm,brico,1,,2026-05-24T19:12:46.747538,2026-05-25T12:48:49.292815
+993,2025-01-08,2.17,Brico,brico,csv_import,draft,"SAVY Pinceau plat bi-matière peinture mate, velours et satinée larg.20mm",brico,1,,2026-05-24T19:12:46.747539,2026-05-25T12:48:49.292815
+994,2025-01-08,2.99,Brico,brico,csv_import,draft,"SAVY Pinceau Plat coudé sur Chant pour radiateur et accès Difficile FSC 100%, Tous Types de peintures Largeur 30mm, Bois Naturel",brico,1,,2026-05-24T19:12:46.747540,2026-05-25T12:48:49.292816
+995,2025-01-06,17.00,Brico,brico,csv_import,draft,"iBOARD Laisse de planche de surf, corde droite à tour unique pour longboard, paddleboard, planches de surf, remplacement de 5,5 mm, noir et bleu",brico,1,,2026-05-24T19:12:46.747541,2026-05-25T12:48:49.292816
+996,2025-01-06,39.52,Brico,brico,csv_import,draft,Kit de fixation pour radiateurs fonte Réf C13900313,brico,1,,2026-05-24T19:12:46.747542,2026-05-25T12:48:49.292817
+997,2025-01-04,19.71,Brico,brico,csv_import,draft,Tajima GNB265FBR Lame de scie Fluoro Coat à Rapid Saw Black et Pull-over 265 mm,brico,1,,2026-05-24T19:12:46.747543,2026-05-25T12:48:49.292817
+998,2025-01-04,20.30,Brico,brico,csv_import,draft,"160 PCS Connecteurs électriques avec tige de commande,connecteur electrique,connecteurs électriques kit,2 trous 110PCS, 3 trous 30PCS, 4 trous 10PCS, 5 trous 10PCS (boîte en plastique)",brico,1,,2026-05-24T19:12:46.747544,2026-05-25T12:48:49.292818
+999,2025-01-04,5.75,Brico,brico,csv_import,draft,"BGS Diy 80990 - Vis multifonctions - profil en T (pour Torx) T10-3,0 x 20 mm - 260 pièces",brico,1,,2026-05-24T19:12:46.747545,2026-05-25T12:48:49.292819
+1000,2025-01-04,14.99,Brico,brico,csv_import,draft,"S&R Tenailles en acier chrome-vanadium de haute qualité 280mm, poignées en PVC bleues",brico,1,,2026-05-24T19:12:46.747546,2026-05-25T12:48:49.292819
+1001,2025-01-04,24.89,Brico,brico,csv_import,draft,wolfcraft 4688000 Renvoi d'Angle - Perçage et vissage à 90 degrès - Pour Visseuse sans fil - Multicolore,brico,1,,2026-05-24T19:12:46.747547,2026-05-25T12:48:49.292820
+1002,2025-01-04,9.99,Brico,brico,csv_import,draft,"Enhon [NEW] 2mm Crayon Chantier avec 13 Mines, Crayon Menuisier avec Taille-Crayon, Marqueur Trou Profond Crayons de Charpentier pour Bois, Metal, Béton, Bricolage Outillage - Noir",brico,1,,2026-05-24T19:12:46.747548,2026-05-25T12:48:49.292820
+1003,2025-01-04,11.38,Brico,brico,csv_import,draft,Stanley 0-66-357 Tournevis Porte- Boule Bi-Matière Avec 6 Embouts - Tête Magnétique - Réservoir De Stockage Dans Le Manche,brico,1,,2026-05-24T19:12:46.747549,2026-05-25T12:48:49.292821
+1004,2025-01-04,6.11,Brico,brico,csv_import,draft,STANLEY - Niveau Magnétique de Poche - 042130,brico,1,,2026-05-24T19:12:46.747550,2026-05-25T12:48:49.292821
+1005,2025-01-04,15.00,Brico,brico,csv_import,draft,Ausonia - 42070 Taloche caoutchouc éponge pour enduire pour jointoiement 25x10 Cm,brico,1,,2026-05-24T19:12:46.747551,2026-05-25T12:48:49.292822
+1006,2025-01-03,31.99,Brico,brico,csv_import,draft,"Navaris Organiseur L Outils Vide - 3x Boîte à Outil professionnelle - 31,5 x 22,5 x 19,8 cm - Valise Empilable Rangement Multiple Cases Modulables",brico,1,,2026-05-24T19:12:46.747552,2026-05-25T12:48:49.292822
+1007,2025-01-03,3.38,Brico,brico,csv_import,draft,Bosch Lampe de phare Pure Light H4 12V 60/55W,brico,1,,2026-05-24T19:12:46.747553,2026-05-25T12:48:49.292823
+1008,2025-01-03,19.99,Brico,brico,csv_import,draft,"RoverTac Multitool Pince Couteau de poche, 14 en 1 Multi-outils Couteau Pince Scie Ouvre Bouteille Verrouillage de Sécurité, Matériel de Camping et de Randonnée, Cadeaux pour Hommes Papa",brico,1,,2026-05-24T19:12:46.747555,2026-05-25T12:48:49.292823
+1009,2025-01-03,11.49,Brico,brico,csv_import,draft,"EdcX Paracord 4 mm, 35+ Couleurs Unies (10 m, 15 m, 30 m, 50 m, 100 m, 300 m) | Idéal pour l'artisanat, Le Camping, la Survie | Corde 100% Nylon 4 mm | Cordon Tactique 550 Type III (Army Green, 15 m)",brico,1,,2026-05-24T19:12:46.747556,2026-05-25T12:48:49.292824
+1010,2025-01-02,11.99,Brico,brico,csv_import,draft,Gedotec Loqueteau à Ressort | Plaque Quincaillerie Kit de Serrure - 99 mm | 1 Pièce | Fermeture Acier Galvanisé Porte Fenêtre de Balcon et Terrasse Bois | Loquet universel porte avec Douille patio,brico,1,,2026-05-24T19:12:46.747558,2026-05-25T12:48:49.292824
+1011,2025-01-01,4.68,Brico,brico,csv_import,draft,Connecteur electrique - Adaptateur prise - Prise Plate - Raccord electrique - Fiche electrique - Fiche Femelle Caoutchouc Douille D4.8mm Avec EclIPse Noir - Debflex - 713590,brico,1,,2026-05-24T19:12:46.747559,2026-05-25T12:48:49.292825
+1012,2025-01-01,4.15,Brico,brico,csv_import,draft,Prise electrique male - Fiche electrique - Prise male - Prise male 220 V - Fiche male - Fiche electrique male - Fiche Male Caoutchouc Broche D.4.8mm Noir - Debflex - 713200,brico,1,,2026-05-24T19:12:46.747560,2026-05-25T12:48:49.292826
+1013,2025-01-01,2.90,Brico,brico,csv_import,draft,Prise 16A + Terre Etanche,brico,1,,2026-05-24T19:12:46.747561,2026-05-25T12:48:49.292826
+1014,2025-01-01,21.89,Brico,brico,csv_import,draft,JAUGE DE MESURE MECANIQUE AFRISO MT-PROFIL R pour cuve et citerne profondeur jusqu'a 250cm,brico,1,,2026-05-24T19:12:46.747562,2026-05-25T12:48:49.292827
+1015,2026-04-28,3650.29,Brico,brico,csv_import,draft,Accompte fenetre PVC Axel Fermeture,brico,1,,2026-05-24T19:12:46.747563,2026-05-25T12:48:49.292827
+1016,2026-03-28,97.00,Leroy Merlin,brico,csv_import,draft,,,1,,2026-05-24T19:13:08.023801,2026-05-25T12:48:49.292828
+1017,2026-03-28,36.31,euros Leroy Merlin,brico,csv_import,draft,,,1,,2026-05-24T19:13:08.023806,2026-05-25T12:48:49.292828
+1018,2026-02-16,70.00,casto,brico,csv_import,draft,,,1,,2026-05-24T19:13:08.023808,2026-05-25T12:48:49.292829
+1019,2026-01-18,12.00,Leroy,brico,csv_import,draft,,,1,,2026-05-24T19:13:08.023809,2026-05-25T12:48:49.292829
+1020,2026-05-22,21.00,marche Ilan,50/50,telegram,draft,,quotepart,1,,2026-07-11T12:53:11.014387,2026-07-11T14:14:52.649723
+1021,2026-06-24,59.00,Kerbio,quotepart,telegram,draft,,,1,,2026-07-11T13:23:31.525251,2026-07-11T16:28:14.650412
+1022,2026-05-30,34.00,Blons tricot,50/50,telegram,draft,,,1,,2026-07-11T13:23:31.527675,2026-07-11T14:25:27.945287
+1023,2026-05-29,131.00,Biocoop,50/50,telegram,draft,,,1,,2026-07-11T13:23:31.529893,2026-07-11T14:25:27.945287
+1031,2026-06-16,94.00,Farine,quotepart,telegram,draft,,,2,,2026-07-11T13:23:39.595467,2026-07-11T16:28:14.650419
+1032,2026-06-14,333.00,La fourche,50/50,telegram,draft,,,2,,2026-07-11T13:23:39.597521,2026-07-11T14:25:27.945287
+1033,2026-05-31,162.71,Carole mai,50/50,telegram,draft,,,2,,2026-07-11T13:23:39.598888,2026-07-11T14:27:03.789085
+1034,2026-05-31,23.00,Tonio,quotepart,telegram,draft,,,2,,2026-07-11T13:23:39.600236,2026-07-11T14:29:22.519142
+1035,2026-05-27,16.00,Stricot,50/50,telegram,draft,,,2,,2026-07-11T13:23:39.601795,2026-07-11T14:25:27.945287
+1045,2026-06-10,154.00,weightworld,50/50,telegram,draft,,,2,,2026-07-11T13:23:39.672079,2026-07-11T14:27:28.166721
+1046,2026-06-10,100.00,Sunday Naturale,50/50,telegram,draft,,,2,,2026-07-11T13:23:39.673654,2026-07-11T14:27:51.192259
+1055,2026-07-01,150.00,Kerbio,quotepart,telegram,draft,,,2,,2026-07-11T13:26:22.800450,2026-07-11T16:28:14.650420
+1056,2026-07-01,246.22,Carole salaire juin,50/50,telegram,draft,,,2,,2026-07-11T13:26:22.802850,2026-07-11T14:27:03.789085
+1060,2026-07-05,11.00,Tonio,quotepart,telegram,draft,,,2,,2026-07-11T13:28:30.686852,2026-07-11T14:23:20.189587
+1061,2026-07-11,10.00,Navette,50/50,telegram,draft,,,2,,2026-07-11T13:28:30.730312,2026-07-11T14:30:35.939399
+1062,2026-07-11,12.00,Alsa,50/50,telegram,draft,,,2,,2026-07-11T13:28:30.731197,2026-07-11T14:30:35.939401
+1063,2026-07-11,500.00,VIR INST trop plein,virement,csv_import,draft,,,5,,2026-07-11T16:24:58.695285,2026-07-11T16:24:58.695288
+1064,2026-07-11,106.65,VIR gel 11072026,virement,csv_import,draft,,,5,,2026-07-11T16:24:58.697562,2026-07-11T16:24:58.697564
+1065,2026-07-11,1208.10,VIR INST LOIC GOURMELON,virement,csv_import,draft,,,5,,2026-07-11T16:24:58.700876,2026-07-11T16:24:58.700878
+1066,2026-07-10,27.26,CARTE 09/07 MARKET NERJA NERJA,50/50,csv_import,draft,,,5,,2026-07-11T16:24:58.701874,2026-07-11T16:25:21.669886
+1067,2026-07-09,112.21,CARTE 08/07 AGRICULTURA VEDI FRIGILIANA,50/50,csv_import,draft,,,5,,2026-07-11T16:24:58.702912,2026-07-11T16:25:28.268179
+1068,2026-07-09,54.55,CARTE 08/07 MARKET NERJA NERJA,50/50,csv_import,draft,,,5,,2026-07-11T16:24:58.703721,2026-07-11T16:25:36.121170
+1069,2026-07-08,130.00,CARTE 07/07 Volotea     G58U BARCELONA,50/50,csv_import,draft,,,5,,2026-07-11T16:24:58.704574,2026-07-11T16:25:45.233632
+1070,2026-07-08,4.50,CARTE 07/07 RELAY BREAD CO GUIPAVAS,50/50,csv_import,draft,,,5,,2026-07-11T16:24:58.706119,2026-07-11T16:26:21.387155
+1071,2026-07-07,52.20,CARTE 06/07 KERBIO BREST,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.707477,2026-07-11T16:28:14.650420
+1072,2026-07-06,38.90,CARTE 05/07 SAVEZ-VOUS PLAN ST POL DE LEON,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.709327,2026-07-11T16:24:58.709329
+1073,2026-07-06,78.95,CARTE 04/07 KERBIO R DROITE0 BREST,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.710632,2026-07-11T16:28:14.650422
+1074,2026-07-02,700.00,VIR MADAME   VASSEUR ALICE,virement,csv_import,draft,,,5,,2026-07-11T16:24:58.712500,2026-07-11T16:24:58.712503
+1075,2026-06-30,700.00,VIR M GOURMELON LOIC,virement,csv_import,draft,,,5,,2026-07-11T16:24:58.713735,2026-07-11T16:24:58.713736
+1076,2026-06-27,51.70,CARTE 26/06 KERBIO R DROITE BREST,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.714971,2026-07-11T16:28:14.650422
+1077,2026-06-22,168.67,CARTE 20/06 GRAINE DE BIO PONT L ABBE,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.716755,2026-07-11T16:28:50.554634
+1078,2026-06-20,31.50,CARTE 19/06 GRAINE DE BIO PONT L ABBE,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.718242,2026-07-11T16:28:50.554636
+1079,2026-06-18,148.41,CARTE 17/06 KERBIO BREST,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.719447,2026-07-11T16:28:14.650422
+1080,2026-06-17,44.00,CARTE 16/06 SNCF-VOYAGEURS PARIS 10,dette,csv_import,draft,,,1,,2026-07-11T16:24:58.720371,2026-07-11T16:28:06.961832
+1081,2026-06-15,42.10,CARTE 14/06 SAVEZ-VOUS PLAN0 ST POL DE LEO,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.721710,2026-07-11T16:24:58.721711
+1082,2026-06-15,197.67,CARTE 13/06 GRAINE DE BIO PONT L ABBE,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.722969,2026-07-11T16:28:50.554637
+1083,2026-06-12,495.00,VIR INST poisson viande etc,50/50,csv_import,draft,,,5,,2026-07-11T16:24:58.729132,2026-07-11T16:24:58.729135
+1084,2026-06-11,135.29,CARTE 10/06 KERBIO BREST,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.729803,2026-07-11T16:28:14.650423
+1085,2026-06-08,88.00,VIR erreur carte marche Manu,50/50,csv_import,draft,,,5,,2026-07-11T16:24:58.730497,2026-07-11T16:24:58.730498
+1086,2026-06-05,212.88,CARTE 04/06 KERBIO BREST,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.731127,2026-07-11T16:28:14.650423
+1087,2026-06-02,700.00,VIR MADAME   VASSEUR ALICE,virement,csv_import,draft,,,5,,2026-07-11T16:24:58.731834,2026-07-11T16:24:58.731835
+1088,2026-06-01,25.30,CARTE 30/05 SAVEZ-VOUS PLAN0 ST POL DE LEO,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.732555,2026-07-11T16:24:58.732556
+1089,2026-06-01,700.00,VIR M GOURMELON LOIC,virement,csv_import,draft,,,5,,2026-07-11T16:24:58.733279,2026-07-11T16:24:58.733280
+1090,2026-05-28,79.99,CARTE 27/05 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,,5,,2026-07-11T16:24:58.734113,2026-07-11T16:24:58.734114
+1091,2026-05-27,10.40,CARTE 26/05 SAVEZ-VOUS PLAN ST POL DE LEON,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.734859,2026-07-11T16:24:58.734860
+1092,2026-05-27,19.66,CARTE 26/05 GIE DOUAR BEV LA ROCHE MAURI,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.735582,2026-07-11T16:24:58.735583
+1093,2026-05-27,91.19,CARTE 26/05 FINIS TERRA BREST,divers,csv_import,draft,,,5,,2026-07-11T16:24:58.736288,2026-07-11T16:24:58.736289
+1094,2026-05-25,138.34,CARTE 23/05 GRAINE DE BIO PONT L ABBE,quotepart,csv_import,draft,,,5,,2026-07-11T16:24:58.736855,2026-07-11T16:28:50.554637
+1095,2026-05-25,84.50,CARTE 23/05 SumUp  *Ty Tropi Plomeur,divers,csv_import,draft,,,5,,2026-07-11T16:24:58.737652,2026-07-11T16:24:58.737653
+1096,2026-09-12,43.46,CARTE 11/09 IKEA BREST GUIPAVAS,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.306222,2026-09-15T18:08:20.842061
+1097,2026-09-11,130.16,CARTE 10/09 KERBIO BREST,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.319133,2026-09-15T14:54:13.319138
+1098,2026-09-09,11.77,CARTE 08/09 CARREFOUR CITY BREST,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.326437,2026-09-15T18:08:20.842061
+1099,2026-09-07,271.08,CARTE 06/09 La Fourche SEINE ET MARN,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.336113,2026-09-15T18:08:20.842061
+1100,2026-09-07,39.90,CARTE 05/09 CASTORAMA BREST   1485/,brico,csv_import,draft,,,5,,2026-09-15T14:54:13.343755,2026-09-15T18:08:20.842061
+1101,2026-09-07,13.59,CARTE 05/09 Action 4247 Brest,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.346305,2026-09-15T18:12:04.522157
+1102,2026-09-07,45.51,CARTE 05/09 MV BREST KERGA BREST,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.349206,2026-09-15T18:08:20.842061
+1103,2026-09-07,110.05,CARTE 05/09 KERBIO BREST,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.354968,2026-09-15T14:54:13.354971
+1104,2026-09-02,16.70,CARTE 01/09 SAVEZ-VOUS PLAN ST POL DE LEON,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.359712,2026-09-15T14:54:13.359783
+1105,2026-09-02,700.00,VIR MADAME   VASSEUR ALICE,virement,csv_import,draft,,,2,,2026-09-15T14:54:13.364516,2026-09-15T14:54:13.364520
+1106,2026-08-31,41.25,CARTE 29/08 EARL DE VOURCH PLABENNEC,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.370744,2026-09-15T18:12:04.522157
+1107,2026-08-31,28.03,CARTE 30/08 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,,5,,2026-09-15T14:54:13.381658,2026-09-15T14:54:13.381661
+1108,2026-08-31,6.69,CARTE 30/08 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,,5,,2026-09-15T14:54:13.388267,2026-09-15T14:54:13.388272
+✅ Export complete: 660 expenses
+1109,2026-08-31,10.66,CARTE 29/08 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,,5,,2026-09-15T14:54:13.394845,2026-09-15T14:54:13.394850
+1110,2026-08-31,49.40,CARTE 29/08 SAVEZ-VOUS PLAN ST POL DE LEON,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.401791,2026-09-15T14:54:13.401797
+1111,2026-08-31,20.72,CARTE 29/08 GIE DOUAR BEV LA ROCHE MAURI,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.406624,2026-09-15T14:54:13.406627
+1112,2026-08-31,700.00,VIR M GOURMELON LOIC,virement,csv_import,draft,,,1,,2026-09-15T14:54:13.415600,2026-09-15T14:54:13.415608
+1113,2026-08-28,88.22,CARTE 27/08 KERBIO BREST,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.419313,2026-09-15T14:54:13.419316
+1114,2026-08-25,12.12,CARTE 24/08 WISE BREST,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.422120,2026-09-15T18:14:59.927081
+1115,2026-08-22,23.16,CARTE 21/08 KERBIO BREST,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.425785,2026-09-15T14:54:13.425796
+1116,2026-08-22,200.00,VIR INST LOIC GOURMELON,virement,csv_import,draft,,,1,,2026-09-15T14:54:13.457733,2026-09-15T14:54:13.457737
+1117,2026-08-19,37.40,CARTE 18/08 GIE DOUAR BEV LA ROCHE MAURI,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.461334,2026-09-15T14:54:13.461337
+1118,2026-08-19,4.66,CARTE 18/08 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,,5,,2026-09-15T14:54:13.468665,2026-09-15T14:54:13.468670
+1119,2026-08-18,7.87,CARTE 17/08 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,,5,,2026-09-15T14:54:13.479454,2026-09-15T14:54:13.479458
+1120,2026-08-17,94.86,CARTE 16/08 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,,5,,2026-09-15T14:54:13.488296,2026-09-15T14:54:13.488303
+1121,2026-08-17,66.24,CARTE 15/08 GRAINE DE BIO PONT L ABBE,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.494208,2026-09-15T14:54:13.494213
+1122,2026-08-14,26.45,CARTE 08/08 GIE DOUAR BEV LA ROCHE MAURI,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.501467,2026-09-15T14:54:13.501472
+1123,2026-08-14,67.48,CARTE 13/08 La Fourche SEINE ET MARN,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.508466,2026-09-15T18:08:20.842061
+1124,2026-08-12,200.00,VIR INST MADAME VASSEUR ALICE,virement,csv_import,draft,,,2,,2026-09-15T14:54:13.512460,2026-09-15T14:54:13.512464
+1125,2026-08-10,26.96,CARTE 08/08 BRICO DEPOT BREST2914   /,brico,csv_import,draft,,,5,,2026-09-15T14:54:13.523486,2026-09-15T14:54:13.523532
+1126,2026-08-10,28.71,CARTE 08/08 BOUCHBIOMINOU PLOUZANE,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.533147,2026-09-15T18:08:20.842061
+1127,2026-08-08,123.43,CARTE 07/08 CEDEO BREST   3976/,brico,csv_import,draft,,,5,,2026-09-15T14:54:13.543730,2026-09-15T18:08:20.842061
+1128,2026-08-07,171.05,CARTE 06/08 KERBIO BREST,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.556672,2026-09-15T14:54:13.556682
+1129,2026-08-07,304.20,CARTE 06/08 CEDEO BREST   3976/,brico,csv_import,draft,,,5,,2026-09-15T14:54:13.563463,2026-09-15T18:08:20.842061
+1130,2026-08-05,50.00,CARTE 04/08 SAVEZ-VOUS PLAN ST POL DE LEON,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.568879,2026-09-15T14:54:13.568884
+1131,2026-08-05,16.50,CARTE 04/08 GIE DOUAR BEV LA ROCHE MAURI,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.573490,2026-09-15T14:54:13.573493
+1132,2026-08-05,16.00,CARTE 04/08 FINIS TERRA BREST,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.578967,2026-09-15T18:08:20.842061
+1133,2026-08-05,176.34,CARTE 04/08 CEDEO BREST   3976/,brico,csv_import,draft,,,5,,2026-09-15T14:54:13.587107,2026-09-15T18:08:20.842061
+1134,2026-08-04,113.10,CARTE 03/08 LEROY MERLIN GUIPAVAS,brico,csv_import,draft,,,5,,2026-09-15T14:54:13.595047,2026-09-15T14:54:13.595053
+1135,2026-08-03,378.98,CARTE 03/08 La Fourche SEINE ET MARN,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.607039,2026-09-15T18:08:20.842061
+1136,2026-08-03,36.85,CARTE 01/08 BIOCOOP LE RELECQ KERH,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.614664,2026-09-15T18:08:20.842061
+1137,2026-08-03,31.50,CARTE 01/08 SAVEZ-VOUS PLAN ST POL DE LEON,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.617021,2026-09-15T14:54:13.617025
+1138,2026-08-03,41.47,CARTE 01/08 BOUCHBIOMINOU PLOUZANE,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.624439,2026-09-15T18:08:20.842061
+1139,2026-08-03,35.56,CARTE 01/08 GIE DOUAR BEV LA ROCHE MAURI,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.635099,2026-09-15T14:54:13.635104
+1140,2026-08-03,700.00,VIR MADAME   VASSEUR ALICE,virement,csv_import,draft,,,2,,2026-09-15T14:54:13.645102,2026-09-15T14:54:13.645112
+1141,2026-07-31,8.00,CARTE 28/07 EMPRESA MALAGUEN MALAGA,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.651181,2026-09-15T18:08:20.842061
+1142,2026-07-31,30.40,CARTE 30/07 LECLERC GOUESNOU GOUESNOU,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.655092,2026-09-15T18:08:20.842061
+1143,2026-07-31,700.00,VIR M GOURMELON LOIC,virement,csv_import,draft,,,1,,2026-09-15T14:54:13.657540,2026-09-15T14:54:13.657543
+1144,2026-07-30,97.89,CARTE 29/07 KERBIO BREST,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.664436,2026-09-15T14:54:13.664439
+1145,2026-07-30,101.27,CARTE 29/07 LECLERC GOUESNOU GOUESNOU,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.676635,2026-09-15T18:08:20.842061
+1146,2026-07-29,4.90,CARTE 28/07 AGP LA MANON 521 MALAGA,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.681295,2026-09-15T18:08:20.842061
+1147,2026-07-27,12.24,CARTE 26/07 ALSA INTERNET MADRID,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.689481,2026-09-15T18:08:20.842061
+1148,2026-07-25,23.56,CARTE 24/07 MARKET NERJA NERJA,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.692337,2026-09-15T18:08:20.842061
+1149,2026-07-24,147.60,CARTE 23/07 MUM INDIAN RESTA NERJA,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.703675,2026-09-15T18:08:20.842061
+1150,2026-07-23,58.73,CARTE 22/07 MARKET NERJA NERJA,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.724317,2026-09-15T18:08:20.842061
+1151,2026-07-23,46.26,CARTE 22/07 VoloteaG58UFV Santiago Del,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.733081,2026-09-15T18:08:20.842061
+1152,2026-07-22,45.39,CARTE 21/07 AGRICULTURA VEDI FRIGILIANA,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.742478,2026-09-15T18:08:20.842061
+1153,2026-07-20,39.04,CARTE 19/07 MARKET NERJA NERJA,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.755622,2026-09-15T18:08:20.842061
+1154,2026-07-20,55.96,CARTE 18/07 SP WEIGHTWORLD F CLONMEL,quotepart,csv_import,draft,,,5,,2026-09-15T14:54:13.769415,2026-09-15T18:08:20.842061
+1155,2026-07-15,62.41,CARTE 14/07 AGRICULTURA VEDI FRIGILIANA,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.773136,2026-09-15T18:08:20.842061
+1156,2026-07-14,37.78,CARTE 13/07 MARKET NERJA NERJA,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.786267,2026-09-15T18:08:20.842061
+1157,2026-07-13,500.00,VIR INST loic trop plein,trop_plein,csv_import,draft,,,1,,2026-09-15T14:54:13.793607,2026-09-15T14:54:13.793612
+1158,2026-07-13,17.23,CARTE 11/07 MARKET NERJA NERJA,50/50,csv_import,draft,,,5,,2026-09-15T14:54:13.803036,2026-09-15T18:08:20.842061

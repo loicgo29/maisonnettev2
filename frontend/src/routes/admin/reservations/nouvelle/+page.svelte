@@ -16,6 +16,10 @@
 	let dateFin = $state('');
 	let montantTotal = $state('');
 	let notesInternes = $state('');
+	let appelerParPrenom = $state(false);
+	let nombreLits = $state('');
+	let nombreLitsInconnu = $state(false);
+	let attentesClient = $state('');
 
 	let enregistrement = $state(false);
 	let erreur = $state('');
@@ -67,6 +71,9 @@
 				dateFin: new Date(dateFin).toISOString(),
 				montantTotal: montantTotal ? Number(montantTotal) : 0,
 				notesInternes,
+				appelerParPrenom,
+				nombreLits: nombreLitsInconnu ? '' : nombreLits,
+				attentesClient,
 				messages: [...typesCoches],
 			});
 			await goto(`/admin/reservations/${creee.id}`);
@@ -91,12 +98,16 @@
 			Prénom
 			<input bind:value={clientPrenom} />
 		</label>
+		<label class="case">
+			<input type="checkbox" bind:checked={appelerParPrenom} />
+			Les échanges se font par le prénom
+		</label>
 		<label>
-			Téléphone
+			Téléphone <span class="optionnel">(facultatif)</span>
 			<input bind:value={clientTelephone} />
 		</label>
 		<label>
-			E-mail <span class="optionnel">(souvent masqué par la plateforme)</span>
+			E-mail <span class="optionnel">(facultatif, souvent masqué par la plateforme)</span>
 			<input type="email" bind:value={clientEmail} />
 		</label>
 		<label>
@@ -121,7 +132,20 @@
 			Départ
 			<input type="date" bind:value={dateFin} required />
 		</label>
+		<label>
+			Nombre de lits
+			<input type="number" min="0" step="1" bind:value={nombreLits} disabled={nombreLitsInconnu} />
+		</label>
+		<label class="case">
+			<input type="checkbox" bind:checked={nombreLitsInconnu} onchange={() => { if (nombreLitsInconnu) nombreLits = ''; }} />
+			Pas d'info sur le nombre de lits
+		</label>
 	</div>
+
+	<label class="pleine-largeur">
+		Attentes du client <span class="optionnel">(vélo à prévoir, arrivée à une autre heure…)</span>
+		<textarea bind:value={attentesClient} rows="2"></textarea>
+	</label>
 
 	<label class="pleine-largeur">
 		Notes internes

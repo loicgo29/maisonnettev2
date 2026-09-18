@@ -30,7 +30,11 @@ import { getCategoryColor, getPersonColor, getSourceColor } from '../styles/colo
 type SortField = 'date' | 'amount' | 'label' | 'category';
 type SortOrder = 'asc' | 'desc';
 
-const categories = ['quotepart', '50/50', 'dette', 'brico', 'virement', 'trop_plein', 'regule_periode'];
+// `divers` manquait alors que c'est le repli de la catégorisation automatique
+// (un tiers des lignes d'un import Fortuneo) : les dépenses concernées
+// s'affichaient avec un menu déroulant vide, et la liste déroulante de filtre
+// ne permettait pas de les retrouver.
+const categories = ['quotepart', '50/50', 'dette', 'brico', 'virement', 'trop_plein', 'regule_periode', 'divers'];
 const sources = ['manuel', 'telegram', 'csv_import', 'brico'];
 const sourceLabels: Record<string, string> = {
   'manuel': 'Manuel',
@@ -255,6 +259,34 @@ export default function Expenses() {
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setEditingId(null);
+  };
+
+  /**
+   * Changement de catégorie directement dans le tableau, sans passer par la
+   * fenêtre d'édition : c'est le champ qu'on corrige le plus souvent après un
+   * import (un tiers des lignes Fortuneo arrivent en « divers »), et ouvrir un
+   * dialogue pour un seul menu déroulant coûtait trois clics par ligne.
+   *
+   * Mise à jour optimiste : la ligne change de couleur immédiatement, et l'état
+   * précédent est rétabli si l'API refuse — sans recharger toute la liste, qui
+   * ferait sauter le tri et les filtres en cours.
+   */
+  const handleCategorieEnLigne = async (expenseId: number, nouvelleCategorie: string) => {
+    const precedente = expenses.find(e => e.id === expenseId)?.category;
+    if (precedente === nouvelleCategorie) return;
+
+    setExpenses(liste =>
+      liste.map(e => (e.id === expenseId ? { ...e, category: nouvelleCategorie as any } : e))
+    );
+
+    try {
+      await expensesAPI.update(expenseId, { category: nouvelleCategorie as any });
+    } catch (err) {
+      setExpenses(liste =>
+        liste.map(e => (e.id === expenseId ? { ...e, category: precedente as any } : e))
+      );
+      alert("La catégorie n'a pas pu être enregistrée.");
+    }
   };
 
   const handleSave = async () => {
@@ -504,18 +536,30 @@ export default function Expenses() {
                   <TableCell align="right">{expense.amount.toFixed(2)}€</TableCell>
                   <TableCell>{expense.label}</TableCell>
                   <TableCell>
-                    <span
-                      style={{
+                    <Select
+                      value={expense.category}
+                      onChange={e => handleCategorieEnLigne(expense.id, e.target.value as string)}
+                      variant="standard"
+                      disableUnderline
+                      disabled={expense.status === 'frozen'}
+                      sx={{
                         backgroundColor: getCategoryColor(expense.category),
                         color: 'white',
-                        padding: '4px 8px',
                         borderRadius: '4px',
                         fontSize: '0.85em',
-                        fontWeight: '600',
+                        fontWeight: 600,
+                        padding: '2px 4px 2px 8px',
+                        '& .MuiSelect-select': { padding: '2px 0', backgroundColor: 'transparent' },
+                        '& .MuiSelect-icon': { color: 'white' },
+                        '&.Mui-disabled': { opacity: 0.6 },
                       }}
                     >
-                      {expense.category}
-                    </span>
+                      {categories.map(c => (
+                        <MenuItem key={c} value={c} sx={{ fontSize: '0.85em' }}>
+                          {c}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </TableCell>
                   <TableCell>
                     <span

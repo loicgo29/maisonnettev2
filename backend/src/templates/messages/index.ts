@@ -16,6 +16,8 @@ export interface Variables {
   dateDebut: Date;
   dateFin: Date;
   telephone: string;
+  /** RELANCE_ACOMPTE / RELANCE_SOLDE seulement. */
+  montantTotal?: number;
 }
 
 export interface MessageRendu {
@@ -34,6 +36,9 @@ const formatDate = (d: Date) =>
 
 /** Le prénom peut manquer sur une réservation importée : on reste poli sans lui. */
 const salutation = (v: Variables) => (v.clientPrenom ? `Bonjour ${v.clientPrenom},` : 'Bonjour,');
+
+const formatMontant = (m: number) =>
+  m.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
 
 const enveloppe = (contenu: string, v: Variables) => `
 <div style="font-family: -apple-system, Segoe UI, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #2b2b2b; max-width: 560px;">
@@ -113,6 +118,32 @@ const GABARITS: Record<TypeMessage, Gabarit> = {
 <p>Votre séjour se termine demain, le ${formatDate(v.dateFin)}. Je vous rappelle que le départ se fait <strong>avant 12 h</strong>.</p>
 <p>Rien de particulier à prévoir : laissez simplement les clés sur la table et refermez la porte derrière vous.</p>
 <p>Si vous avez besoin d'un peu plus de temps, écrivez-moi, nous verrons ce qui est possible.</p>`,
+      v
+    ),
+  }),
+
+  RELANCE_ACOMPTE: (v) => ({
+    sujet: `${v.giteNom} — acompte pour votre séjour du ${formatDate(v.dateDebut)}`,
+    corps: enveloppe(
+      `<p>${salutation(v)}</p>
+<p>Je reviens vers vous au sujet de votre réservation du ${formatDate(v.dateDebut)} au ${formatDate(v.dateFin)}${
+        v.montantTotal ? ` (${formatMontant(v.montantTotal)} au total)` : ''
+      }.</p>
+<p>Je n'ai pas encore reçu l'acompte convenu. Pourriez-vous me le faire parvenir quand vous aurez un moment ?</p>
+<p>N'hésitez pas si vous avez la moindre question.</p>`,
+      v
+    ),
+  }),
+
+  RELANCE_SOLDE: (v) => ({
+    sujet: `${v.giteNom} — solde pour votre séjour du ${formatDate(v.dateDebut)}`,
+    corps: enveloppe(
+      `<p>${salutation(v)}</p>
+<p>Votre séjour approche : vous arrivez le ${formatDate(v.dateDebut)}.</p>
+<p>Pourriez-vous me faire parvenir le solde${
+        v.montantTotal ? ` (${formatMontant(v.montantTotal)} au total)` : ''
+      } avant votre arrivée ?</p>
+<p>À très bientôt.</p>`,
       v
     ),
   }),

@@ -12,14 +12,34 @@ const REALM_URL = `${PUBLIC_AUTH_URL}/realms/${PUBLIC_AUTH_REALM}`;
 const CLE_VERIFICATEUR = 'admin_pkce_verifier';
 const CLE_RETOUR = 'admin_retour_apres_connexion';
 const CLE_JETON = 'admin_jeton_acces';
+// Nécessaire pour une déconnexion RP-Initiated propre côté Keycloak (26+) :
+// sans id_token_hint, la session SSO reste active malgré l'appel de logout,
+// et la prochaine connexion revient silencieusement sans redemander id/mdp.
+const CLE_JETON_ID = 'admin_jeton_id';
 
 let jetonActuel: string | null = null;
 
 function chargerJetonSiPresent() {
   if (jetonActuel) return;
   if (!browser) return;
-  const j = sessionStorage.getItem(CLE_JETON);
-  if (j) jetonActuel = j;
+
+  // Try sessionStorage first (normal flow)
+  let j = sessionStorage.getItem(CLE_JETON);
+  if (j) {
+    jetonActuel = j;
+    return;
+  }
+
+  // DEV MODE: Fallback to cookie (set by +layout.server.ts)
+  // TODO: Remove this in production
+  const cookies = document.cookie.split('; ').find(c => c.startsWith('jeton='));
+  if (cookies) {
+    j = cookies.split('=')[1];
+    if (j) {
+      jetonActuel = j;
+      sessionStorage.setItem(CLE_JETON, j);
+    }
+  }
 }
 
 export function jeton(): string | null {
@@ -130,7 +150,10 @@ export async function terminerConnexion(code: string): Promise<string> {
   const donnees = await reponse.json();
   jetonActuel = donnees.access_token;
   // Persist en sessionStorage pour survire aux rechargements du callback redirect
-  if (browser) sessionStorage.setItem(CLE_JETON, donnees.access_token);
+  if (browser) {
+    sessionStorage.setItem(CLE_JETON, donnees.access_token);
+    if (donnees.id_token) sessionStorage.setItem(CLE_JETON_ID, donnees.id_token);
+  }
 
   const retour = sessionStorage.getItem(CLE_RETOUR) || '/admin';
   sessionStorage.removeItem(CLE_RETOUR);
@@ -140,8 +163,15 @@ export async function terminerConnexion(code: string): Promise<string> {
 export function deconnexion(): void {
   jetonActuel = null;
   if (browser) {
+    const idToken = sessionStorage.getItem(CLE_JETON_ID);
     sessionStorage.removeItem(CLE_JETON);
-    location.href = `${REALM_URL}/protocol/openid-connect/logout?client_id=${PUBLIC_AUTH_CLIENT_ID}&post_logout_redirect_uri=${encodeURIComponent(location.origin)}`;
+    sessionStorage.removeItem(CLE_JETON_ID);
+    const params = new URLSearchParams({
+      client_id: PUBLIC_AUTH_CLIENT_ID,
+      post_logout_redirect_uri: location.origin,
+    });
+    if (idToken) params.set('id_token_hint', idToken);
+    location.href = `${REALM_URL}/protocol/openid-connect/logout?${params}`;
   }
 }
 

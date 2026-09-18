@@ -1,0 +1,21 @@
+-- Initialisation de la base Keycloak
+-- Exécuté automatiquement par PostgreSQL au premier démarrage
+
+-- Créer l'utilisateur Keycloak s'il n'existe pas
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_user WHERE usename = 'keycloak') THEN
+    CREATE USER keycloak WITH PASSWORD :'KC_DB_PASSWORD';
+  END IF;
+END $$;
+
+-- Créer la base Keycloak
+CREATE DATABASE keycloak OWNER keycloak;
+
+-- Accorder les permissions nécessaires
+GRANT ALL PRIVILEGES ON DATABASE keycloak TO keycloak;
+
+-- Permissions sur le schéma public
+\connect keycloak;
+GRANT ALL PRIVILEGES ON SCHEMA public TO keycloak;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO keycloak;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO keycloak;

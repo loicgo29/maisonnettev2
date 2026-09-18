@@ -45,9 +45,9 @@ declare module '$env/static/private' {
 	export const COLORTERM: string;
 	export const CLAUDE_CODE_MESSAGING_SOCKET: string;
 	export const LC_TERMINAL: string;
-	export const HOMEBREW_CELLAR: string;
-	export const INFOPATH: string;
 	export const CLAUDE_CODE_SESSION_ID: string;
+	export const INFOPATH: string;
+	export const HOMEBREW_CELLAR: string;
 	export const npm_config_user_agent: string;
 	export const ITERM_SESSION_ID: string;
 	export const NODE_ENV: string;
@@ -93,29 +93,28 @@ declare module '$env/static/private' {
 	export const CLAUDE_CODE_CHILD_SESSION: string;
 	export const SHELL: string;
 	export const COLOR: string;
-	export const TERM: string;
-	export const TMPDIR: string;
 	export const npm_config_engine_strict: string;
 	export const COREPACK_ENABLE_AUTO_PIN: string;
 	export const TERMINFO_DIRS: string;
 	export const CLAUDE_PID: string;
-	export const NVM_BIN: string;
-	export const HOMEBREW_PREFIX: string;
-	export const HOMEBREW_REPOSITORY: string;
+	export const TERM: string;
+	export const TMPDIR: string;
 	export const npm_config_node_gyp: string;
 	export const PWD: string;
 	export const NVM_CD_FLAGS: string;
 	export const NODE: string;
 	export const SSH_AUTH_SOCK: string;
 	export const CLAUDE_CODE_BRIDGE_SESSION_ID: string;
+	export const COLORFGBG: string;
+	export const INIT_CWD: string;
+	export const NVM_BIN: string;
+	export const HOMEBREW_PREFIX: string;
+	export const HOMEBREW_REPOSITORY: string;
 	export const HOME: string;
 	export const NVM_INC: string;
 	export const TERM_PROGRAM: string;
 	export const npm_config_global_prefix: string;
 	export const NoDefaultCurrentDirectoryInExePath: string;
-	export const COLORFGBG: string;
-	export const INIT_CWD: string;
-	export const CLAUDE_EFFORT: string;
 	export const CLAUDECODE: string;
 	export const npm_config_cache: string;
 	export const LC_TERMINAL_VERSION: string;
@@ -159,6 +158,7 @@ declare module '$env/static/private' {
  * The above values will be the same _even if_ different values for `ENVIRONMENT` or `PUBLIC_BASE_URL` are set at runtime, as they are statically replaced in your code with their build time values.
  */
 declare module '$env/static/public' {
+	export const PUBLIC_AUTH_BYPASS: string;
 	export const PUBLIC_AUTH_CLIENT_ID: string;
 	export const PUBLIC_AUTH_REALM: string;
 	export const PUBLIC_AUTH_URL: string;
@@ -218,9 +218,9 @@ declare module '$env/dynamic/private' {
 		COLORTERM: string;
 		CLAUDE_CODE_MESSAGING_SOCKET: string;
 		LC_TERMINAL: string;
-		HOMEBREW_CELLAR: string;
-		INFOPATH: string;
 		CLAUDE_CODE_SESSION_ID: string;
+		INFOPATH: string;
+		HOMEBREW_CELLAR: string;
 		npm_config_user_agent: string;
 		ITERM_SESSION_ID: string;
 		NODE_ENV: string;
@@ -266,29 +266,28 @@ declare module '$env/dynamic/private' {
 		CLAUDE_CODE_CHILD_SESSION: string;
 		SHELL: string;
 		COLOR: string;
-		TERM: string;
-		TMPDIR: string;
 		npm_config_engine_strict: string;
 		COREPACK_ENABLE_AUTO_PIN: string;
 		TERMINFO_DIRS: string;
 		CLAUDE_PID: string;
-		NVM_BIN: string;
-		HOMEBREW_PREFIX: string;
-		HOMEBREW_REPOSITORY: string;
+		TERM: string;
+		TMPDIR: string;
 		npm_config_node_gyp: string;
 		PWD: string;
 		NVM_CD_FLAGS: string;
 		NODE: string;
 		SSH_AUTH_SOCK: string;
 		CLAUDE_CODE_BRIDGE_SESSION_ID: string;
+		COLORFGBG: string;
+		INIT_CWD: string;
+		NVM_BIN: string;
+		HOMEBREW_PREFIX: string;
+		HOMEBREW_REPOSITORY: string;
 		HOME: string;
 		NVM_INC: string;
 		TERM_PROGRAM: string;
 		npm_config_global_prefix: string;
 		NoDefaultCurrentDirectoryInExePath: string;
-		COLORFGBG: string;
-		INIT_CWD: string;
-		CLAUDE_EFFORT: string;
 		CLAUDECODE: string;
 		npm_config_cache: string;
 		LC_TERMINAL_VERSION: string;
@@ -351,6 +350,7 @@ declare module '$env/dynamic/private' {
  */
 declare module '$env/dynamic/public' {
 	export const env: {
+		PUBLIC_AUTH_BYPASS: string;
 		PUBLIC_AUTH_CLIENT_ID: string;
 		PUBLIC_AUTH_REALM: string;
 		PUBLIC_AUTH_URL: string;

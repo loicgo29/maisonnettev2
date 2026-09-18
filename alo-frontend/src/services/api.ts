@@ -53,7 +53,15 @@ const parseNumbers = (obj: any): any => {
     // Ne pas convertir les dates ISO (YYYY-MM-DD)
     if (/^\d{4}-\d{2}-\d{2}/.test(obj)) return obj;
 
-    const num = parseFloat(obj);
+    // Number et non parseFloat : parseFloat s'arrête au premier caractère non
+    // numérique et renvoie un nombre pour des chaînes qui n'en sont pas.
+    // `parseFloat('50/50')` valait 50 — la catégorie « 50/50 » arrivait donc
+    // dans l'interface sous forme du nombre 50, d'où un menu de catégorie vide
+    // et un filtre qui ne retrouvait jamais ces dépenses. Un libellé comme
+    // « 50 euros de courses » subissait le même sort.
+    // Number('50/50') vaut NaN : la chaîne entière doit être un nombre.
+    if (obj.trim() === '') return obj;
+    const num = Number(obj);
     return !isNaN(num) ? num : obj;
   }
   if (Array.isArray(obj)) {

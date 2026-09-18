@@ -32,6 +32,15 @@ alimentation:
     - pourboire
     - navette
     - alsa
+    # Ajoutés le 2026-09-15 : tombaient en « divers » faute de correspondance
+    - finis terra
+    - bouchbiominou
+    - earl de vourch
+    - fromage
+    # « WISE BREST » sur les relevés = Carrefour Express (le libellé bancaire
+    # ne dit pas l'enseigne réelle). Rien à voir avec le service de transfert
+    # d'argent Wise — d'où le mot-clé volontairement précis.
+    - wise brest
   regex:
     - 'resto|restaurant|café|pizza|burger'
     - 'food|fridge'
@@ -40,6 +49,12 @@ alimentation:
 
 logement:
   keywords:
+    # Ameublement/équipement de la maison : partagé à parts égales
+    # (logement est mappé sur 50/50), pas au prorata des repas.
+    - ikea
+    - mv brest
+    # Bazar/discount : achats hétéroclites pour la maison, pas de l'alimentation
+    - action
     - loyer
     - rent
     - eau
@@ -109,6 +124,12 @@ transport:
 
 loisirs:
   keywords:
+    # Séjour en Espagne, juillet 2026 — dépenses de vacances, partagées à
+    # parts égales (loisirs est mappé sur 50/50) et non au prorata des repas.
+    - nerja
+    - frigiliana
+    - malaga
+    - volotea
     - cinéma
     - théâtre
     - musée
@@ -184,11 +205,16 @@ brico:
     - fenêtres
     - leroy merlin
     - leroymerlin
+    # Fournisseur sanitaire/plomberie — 604 € tombaient en « divers »
+    - cedeo
   regex:
     - '(bricolage|brico)'
     - '(outils|quincaillerie)'
     - '(peinture|vernis)'
     - 'leroy'
+    # Castorama apparaît sous plusieurs formes selon le canal :
+    # « CASTORAMA BREST » (carte), « Casto Wedi », « paiement en ligne casto »
+    - 'casto'
 
 quotepart:
   keywords:

@@ -19,6 +19,12 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 
+// Même base que services/api.ts : cette page appelait `/api/...` en absolu,
+// ce qui visait la racine du domaine et non l'application. Invisible tant
+// qu'alo était servi sur son propre sous-domaine ; cassé net depuis qu'il
+// vit sous /admin/alo (toutes les requêtes tombaient en 404).
+const API_BASE = process.env.REACT_APP_API_URL || '/api';
+
 export default function Import() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -38,7 +44,7 @@ export default function Import() {
       setLoading(true);
       setError(null);
 
-      const response = await axios.post('/api/imports/telegram/auth/start');
+      const response = await axios.post(`${API_BASE}/imports/telegram/auth/start`);
 
       if (response.data.status === 'already_authorized') {
         setAuthStep('confirmed');
@@ -62,7 +68,7 @@ export default function Import() {
       setLoading(true);
       setError(null);
 
-      const response = await axios.post(`/api/imports/telegram/auth/confirm?code=${smsCode}`);
+      const response = await axios.post(`${API_BASE}/imports/telegram/auth/confirm?code=${smsCode}`);
 
       if (response.data.status === 'authenticated') {
         setAuthStep('confirmed');
@@ -87,7 +93,7 @@ export default function Import() {
       if (endDate) params.append('end_date', endDate);
 
       const response = await axios.post(
-        `/api/imports/telegram/preview${params.toString() ? '?' + params.toString() : ''}`,
+        `${API_BASE}/imports/telegram/preview${params.toString() ? '?' + params.toString() : ''}`,
         {}
       );
 
@@ -114,7 +120,7 @@ export default function Import() {
       if (endDate) params.append('end_date', endDate);
 
       const response = await axios.post(
-        `/api/imports/telegram/import${params.toString() ? '?' + params.toString() : ''}`,
+        `${API_BASE}/imports/telegram/import${params.toString() ? '?' + params.toString() : ''}`,
         {}
       );
 
@@ -143,7 +149,7 @@ export default function Import() {
       const formData = new FormData();
       formData.append('file', csvFile);
 
-      const response = await axios.post('/api/imports/csv/preview', formData, {
+      const response = await axios.post(`${API_BASE}/imports/csv/preview`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
@@ -167,7 +173,7 @@ export default function Import() {
       const formData = new FormData();
       formData.append('file', csvFile);
 
-      const response = await axios.post('/api/imports/csv/import', formData, {
+      const response = await axios.post(`${API_BASE}/imports/csv/import`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 

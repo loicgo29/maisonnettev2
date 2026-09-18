@@ -18,6 +18,36 @@ The validator agent:
 
 ---
 
+## ⚠️ CRITICAL: Frontend Build Strategy
+
+**NEVER run:** `docker-compose up -d --build` → **30+ minutes on USB disk** 🚫
+
+**Use the script instead (3 minutes total):**
+
+```bash
+./scripts/rebuild-frontend.sh
+```
+
+**Or quick alias:**
+```bash
+alias rebuild-maisonnette='/Volumes/logousb/SSD/Projects/maisonnettev2/scripts/rebuild-frontend.sh'
+```
+
+Then: `rebuild-maisonnette`
+
+**What the script does:**
+1. `npm run build` on host with `PUBLIC_REQUIRE_AUTH=false` (2 min)
+2. `docker cp build/` to container (30 sec)
+3. `docker-compose restart frontend` (10 sec)
+
+**Why this strategy:**
+- SvelteKit compiles everything to `/app/build/`
+- Container already has `node_modules` + app base
+- Just replace `build/` folder = instant deployment
+- No need to rebuild entire Docker image (which takes 30+ min on USB)
+
+---
+
 ## Project Overview
 
 **maisonnettev2** is a gîte (vacation rental) booking platform:

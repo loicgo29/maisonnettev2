@@ -1,0 +1,4 @@
+
+> maisonnettev2-alo-backend@1.0.0 alo:export-expenses
+> python3 scripts/export-expenses.py
+

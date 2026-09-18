@@ -1,14 +1,27 @@
 {
 	"/": [],
-	"/admin": [],
+	"/admin": [
+		"src/routes/admin/+layout.server.ts",
+		"src/routes/admin/+layout.server.ts"
+	],
 	"/admin/callback": [
 		"src/routes/admin/callback/+layout.ts",
-		"src/routes/admin/callback/+layout.ts"
+		"src/routes/admin/+layout.server.ts",
+		"src/routes/admin/callback/+layout.ts",
+		"src/routes/admin/+layout.server.ts"
 	],
-	"/admin/messages": [],
-	"/admin/reservations": [],
-	"/admin/reservations/nouvelle": [],
-	"/admin/reservations/[id]": [],
+	"/admin/messages": [
+		"src/routes/admin/+layout.server.ts"
+	],
+	"/admin/reservations": [
+		"src/routes/admin/+layout.server.ts"
+	],
+	"/admin/reservations/nouvelle": [
+		"src/routes/admin/+layout.server.ts"
+	],
+	"/admin/reservations/[id]": [
+		"src/routes/admin/+layout.server.ts"
+	],
 	"/api/auth/callback": [
 		"src/routes/api/auth/callback/+server.ts"
 	],
@@ -29,6 +42,8 @@
 	],
 	"/backoffice": [
 		"src/routes/backoffice/+layout.ts",
+		"src/routes/backoffice/+layout.server.ts",
+		"src/routes/backoffice/+layout.ts",
 		"src/routes/backoffice/+layout.server.ts"
 	],
 	"/backoffice/login": [
@@ -37,13 +52,14 @@
 		"src/routes/backoffice/+layout.ts",
 		"src/routes/backoffice/+layout.server.ts"
 	],
-	"/backoffice/meals": [
+	"/backoffice/logout": [
 		"src/routes/backoffice/+layout.ts",
 		"src/routes/backoffice/+layout.server.ts"
 	],
 	"/calendar": [],
 	"/contact": [],
 	"/gite/[slug]": [],
+	"/login": [],
 	"/test-api": [
 		"src/routes/test-api/+server.ts"
 	]

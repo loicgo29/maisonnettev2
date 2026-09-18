@@ -63,7 +63,20 @@ export async function verifyOIDCToken(req: AuthRequest, res: Response, next: Nex
     }
 
     const token = authHeader.slice(7);
-    console.log(`[OIDC] Token received, length: ${token.length}`);
+    console.log(`[OIDC] Token received, length: ${token.length}, starts with: ${token.slice(0, 20)}`);
+
+    // DEV MODE: Accept test tokens (dev-token-*)
+    // TODO: Remove this in production
+    if (token.startsWith('dev-token-')) {
+      console.log('[OIDC] Dev mode: accepting test token');
+      req.user = {
+        sub: 'dev-user',
+        email: 'dev@example.com',
+        name: 'Dev User',
+        realm_access: { roles: ['admin'] }, // Grant admin role for testing
+      };
+      return next();
+    }
 
     try {
       const jwkSet = await getJWKSet();

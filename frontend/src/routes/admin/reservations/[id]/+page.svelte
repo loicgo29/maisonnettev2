@@ -7,13 +7,29 @@
 	let erreur = $state('');
 	let chargement = $state(true);
 	let notesLocales = $state('');
+	let infosLocales = $state({
+		clientNom: '', clientPrenom: '', clientEmail: '', clientTelephone: '',
+		montantTotal: 0, plateforme: 'DIRECT',
+	});
+	let messageEnregistrement = $state('');
 
 	async function charger() {
 		try {
 			const toutes = await apiAdmin.reservations();
 			reservation = toutes.find((r: any) => r.id === $page.params.id);
 			notesLocales = reservation?.notesInternes ?? '';
-			if (!reservation) erreur = 'Réservation introuvable';
+			if (reservation) {
+				infosLocales = {
+					clientNom: reservation.clientNom ?? '',
+					clientPrenom: reservation.clientPrenom ?? '',
+					clientEmail: reservation.clientEmail ?? '',
+					clientTelephone: reservation.clientTelephone ?? '',
+					montantTotal: reservation.montantTotal ?? 0,
+					plateforme: reservation.plateforme ?? 'DIRECT',
+				};
+			} else {
+				erreur = 'Réservation introuvable';
+			}
 		} catch (e) {
 			erreur = e instanceof ErreurAccesRefuse ? e.message : 'Chargement impossible';
 		} finally {
@@ -25,6 +41,13 @@
 
 	async function enregistrerNotes() {
 		await apiAdmin.modifierReservation(reservation.id, { notesInternes: notesLocales });
+	}
+
+	async function enregistrerInfos() {
+		await apiAdmin.modifierReservation(reservation.id, infosLocales);
+		await charger();
+		messageEnregistrement = 'Enregistré.';
+		setTimeout(() => (messageEnregistrement = ''), 2000);
 	}
 
 	async function basculerPaiement(champ: 'acompteVerse' | 'soldeVerse') {
@@ -74,12 +97,39 @@
 		<section>
 			<h2>Séjour</h2>
 			<dl>
-				<dt>Plateforme</dt><dd>{reservation.plateforme}</dd>
 				<dt>Arrivée</dt><dd>{formatDateHeure(reservation.dateDebut)}</dd>
 				<dt>Départ</dt><dd>{formatDateHeure(reservation.dateFin)}</dd>
-				<dt>Téléphone</dt><dd>{reservation.clientTelephone || '—'}</dd>
-				<dt>E-mail</dt><dd>{reservation.clientEmail || '— non communiqué —'}</dd>
 			</dl>
+
+			<h3>Informations client</h3>
+			<div class="formulaire-infos">
+				<label>Nom
+					<input type="text" bind:value={infosLocales.clientNom} />
+				</label>
+				<label>Prénom
+					<input type="text" bind:value={infosLocales.clientPrenom} />
+				</label>
+				<label>E-mail
+					<input type="email" bind:value={infosLocales.clientEmail} placeholder="non communiqué" />
+				</label>
+				<label>Téléphone
+					<input type="tel" bind:value={infosLocales.clientTelephone} />
+				</label>
+				<label>Montant total (€)
+					<input type="number" min="0" step="0.01" bind:value={infosLocales.montantTotal} />
+				</label>
+				<label>Plateforme
+					<select bind:value={infosLocales.plateforme}>
+						<option value="AIRBNB">Airbnb</option>
+						<option value="BOOKING">Booking</option>
+						<option value="LEBONCOIN">Leboncoin</option>
+						<option value="DIRECT">Direct</option>
+						<option value="AUTRE">Autre</option>
+					</select>
+				</label>
+			</div>
+			<button onclick={enregistrerInfos}>Enregistrer les informations</button>
+			{#if messageEnregistrement}<span class="confirmation">{messageEnregistrement}</span>{/if}
 
 			<label class="case">
 				<input type="checkbox" checked={reservation.acompteVerse} onchange={() => basculerPaiement('acompteVerse')} />
@@ -132,6 +182,12 @@
 	dt { color: #6b7280; font-size: 0.85rem; }
 	dd { margin: 0; }
 	.case { display: flex; align-items: center; gap: 0.5rem; margin: 0.4rem 0; font-size: 0.9rem; }
+	.formulaire-infos { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.5rem; }
+	.formulaire-infos label { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.8rem; color: #6b7280; }
+	.formulaire-infos input, .formulaire-infos select {
+		padding: 0.4rem 0.5rem; border-radius: 6px; border: 1px solid #d1d5db; font-size: 0.9rem; color: #111827;
+	}
+	.confirmation { color: #065f46; font-size: 0.85rem; margin-left: 0.6rem; }
 	textarea { width: 100%; margin: 0.5rem 0; padding: 0.5rem; border-radius: 6px; border: 1px solid #d1d5db; }
 	button {
 		background: #14532d; color: white; border: none; border-radius: 6px;

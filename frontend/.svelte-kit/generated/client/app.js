@@ -26,10 +26,12 @@ export const nodes = [
 	() => import('./nodes/14'),
 	() => import('./nodes/15'),
 	() => import('./nodes/16'),
-	() => import('./nodes/17')
+	() => import('./nodes/17'),
+	() => import('./nodes/18'),
+	() => import('./nodes/19')
 ];
 
-export const server_loads = [4];
+export const server_loads = [2,4];
 
 export const dictionary = {
 		"/": [6],
@@ -39,11 +41,13 @@ export const dictionary = {
 		"/admin/reservations": [10,[2]],
 		"/admin/reservations/nouvelle": [12,[2]],
 		"/admin/reservations/[id]": [11,[2]],
-		"/backoffice/login": [13,[4,5]],
-		"/backoffice/meals": [14,[4]],
-		"/calendar": [15],
-		"/contact": [16],
-		"/gite/[slug]": [17]
+		"/backoffice": [13,[4]],
+		"/backoffice/login": [14,[4,5]],
+		"/backoffice/logout": [15,[4]],
+		"/calendar": [16],
+		"/contact": [17],
+		"/gite/[slug]": [18],
+		"/login": [19]
 	};
 
 export const hooks = {

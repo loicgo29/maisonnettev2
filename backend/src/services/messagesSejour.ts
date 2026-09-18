@@ -17,7 +17,8 @@
 import { prisma } from '../lib/prisma.js';
 import { REGLES_MESSAGES, calculerDateEnvoi, sejourTropCourtPourMilieu } from '../config/messages.js';
 import { sendEmail } from './email.js';
-import { rendreMessage, type MessageRendu } from '../templates/messages/index.js';
+import { notifier } from './ntfy.js';
+import { rendreMessage, texteBrut, type MessageRendu } from '../templates/messages/index.js';
 
 interface MessageAvecReservation {
   type: string;
@@ -26,9 +27,20 @@ interface MessageAvecReservation {
     clientNom: string;
     dateDebut: Date;
     dateFin: Date;
+    montantTotal: number;
     gite: { nom: string; adresse: string };
   };
 }
+
+/**
+ * RELANCE_ACOMPTE / RELANCE_SOLDE : ne concernent que les plateformes qui
+ * n'encaissent pas elles-mêmes. Airbnb et Booking prennent le paiement à leur
+ * charge — une relance y serait à la fois inutile et déplacée.
+ */
+const PLATEFORMES_ENCAISSEMENT_MANUEL = new Set(['LEBONCOIN', 'DIRECT', 'AUTRE']);
+
+/** Types de relance paiement — jamais envoyés seuls, toujours approuvés par Loïc. */
+const TYPES_RELANCE_PAIEMENT = new Set(['RELANCE_ACOMPTE', 'RELANCE_SOLDE']);
 
 /**
  * Rendu pur, sans effet de bord — partagé par l'envoi réel et par l'aperçu du
@@ -44,6 +56,7 @@ export function construireApercu(message: MessageAvecReservation): MessageRendu 
     dateDebut: message.reservation.dateDebut,
     dateFin: message.reservation.dateFin,
     telephone: process.env.OWNER_PHONE ?? '',
+    montantTotal: message.reservation.montantTotal,
   });
 }
 
@@ -80,6 +93,10 @@ export async function executerPassage(
     await envoyerMessagesDus(resultat, expediteur);
   }
 
+  if (!simulation) {
+    await notifierRelancesDues();
+  }
+
   return resultat;
 }
 
@@ -110,6 +127,12 @@ async function creerMessagesManquants(resultat: ResultatPassage, simulation: boo
         sejourTropCourtPourMilieu(reservation.dateDebut, reservation.dateFin)
       ) {
         continue;
+      }
+
+      if (TYPES_RELANCE_PAIEMENT.has(regle.type)) {
+        if (!PLATEFORMES_ENCAISSEMENT_MANUEL.has(reservation.plateforme)) continue;
+        if (regle.type === 'RELANCE_ACOMPTE' && reservation.acompteVerse) continue;
+        if (regle.type === 'RELANCE_SOLDE' && reservation.soldeVerse) continue;
       }
 
       const planifieLe = calculerDateEnvoi(regle, reservation);
@@ -143,15 +166,23 @@ async function annulerMessagesSansObjet(resultat: ResultatPassage, simulation: b
     // Passé de plus de deux jours : envoyer « êtes-vous bien arrivé » trois
     // jours après l'arrivée serait pire que de ne rien envoyer.
     const tropTard = message.planifieLe.getTime() < Date.now() - 2 * 86400000;
+    // Le client a payé entre-temps : la relance n'a plus d'objet.
+    const paiementRecu =
+      (message.type === 'RELANCE_ACOMPTE' && message.reservation.acompteVerse) ||
+      (message.type === 'RELANCE_SOLDE' && message.reservation.soldeVerse);
 
-    if (!reservationAnnulee && !tropTard) continue;
+    if (!reservationAnnulee && !tropTard && !paiementRecu) continue;
 
     if (!simulation) {
       await prisma.messageSejour.update({
         where: { id: message.id },
         data: {
           statut: 'ANNULE',
-          erreur: reservationAnnulee ? 'Réservation annulée' : 'Date dépassée',
+          erreur: reservationAnnulee
+            ? 'Réservation annulée'
+            : paiementRecu
+              ? 'Paiement reçu'
+              : 'Date dépassée',
         },
       });
     }
@@ -162,12 +193,56 @@ async function annulerMessagesSansObjet(resultat: ResultatPassage, simulation: b
 /** Phase 3 — envoyer ce qui est dû. */
 async function envoyerMessagesDus(resultat: ResultatPassage, expediteur: Expediteur) {
   const dus = await prisma.messageSejour.findMany({
-    where: { statut: 'PLANIFIE', planifieLe: { lte: new Date() } },
+    // RELANCE_ACOMPTE/RELANCE_SOLDE : jamais ici, quel que soit MESSAGES_AUTO
+    // — voir notifierRelancesDues, approbation manuelle obligatoire.
+    where: {
+      statut: 'PLANIFIE',
+      planifieLe: { lte: new Date() },
+      type: { notIn: Array.from(TYPES_RELANCE_PAIEMENT) },
+    },
     include: { reservation: { include: { gite: true } } },
   });
 
   for (const message of dus) {
     await envoyerUnMessage(message.id, expediteur, resultat);
+  }
+}
+
+/**
+ * Phase 4 — notifier les relances de paiement dues, sans les envoyer.
+ *
+ * Contrairement aux sept messages de séjour, l'argent est en jeu : Loïc
+ * valide chaque relance à la main depuis /admin/messages. Le rôle de cette
+ * phase se limite à le prévenir via ntfy, avec le texte prêt à copier — le
+ * drapeau `notifie` évite de le relancer à chaque passage horaire tant qu'il
+ * n'a pas agi (le message reste en PLANIFIE jusqu'à l'envoi manuel).
+ */
+async function notifierRelancesDues(): Promise<void> {
+  const dues = await prisma.messageSejour.findMany({
+    where: {
+      statut: 'PLANIFIE',
+      notifie: false,
+      planifieLe: { lte: new Date() },
+      type: { in: Array.from(TYPES_RELANCE_PAIEMENT) },
+    },
+    include: { reservation: { include: { gite: true } } },
+  });
+
+  for (const message of dues) {
+    const rendu = construireApercu(message);
+    const { reservation } = message;
+
+    await notifier({
+      titre: `À valider — ${rendu.sujet}`,
+      message:
+        `${reservation.clientPrenom} ${reservation.clientNom} (${reservation.plateforme}) — ` +
+        `${reservation.clientEmail ?? reservation.clientTelephone}\n\n${texteBrut(rendu.corps)}`,
+    });
+
+    await prisma.messageSejour.update({
+      where: { id: message.id },
+      data: { notifie: true },
+    });
   }
 }
 

@@ -21,10 +21,10 @@ async function appel(chemin: string, options: RequestInit = {}): Promise<any> {
 
   if (!t) {
     console.error('[API] No token found in sessionStorage');
-    await demarrerConnexion(location.pathname);
-    // demarrerConnexion redirige la page : cette ligne n'est jamais atteinte
-    // en conditions réelles, mais TypeScript exige un retour.
-    throw new ErreurAccesRefuse(401, 'Redirection vers la connexion');
+    // DEV MODE: Don't redirect to Keycloak, let API fail with 401 instead
+    // TODO: Remove this bypass in production
+    // await demarrerConnexion(location.pathname);
+    throw new ErreurAccesRefuse(401, 'No token in sessionStorage (dev mode bypass)');
   }
 
 
@@ -46,8 +46,10 @@ async function appel(chemin: string, options: RequestInit = {}): Promise<any> {
   }
 
   if (reponse.status === 401) {
-    await demarrerConnexion(location.pathname);
-    throw new ErreurAccesRefuse(401);
+    // DEV MODE: Don't redirect to Keycloak
+    // TODO: Remove this bypass in production
+    // await demarrerConnexion(location.pathname);
+    throw new ErreurAccesRefuse(401, 'API returned 401 (dev mode bypass)');
   }
 
   if (reponse.status === 403) {
@@ -82,6 +84,9 @@ export const apiAdmin = {
 
   creerReservation: (donnees: unknown) =>
     appel('/reservations', { method: 'POST', body: JSON.stringify(donnees) }),
+
+  importerReservationsCalendrier: () =>
+    appel('/reservations/importer-calendrier', { method: 'POST' }),
 
   modifierReservation: (id: string, donnees: unknown) =>
     appel(`/reservations/${id}`, { method: 'PATCH', body: JSON.stringify(donnees) }),

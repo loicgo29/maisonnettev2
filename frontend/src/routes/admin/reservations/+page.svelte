@@ -7,6 +7,8 @@
 	let chargement = $state(true);
 	let filtreStatut = $state('');
 	let filtrePlateforme = $state('');
+	let enCoursImport = $state(false);
+	let messageImport = $state('');
 
 	async function charger() {
 		chargement = true;
@@ -24,6 +26,20 @@
 
 	onMount(charger);
 
+	async function importerDepuisCalendrier() {
+		enCoursImport = true;
+		messageImport = '';
+		try {
+			const resultat = await apiAdmin.importerReservationsCalendrier();
+			messageImport = `${resultat.importees} importée(s), ${resultat.ignorees} déjà connue(s) ou ignorée(s).`;
+			await charger();
+		} catch (e) {
+			messageImport = e instanceof ErreurAccesRefuse ? e.message : 'Import impossible';
+		} finally {
+			enCoursImport = false;
+		}
+	}
+
 	function formatDate(d: string) {
 		return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
 	}
@@ -31,8 +47,14 @@
 
 <div class="entete">
 	<h1>Réservations</h1>
-	<a href="/admin/reservations/nouvelle" class="bouton-principal">+ Nouvelle réservation</a>
+	<div class="actions-entete">
+		<button class="bouton-secondaire" onclick={importerDepuisCalendrier} disabled={enCoursImport}>
+			{enCoursImport ? 'Import…' : 'Importer depuis le calendrier'}
+		</button>
+		<a href="/admin/reservations/nouvelle" class="bouton-principal">+ Nouvelle réservation</a>
+	</div>
 </div>
+{#if messageImport}<p class="message-import">{messageImport}</p>{/if}
 
 <div class="filtres">
 	<select bind:value={filtreStatut} onchange={charger}>
@@ -79,10 +101,17 @@
 
 <style>
 	.entete { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+	.actions-entete { display: flex; gap: 0.6rem; align-items: center; }
 	.bouton-principal {
 		background: #14532d; color: white; text-decoration: none;
 		padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem;
 	}
+	.bouton-secondaire {
+		background: white; color: #14532d; border: 1px solid #14532d;
+		padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem; cursor: pointer;
+	}
+	.bouton-secondaire:disabled { opacity: 0.6; cursor: default; }
+	.message-import { color: #065f46; font-size: 0.85rem; margin: -0.5rem 0 1rem; }
 	.filtres { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; }
 	select { padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid #d1d5db; }
 	table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
