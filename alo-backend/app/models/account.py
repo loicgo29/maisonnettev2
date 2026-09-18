@@ -8,6 +8,7 @@ from app.database import Base
 
 class Account(Base):
     __tablename__ = "accounts"
+    __table_args__ = {"schema": "alo"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
@@ -33,9 +34,10 @@ class Account(Base):
 
 class AccountBalance(Base):
     __tablename__ = "account_balances"
+    __table_args__ = {"schema": "alo"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    account_id: Mapped[int] = mapped_column(ForeignKey("accounts.id"), nullable=False)
+    account_id: Mapped[int] = mapped_column(ForeignKey("alo.accounts.id"), nullable=False)
     balance: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     recorded_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, nullable=False

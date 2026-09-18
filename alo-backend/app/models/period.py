@@ -8,6 +8,7 @@ from app.database import Base
 
 class Period(Base):
     __tablename__ = "periods"
+    __table_args__ = {"schema": "alo"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)

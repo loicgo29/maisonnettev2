@@ -6,9 +6,10 @@ from app.database import Base
 
 class SharingEntry(Base):
     __tablename__ = "sharing_entries"
+    __table_args__ = {"schema": "alo"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    expense_id: Mapped[int] = mapped_column(ForeignKey("expenses.id"), nullable=False)
+    expense_id: Mapped[int] = mapped_column(ForeignKey("alo.expenses.id"), nullable=False)
     person: Mapped[str] = mapped_column(
         SQLEnum("adulte1", "adulte2", name="sharing_person_enum"),
         nullable=False,

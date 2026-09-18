@@ -8,6 +8,7 @@ from app.database import Base
 
 class Expense(Base):
     __tablename__ = "expenses"
+    __table_args__ = {"schema": "alo"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
     date: Mapped[date] = mapped_column(Date, nullable=False)
@@ -40,8 +41,8 @@ class Expense(Base):
     )
     comment: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     sharing_mode: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
-    account_id: Mapped[Optional[int]] = mapped_column(ForeignKey("accounts.id"), nullable=True)
-    period_id: Mapped[Optional[int]] = mapped_column(ForeignKey("periods.id"), nullable=True)
+    account_id: Mapped[Optional[int]] = mapped_column(ForeignKey("alo.accounts.id"), nullable=True)
+    period_id: Mapped[Optional[int]] = mapped_column(ForeignKey("alo.periods.id"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, onupdate=datetime.utcnow

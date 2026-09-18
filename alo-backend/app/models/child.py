@@ -7,6 +7,7 @@ from app.database import Base
 
 class Child(Base):
     __tablename__ = "children"
+    __table_args__ = {"schema": "alo"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -23,9 +24,10 @@ class Child(Base):
 
 class PresencePeriod(Base):
     __tablename__ = "presence_periods"
+    __table_args__ = {"schema": "alo"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    child_id: Mapped[int] = mapped_column(ForeignKey("children.id"), nullable=False)
+    child_id: Mapped[int] = mapped_column(ForeignKey("alo.children.id"), nullable=False)
     parent: Mapped[str] = mapped_column(
         SQLEnum("adulte1", "adulte2", name="presence_parent_enum"),
         nullable=False,
