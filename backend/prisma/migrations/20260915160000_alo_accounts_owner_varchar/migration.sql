@@ -13,5 +13,17 @@
 --
 -- Idempotent en production : re-typer un varchar en varchar est accepté par
 -- PostgreSQL et ne touche pas aux données.
-ALTER TABLE "alo"."accounts"
-  ALTER COLUMN "owner" TYPE character varying USING "owner"::text;
+--
+-- Gardé conditionnel : en CI, la base de test est vierge et n'a jamais le
+-- schéma/la table `alo.accounts`, car celle-ci est créée par SQLAlchemy
+-- (backend Python alo), jamais par une migration Prisma. Sans cette garde,
+-- l'ALTER TABLE échoue avec "relation alo.accounts does not exist" dès
+-- qu'on exécute `prisma migrate deploy` sur une base fraîche.
+DO $$
+BEGIN
+  IF to_regclass('alo.accounts') IS NOT NULL THEN
+    ALTER TABLE "alo"."accounts"
+      ALTER COLUMN "owner" TYPE character varying USING "owner"::text;
+  END IF;
+END
+$$;
