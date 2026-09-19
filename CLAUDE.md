@@ -65,6 +65,14 @@ Then: `rebuild-maisonnette`
 - **Backend (direct):** http://localhost:3001
 - **Admin login:** http://localhost:5173/backoffice/login
 
+### Module ALO (comptabilité familiale)
+
+`alo-backend/` et `alo-frontend/` — rapatriés depuis le dépôt `alo` séparé le
+2026-09-07 (CI cassée depuis des semaines, plus de source de vérité). Lit le
+schéma `alo` du Postgres partagé de maisonnettev2 (`search_path`), servi
+derrière Caddy sous `/admin/alo` sans authentification propre. Voir
+`alo-backend/CLAUDE.md` pour le détail (BDD, déploiement, commandes).
+
 ---
 
 ## Authentication System
