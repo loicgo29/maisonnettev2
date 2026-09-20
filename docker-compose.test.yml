@@ -62,7 +62,6 @@ services:
     environment:
       NODE_ENV: test
       PORT: 3001
-      ALO_ENABLED: 'true'
       DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}?schema=public
       # Nom de service Docker, pas localhost:8081 : le backend joint le JWKS
       # par le réseau interne, seul le navigateur a besoin du port publié.

@@ -88,7 +88,6 @@ const Schema = z.object({
   // ---- Divers ----------------------------------------------------------
   MESSAGES_AUTO: Booleen.default(false),
   MEALS_DATA_DIR: z.string().default('/data/backoffice'),
-  ALO_ENABLED: Booleen.default(false),
 });
 
 export type Configuration = z.infer<typeof Schema>;
