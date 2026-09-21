@@ -46,9 +46,17 @@ auth.{$DOMAIN} {
 }
 
 # ========================================================================
-# SITE PUBLIC — <domaine> et www.<domaine>
+# REDIRECTION www → domaine nu — évite le contenu dupliqué aux yeux des
+# moteurs de recherche (les deux répondaient 200 avant ce changement).
 # ========================================================================
-{$DOMAIN}, www.{$DOMAIN} {
+www.{$DOMAIN} {
+	redir https://{$DOMAIN}{uri} permanent
+}
+
+# ========================================================================
+# SITE PUBLIC — <domaine>
+# ========================================================================
+{$DOMAIN} {
 	encode gzip zstd
 
 	# alo, servi sous /admin/alo (plus de sous-domaine dédié depuis le
