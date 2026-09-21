@@ -1,0 +1,78 @@
+#!/bin/bash
+# Empêche de pousser du code que la CI rejettera de toute façon.
+# Reproduit localement les jobs CI qui échouent le plus souvent :
+# "Frontend - Build & Type Check" et le lint/type-check backend.
+#
+# Note: dans ci.yml, l'étape "Type check (SvelteKit)" du job frontend est
+# non bloquante (`npm run check 2>&1 || echo "Type check completed"`) — les
+# échecs réels de ce job viennent du step `npm run build` juste après, pas
+# du type-check. D'où le step "build" ci-dessous, en plus de `check`.
+
+set -e
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+FAILED=0
+
+echo "🔎 pre-push: vérifications frontend/backend (comme en CI)..."
+
+echo ""
+echo "── Frontend: svelte-check ──"
+if ! (cd "$ROOT/frontend" && npm run check --silent); then
+  echo "❌ frontend: npm run check a échoué"
+  FAILED=1
+fi
+
+echo ""
+echo "── Frontend: build ──"
+if ! (cd "$ROOT/frontend" && npm run build --silent); then
+  echo "❌ frontend: npm run build a échoué"
+  FAILED=1
+fi
+
+echo ""
+echo "── Backend: lint ──"
+if ! (cd "$ROOT/backend" && npm run lint --silent); then
+  echo "❌ backend: npm run lint a échoué"
+  FAILED=1
+fi
+
+echo ""
+echo "── Backend: type-check ──"
+if ! (cd "$ROOT/backend" && npm run type-check --silent); then
+  echo "❌ backend: npm run type-check a échoué"
+  FAILED=1
+fi
+
+# Reproduit le job "provisionnement" du CI (seed + les deux contrôles photos),
+# introuvable en local avant le 2026-09-21 — c'est ce qui a laissé passer une
+# incohérence disque/base jusqu'au CI ce soir-là (fichiers ajoutés dans
+# public/uploads/gites/bertheaume/ hors de la table `photo`).
+echo ""
+echo "── Backend: cohérence photos disque/base ──"
+if (cd "$ROOT/backend" && npm run db:seed --silent >/dev/null 2>&1); then
+  DISQUE=$(find "$ROOT/backend/public/uploads/gites/bertheaume" -type f \
+    \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | wc -l | tr -d ' ')
+  BASE=$(cd "$ROOT/backend" && node -e "
+    import('@prisma/client').then(async ({ PrismaClient }) => {
+      const p = new PrismaClient();
+      console.log(await p.photo.count());
+      await p.\$disconnect();
+    });
+  ")
+  if [ "$DISQUE" -ne "$BASE" ]; then
+    echo "❌ Incohérence : $DISQUE fichiers sur disque (gites/bertheaume/), $BASE en base"
+    FAILED=1
+  fi
+else
+  echo "⚠️  db:seed a échoué localement (base de dev non disponible ?) — contrôle photos ignoré, la CI le refera"
+fi
+
+if [ "$FAILED" -ne 0 ]; then
+  echo ""
+  echo "🚫 Push bloqué: corrige les erreurs ci-dessus (ou utilise 'git push --no-verify' en dernier recours)."
+  exit 1
+fi
+
+echo ""
+echo "✅ pre-push OK"
+exit 0

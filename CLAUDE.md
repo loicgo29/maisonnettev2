@@ -18,6 +18,37 @@ The validator agent:
 
 ---
 
+## ⚠️ Workflow Git — branche + PR avant `main` (depuis le 2026-09-21)
+
+**Ne plus pousser directement sur `main`**, sauf urgence explicitement demandée
+par l'utilisateur. À la place :
+
+1. Créer une branche par fonctionnalité/correctif (`git checkout -b feat/xxx`
+   ou `fix/xxx`).
+2. Itérer et pousser sur cette branche autant que nécessaire — les commits
+   d'itération/correction n'y sont pas comptés comme des déploiements.
+3. Ouvrir une PR (`gh pr create`), attendre que le CI soit vert.
+4. Ne merger sur `main` qu'une fois vert. Le déploiement Hetzner
+   (`deploy-hetzner.yml`, déclenché en `workflow_run` après le CI sur
+   `main`) part alors automatiquement.
+
+**Pourquoi ce changement** : avant cette date, chaque itération (y compris un
+correctif d'une erreur introduite par le commit précédent) partait directement
+sur `main` et comptait comme un déploiement distinct pour les métriques DORA
+(`shared/scripts/dora/collect-dora.mjs`). Une seule fonctionnalité pouvait
+ainsi générer 5 "déploiements" dont un en échec de CI — gonflant
+artificiellement la fréquence de déploiement et le taux d'échec de
+changement, sans qu'aucun de ces chiffres reflète une vraie livraison. Avec
+le flux branche + PR, `main` ne voit plus que des états déjà validés par le
+CI, et un merge = une fonctionnalité livrée = un déploiement compté.
+
+Le hook `pre-push` (`scripts/hooks/pre-push`, installé via
+`./scripts/install-hooks.sh`) reproduit maintenant aussi le contrôle CI de
+cohérence photos disque/base (`provisionnement`), qui avait laissé passer un
+échec le 2026-09-21 faute d'être vérifié en local.
+
+---
+
 ## ⚠️ CRITICAL: Frontend Build Strategy
 
 **NEVER run:** `docker-compose up -d --build` → **30+ minutes on USB disk** 🚫
