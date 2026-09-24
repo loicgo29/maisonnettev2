@@ -13,7 +13,8 @@ RUN npm ci
 
 # Copy source
 COPY src ./src
-COPY static ./static
+# Static files (optional, may be empty in development)
+RUN mkdir -p ./static || true
 
 # Build
 RUN npm run build
