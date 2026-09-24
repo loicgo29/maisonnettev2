@@ -14,7 +14,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["public", "alo"]
+  schemas  = ["public", "alo", "comptabilite"]
 }
 
 model Gite {
@@ -269,4 +269,90 @@ enum AloPeriodStatus {
 
   @@map("period_status")
   @@schema("alo")
+}
+
+// Comptabilite Module Tables — SASU Accounting
+model Invoice {
+  id          String   @id @default(cuid())
+  date        DateTime
+  amount      Float    // TTC — the amount the matcher compares against bank transactions
+  amountHT    Float?
+  amountTVA   Float?
+  vendor      String
+  description String?
+  pdfUrl      String?
+  source      String   @default("upload") // "gmail" | "upload"
+
+  // Pennylane supplier_invoice id once pushed via POST /supplier_invoices/import
+  pennylaneInvoiceId String?
+
+  // Dedup key for sync-gmail: `${gmailMessageId}:${attachmentId ?? 'body'}`
+  gmailUid String? @unique
+
+  // Relations
+  matches     ComptabiliteMatch[]
+  syncLogs    SyncLog[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@schema("comptabilite")
+  @@map("invoices")
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  date        DateTime
+  amount      Float
+  description String
+  account     String   // "Revolut", "BNP", etc.
+
+  // Relations
+  matches     ComptabiliteMatch[]
+  syncLogs    SyncLog[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@schema("comptabilite")
+  @@map("transactions")
+}
+
+model ComptabiliteMatch {
+  id            String   @id @default(cuid())
+  invoiceId     String
+  invoice       Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  confidence    Float    @default(0.0)  // 0-1 matching confidence
+  status        String   @default("matched")  // "matched" | "disputed" | "unmatched"
+  notes         String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@schema("comptabilite")
+  @@map("matches")
+  @@unique([invoiceId, transactionId])
+}
+
+model SyncLog {
+  id            String   @id @default(cuid())
+  invoiceId     String?
+  invoice       Invoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  transactionId String?
+  transaction   Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+
+  status        String   @default("pending")  // "pending" | "synced" | "error"
+  message       String?
+  error         String?
+  metadata      Json?    // stores email metadata: { subject, from, date, attachment }
+  retryCount    Int      @default(0)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@schema("comptabilite")
+  @@map("sync_logs")
 }
