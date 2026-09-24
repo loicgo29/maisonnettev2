@@ -271,6 +271,46 @@ services:
       start_period: 120s
     networks: [maisonnette]
 
+  # ── comptabilite — Gestion SASU (invoices + transactions) ─────────────────
+  # Intégré dans maisonnettev2 le 2026-09-24. Lit le schéma `comptabilite`
+  # du Postgres partagé.
+  comptabilite-backend:
+    image: ${COMPTABILITE_BACKEND_IMAGE:-ghcr.io/loicgo29/maisonnettev2-comptabilite-backend:latest}
+    container_name: maisonnette-comptabilite-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://maisonnettev2:${DB_PASSWORD:?DB_PASSWORD manquant}@postgres:5432/maisonnettev2
+      NODE_ENV: production
+      PORT: 3002
+      SAGE_CLIENT_ID: ${SAGE_CLIENT_ID:-}
+      SAGE_CLIENT_SECRET: ${SAGE_CLIENT_SECRET:-}
+      SAGE_SUBSCRIPTION_KEY: ${SAGE_SUBSCRIPTION_KEY:-}
+      GMAIL_EMAIL: ${GMAIL_EMAIL:-}
+      GMAIL_APP_PASSWORD: ${GMAIL_APP_PASSWORD:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://127.0.0.1:3002/api/comptabilite/status']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks: [maisonnette]
+
+  comptabilite-frontend:
+    image: ${COMPTABILITE_FRONTEND_IMAGE:-ghcr.io/loicgo29/maisonnettev2-comptabilite-frontend:latest}
+    container_name: maisonnette-comptabilite-frontend
+    restart: unless-stopped
+    depends_on:
+      - comptabilite-backend
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://127.0.0.1:5174/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks: [maisonnette]
+
   caddy:
     image: caddy:latest
     container_name: maisonnette-caddy
@@ -296,6 +336,7 @@ services:
       - public
       - keycloak
       - alo-frontend
+      - comptabilite-frontend
     networks: [maisonnette]
 
 volumes:

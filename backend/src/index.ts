@@ -24,6 +24,7 @@ import reservationsRouter from './routes/reservations.js';
 import calendarRouter from './routes/calendar.js';
 import adminRouter from './routes/admin.js';
 import backofficeRouter from './routes/backoffice/index.js';
+import comptabiliteRouter from './routes/comptabilite.js';
 import { errorHandler } from './middleware/error.js';
 import { demarrerPlanificateurMessages } from './jobs/messagesSejour.job.js';
 import { demarrerPlanificateurMeteoMarine } from './jobs/meteoMarine.job.js';
@@ -74,6 +75,9 @@ app.use('/api/contact', contactRouter);
 // Backoffice — protégé au niveau du routeur (OIDC + rôle admin).
 app.use('/api/admin', adminRouter);
 app.use('/api/backoffice', backofficeRouter);
+
+// Comptabilité module
+app.use('/api/comptabilite', comptabiliteRouter);
 
 // 404 handler
 app.use((_req, res) => {

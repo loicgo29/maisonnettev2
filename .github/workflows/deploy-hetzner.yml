@@ -45,6 +45,11 @@ jobs:
           MAREE_API_KEY: ${{ secrets.MAREE_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           PUBLIC_CALENDAR_ID: ${{ secrets.PUBLIC_CALENDAR_ID }}
+          SAGE_CLIENT_ID: ${{ secrets.SAGE_CLIENT_ID }}
+          SAGE_CLIENT_SECRET: ${{ secrets.SAGE_CLIENT_SECRET }}
+          SAGE_SUBSCRIPTION_KEY: ${{ secrets.SAGE_SUBSCRIPTION_KEY }}
+          GMAIL_EMAIL: ${{ secrets.GMAIL_EMAIL }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: |
           # Seuls les secrets sont transmis au serveur : toute la configuration
           # — domaine, realm, contacts, identifiants publics — vit désormais
@@ -68,6 +73,11 @@ jobs:
           MAREE_API_KEY=${{ env.MAREE_API_KEY }}
           GOOGLE_API_KEY=${{ env.GOOGLE_API_KEY }}
           PUBLIC_CALENDAR_ID=${{ env.PUBLIC_CALENDAR_ID }}
+          SAGE_CLIENT_ID=${{ env.SAGE_CLIENT_ID }}
+          SAGE_CLIENT_SECRET=${{ env.SAGE_CLIENT_SECRET }}
+          SAGE_SUBSCRIPTION_KEY=${{ env.SAGE_SUBSCRIPTION_KEY }}
+          GMAIL_EMAIL=${{ env.GMAIL_EMAIL }}
+          GMAIL_APP_PASSWORD=${{ env.GMAIL_APP_PASSWORD }}
           ENVEOF
 
           echo "✅ .env.production generated"
@@ -254,11 +264,26 @@ jobs:
           # réussie (côté client) : un curl anonyme, comme ici, ne voit que
           # l'état intermédiaire "Connexion…" rendu côté serveur — c'est lui
           # qu'il faut chercher, pas le contenu post-auth.
+          # Retry avec backoff : le backend répond en premier, mais le
+          # frontend (build + reload du conteneur) peut encore être en
+          # train de redémarrer juste après, d'où des faux échecs observés
+          # en pratique (ex. run du 14/09) alors que le déploiement était sain.
           echo "✓ Testing admin page..."
-          if curl -fsS "$SITE/admin" | grep -q "Connexion"; then
-            echo "✅ Admin page served"
-          else
-            echo "❌ Admin page unreachable"
+          admin_max_attempts=10
+          admin_attempt=1
+          admin_ok=0
+          while [ $admin_attempt -le $admin_max_attempts ]; do
+            if curl -fsS "$SITE/admin" | grep -q "Connexion"; then
+              echo "✅ Admin page served"
+              admin_ok=1
+              break
+            fi
+            echo "⏳ Admin page not ready, attempt $admin_attempt/$admin_max_attempts..."
+            sleep $((admin_attempt < 5 ? 3 : 6))
+            ((admin_attempt++))
+          done
+          if [ "$admin_ok" -ne 1 ]; then
+            echo "❌ Admin page unreachable after $admin_max_attempts attempts"
             exit 1
           fi
 

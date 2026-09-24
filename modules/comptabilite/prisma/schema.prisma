@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Invoice {
+  id          String   @id @default(cuid())
+  date        DateTime
+  amount      Float    // TTC — the amount the matcher compares against bank transactions
+  amountHT    Float?
+  amountTVA   Float?
+  vendor      String
+  description String?
+  pdfUrl      String?
+  source      String   @default("upload") // "gmail" | "upload"
+
+  // Pennylane supplier_invoice id once pushed via POST /supplier_invoices/import —
+  // required to later call POST /supplier_invoices/{id}/matched_transactions
+  // (native bank-transaction matching, see PLAN.md Phase D).
+  pennylaneInvoiceId String?
+
+  // Dedup key for sync-gmail: `${gmailMessageId}:${attachmentId ?? 'body'}`.
+  // Without this, re-running sync-gmail (no way to know what was already
+  // imported) created full duplicate rows every time — 113 duplicate rows
+  // found in production data on 2026-09-20, 32 of them already pushed as
+  // real duplicate accounting documents in Pennylane (no DELETE endpoint
+  // exists there, cleanup had to be done by hand in the Pennylane UI).
+  gmailUid String? @unique
+
+  // Relations
+  matches     Match[]
+  syncLogs    SyncLog[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  date        DateTime
+  amount      Float
+  description String
+  account     String   // "Revolut", "BNP", etc.
+
+  // Relations
+  matches     Match[]
+  syncLogs    SyncLog[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Match {
+  id            String   @id @default(cuid())
+  invoiceId     String
+  invoice       Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  confidence    Float    @default(0.0)  // 0-1 matching confidence
+  status        String   @default("matched")  // "matched" | "disputed" | "unmatched"
+  notes         String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([invoiceId, transactionId])
+}
+
+model SyncLog {
+  id            String   @id @default(cuid())
+  invoiceId     String?
+  invoice       Invoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  transactionId String?
+  transaction   Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+
+  status        String   @default("pending")  // "pending" | "synced" | "error"
+  message       String?
+  error         String?
+  metadata      Json?    // stores email metadata: { subject, from, date, attachment }
+  retryCount    Int      @default(0)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

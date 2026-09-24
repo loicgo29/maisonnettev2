@@ -77,10 +77,20 @@ www.{$DOMAIN} {
 		reverse_proxy backoffice:5173
 	}
 
+	# Comptabilite (invoices + transactions)
+	handle_path /comptabilite* {
+		reverse_proxy comptabilite-frontend:5174
+	}
+
 	# Ressources internes de SvelteKit : servies depuis le même conteneur,
 	# sinon les pages du backoffice arrivent sans style ni JavaScript.
 	handle /_app/* {
 		reverse_proxy backoffice:5173
+	}
+
+	# API Comptabilite (doit précéder /api/* pour éviter interception)
+	handle_path /api/comptabilite/* {
+		reverse_proxy comptabilite-backend:3002
 	}
 
 	handle /api/* {

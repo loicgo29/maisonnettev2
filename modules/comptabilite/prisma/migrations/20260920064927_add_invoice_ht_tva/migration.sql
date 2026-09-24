@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Invoice" ADD COLUMN     "amountHT" DOUBLE PRECISION,
+ADD COLUMN     "amountTVA" DOUBLE PRECISION;
