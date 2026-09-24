@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { goto } from '$app/navigation';
 
 	let formData = {
@@ -12,8 +12,8 @@
 	let submitted = false;
 	let error = '';
 
-	async function handleSubmit(e) {
-		e.preventDefault();
+	async function handleSubmit(e: Event) {
+		(e as SubmitEvent).preventDefault();
 		loading = true;
 		error = '';
 
