@@ -32,7 +32,7 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 
 # Copy built app from builder
-COPY --from=builder /app/build ./build
+COPY --from=builder /app/dist ./build
 
 EXPOSE 5174
 
