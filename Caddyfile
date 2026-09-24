@@ -77,8 +77,8 @@ www.{$DOMAIN} {
 		reverse_proxy backoffice:5173
 	}
 
-	# Comptabilite (invoices + transactions)
-	handle_path /comptabilite* {
+	# Admin (comptabilite + reservations/messages) — derrière Keycloak OAuth
+	handle_path /admin/comptabilite* {
 		reverse_proxy comptabilite-frontend:5174
 	}
 
@@ -88,8 +88,8 @@ www.{$DOMAIN} {
 		reverse_proxy backoffice:5173
 	}
 
-	# API Comptabilite (doit précéder /api/* pour éviter interception)
-	handle_path /api/comptabilite/* {
+	# API Comptabilite (derrière SSO, doit précéder /api/* pour éviter interception)
+	handle_path /api/admin/comptabilite/* {
 		reverse_proxy comptabilite-backend:3002
 	}
 

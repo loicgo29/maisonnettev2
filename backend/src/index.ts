@@ -76,8 +76,8 @@ app.use('/api/contact', contactRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/backoffice', backofficeRouter);
 
-// Comptabilité module
-app.use('/api/comptabilite', comptabiliteRouter);
+// Comptabilité module — derrière SSO (admin routes)
+app.use('/api/admin/comptabilite', comptabiliteRouter);
 
 // 404 handler
 app.use((_req, res) => {

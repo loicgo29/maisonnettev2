@@ -37,19 +37,19 @@ SAGE_CLIENT_SECRET=<client-secret>
 SAGE_SUBSCRIPTION_KEY=<subscription-key-primary>
 ```
 
-## API Endpoints
+## API Endpoints (Protected — SSO Admin)
 
-- `GET /api/comptabilite/matches/compute` — Calculate matches for UI
-- `GET /api/comptabilite/invoices` — List all invoices
-- `POST /api/comptabilite/invoices/sync-gmail` — Sync Gmail → extract invoices
-- `POST /api/comptabilite/sync/match-pennylane` — Match invoices ↔ transactions (legacy)
+- `GET /api/admin/comptabilite/matches/compute` — Calculate matches for UI
+- `GET /api/admin/comptabilite/invoices` — List all invoices
+- `POST /api/admin/comptabilite/invoices/sync-gmail` — Sync Gmail → extract invoices
+- `POST /api/admin/comptabilite/sync/match-pennylane` — Match invoices ↔ transactions (legacy)
 
-## Frontend Routes
+## Frontend Routes (Protected — SSO Admin)
 
-- `/comptabilite` — Home
-- `/comptabilite/matches` — Visualize & validate computed matches
-- `/comptabilite/invoices` — Invoice list
-- `/comptabilite/transactions` — Transaction list
+- `/admin/comptabilite` — Home
+- `/admin/comptabilite/matches` — Visualize & validate computed matches
+- `/admin/comptabilite/invoices` — Invoice list
+- `/admin/comptabilite/transactions` — Transaction list
 
 ## Testing
 
