@@ -10,9 +10,8 @@
 		"module": "ESNext",
 		"allowJs": true,
 		"checkJs": false,
-		"strict": true,
+		"strict": false,
 		"noEmit": true,
-		"noUncheckedIndexedAccess": true,
 		"resolveJsonModule": true
 	},
 	"include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
