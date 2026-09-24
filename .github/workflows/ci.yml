@@ -402,6 +402,25 @@ jobs:
             ${{ env.REGISTRY }}/${{ github.repository }}-meteo-marine:latest
             ${{ env.REGISTRY }}/${{ github.repository }}-meteo-marine:${{ github.sha }}
 
+      # Comptabilite module — SASU invoices + transactions + Sage sync
+      - name: Build & Push comptabilite-backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./modules/comptabilite/backend
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository }}-comptabilite-backend:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}-comptabilite-backend:${{ github.sha }}
+
+      - name: Build & Push comptabilite-frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./modules/comptabilite/frontend
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository }}-comptabilite-frontend:latest
+            ${{ env.REGISTRY }}/${{ github.repository }}-comptabilite-frontend:${{ github.sha }}
+
   # Smoke test OAuth2 contre le VRAI Keycloak de production — jamais sur push
   # ou pull_request : bdd-tests couvre déjà le flux complet contre un Keycloak
   # éphémère et isolé (voir infra/keycloak/realm-test.json) à chaque commit.
