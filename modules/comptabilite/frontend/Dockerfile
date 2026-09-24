@@ -7,6 +7,7 @@ COPY package*.json ./
 COPY tsconfig.json ./
 COPY vite.config.ts ./
 COPY svelte.config.js ./
+COPY index.html ./
 
 # Install dependencies
 RUN npm ci
