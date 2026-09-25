@@ -113,7 +113,7 @@ jobs:
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
 
           # Transfer .env.production to server
-          scp -i ~/.ssh/deploy_key .env.production "$DEPLOY_USER@$DEPLOY_HOST:/tmp/.env.production"
+          scp -i ~/.ssh/deploy_key .env.production "$DEPLOY_USER@$DEPLOY_HOST:~/.env.production.tmp"
 
           # Les options de keepalive ne sont pas décoratives : la construction
           # des images occupe les deux cœurs du serveur pendant plusieurs
@@ -130,7 +130,7 @@ jobs:
           echo "=== PRE-DEPLOYMENT CHECKS ==="
 
           # Verify .env was transferred
-          if [ ! -f /tmp/.env.production ]; then
+          if [ ! -f ~/.env.production.tmp ]; then
             echo "❌ .env.production transfer failed"
             exit 1
           fi
@@ -140,7 +140,7 @@ jobs:
           [ -f .env ] && cp .env .env.backup || true
 
           # Move new .env.production to .env
-          mv /tmp/.env.production .env
+          mv ~/.env.production.tmp .env
 
           # Le .env ne porte plus que des secrets : la configuration est dans
           # le compose, où docker échoue de lui-même sur une variable absente
@@ -182,7 +182,7 @@ jobs:
           # bâtit une fois, sur des machines faites pour ça.
           echo "📥 Récupération des images publiées par la CI..."
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker compose --env-file .env -f docker-compose.prod.yml pull backend backoffice alo-backend alo-frontend meteo-marine
+          docker compose --env-file .env -f docker-compose.prod.yml pull backend backoffice alo-backend alo-frontend meteo-marine comptabilite-backend comptabilite-frontend
 
           echo ""
           echo "🚀 Starting services..."
