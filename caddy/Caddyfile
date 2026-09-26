@@ -24,11 +24,27 @@
 		reverse_proxy backend:3001
 	}
 
-	# alo, servi sous /admin/alo (miroir du Caddyfile de prod). Doit
-	# précéder le catch-all ci-dessous, sinon celui-ci intercepterait
-	# tout /admin/alo/* en premier.
+	# ========================================================================
+	# ZONE PROTÉGÉE PAR KEYCLOAK (test local en se branchant sur Keycloak prod)
+	# Middleware oauth2-proxy valide les tokens Keycloak avant toute route /admin
+	# ========================================================================
+
+	# alo, servi sous /admin/alo — protégé par Keycloak
 	handle_path /admin/alo* {
+		forward_auth oauth2-proxy:4180 {
+			uri /oauth2/auth
+			copy_headers X-Auth-Request-User X-Auth-Request-Email
+		}
 		reverse_proxy alo-frontend:80
+	}
+
+	# Admin (réservations/messages) — protégé par Keycloak
+	handle /admin* {
+		forward_auth oauth2-proxy:4180 {
+			uri /oauth2/auth
+			copy_headers X-Auth-Request-User X-Auth-Request-Email
+		}
+		reverse_proxy frontend:5173
 	}
 
 	handle {
