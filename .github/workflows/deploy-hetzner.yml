@@ -81,9 +81,9 @@ jobs:
           SAGE_SUBSCRIPTION_KEY=${{ env.SAGE_SUBSCRIPTION_KEY }}
           GMAIL_EMAIL=${{ env.GMAIL_EMAIL }}
           GMAIL_APP_PASSWORD=${{ env.GMAIL_APP_PASSWORD }}
-          OAUTH2_CLIENT_ID=${{ env.OAUTH2_CLIENT_ID }}
-          OAUTH2_CLIENT_SECRET=${{ env.OAUTH2_CLIENT_SECRET }}
-          OAUTH2_COOKIE_SECRET=${{ env.OAUTH2_COOKIE_SECRET }}
+          OAUTH2_CLIENT_ID=${{ env.OAUTH2_CLIENT_ID || 'maisonnettev2-backoffice' }}
+          OAUTH2_CLIENT_SECRET=${{ env.OAUTH2_CLIENT_SECRET || '5qd1H9X2N9REHtLTSS7K6DYjPqP7scaM' }}
+          OAUTH2_COOKIE_SECRET=${{ env.OAUTH2_COOKIE_SECRET || 'ORxvMhpve76DwyGcMNdv1P5CsN1Gua7qpihFgQDeAgk=' }}
           ENVEOF
 
           echo "✅ .env.production generated"
