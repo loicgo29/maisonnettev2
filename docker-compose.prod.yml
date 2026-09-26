@@ -331,6 +331,8 @@ services:
       - --http-address=0.0.0.0:4180
       - --email-domain=*
       - --insecure-oidc-allow-unverified-email=true
+      - --whitelist-domain=maisonnette-pecheur-bertheaume.fr
+      - --whitelist-domain=www.maisonnette-pecheur-bertheaume.fr
     environment:
       OAUTH2_PROXY_SKIP_AUTH_ROUTES: /health,/health/live
     depends_on:
