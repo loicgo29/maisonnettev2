@@ -125,7 +125,7 @@ router.post('/invoices/sync', async (req: Request, res: Response) => {
       },
     });
 
-    res.json({
+    return res.json({
       success: true,
       message: 'Invoice synced to Sage',
       sageInvoiceId: sageResponse.id,
@@ -133,7 +133,7 @@ router.post('/invoices/sync', async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Invoice sync error:', error);
-    res.status(500).json({ error: 'Failed to sync invoice to Sage' });
+    return res.status(500).json({ error: 'Failed to sync invoice to Sage' });
   }
 });
 
@@ -156,10 +156,10 @@ router.get('/invoices/:id', async (req: Request, res: Response) => {
     // Get invoice from Sage
     const invoice = await sageService.getInvoice(id);
 
-    res.json(invoice);
+    return res.json(invoice);
   } catch (error) {
     console.error('Invoice fetch error:', error);
-    res.status(500).json({ error: 'Failed to fetch invoice from Sage' });
+    return res.status(500).json({ error: 'Failed to fetch invoice from Sage' });
   }
 });
 
@@ -178,14 +178,14 @@ router.post('/health', async (req: Request, res: Response) => {
     sageService.setAccessToken(tokenRecord.accessToken, 3600);
     const isConnected = await sageService.testConnection();
 
-    res.json({
+    return res.json({
       connected: isConnected,
       lastSync: tokenRecord.updatedAt,
       expiresAt: tokenRecord.expiresAt,
     });
   } catch (error) {
     console.error('Health check error:', error);
-    res.json({ connected: false, error: 'Health check failed' });
+    return res.json({ connected: false, error: 'Health check failed' });
   }
 });
 
