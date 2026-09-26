@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { SageService, SageInvoice } from '../services/sage';
-import { prisma } from '../lib/prisma';
+import { SageService, SageInvoice } from '../services/sage.js';
+import { prisma } from '../lib/prisma.js';
 
 const router = Router();
 
