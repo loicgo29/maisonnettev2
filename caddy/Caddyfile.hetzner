@@ -58,6 +58,15 @@
 		reverse_proxy alo-frontend:80
 	}
 
+	# comptabilite, servi sous /admin/comptabilite — protégé par Keycloak
+	handle_path /admin/comptabilite* {
+		forward_auth oauth2-proxy:4180 {
+			uri /oauth2/auth
+			copy_headers X-Auth-Request-User X-Auth-Request-Email
+		}
+		reverse_proxy comptabilite-frontend:5174
+	}
+
 	# Admin (réservations/messages) — protégé par Keycloak
 	handle /admin* {
 		forward_auth oauth2-proxy:4180 {
