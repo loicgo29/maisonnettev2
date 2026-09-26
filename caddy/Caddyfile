@@ -29,6 +29,11 @@
 	# Middleware oauth2-proxy valide les tokens Keycloak avant toute route /admin
 	# ========================================================================
 
+	# Endpoints OAuth2-Proxy (login, callback, etc.)
+	handle /oauth2/* {
+		reverse_proxy oauth2-proxy:4180
+	}
+
 	# alo, servi sous /admin/alo — protégé par Keycloak
 	handle_path /admin/alo* {
 		forward_auth oauth2-proxy:4180 {
