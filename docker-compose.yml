@@ -224,6 +224,10 @@ services:
 
   # ── OAuth2-Proxy pour tester l'authentification Keycloak en local ────
   # Usage: export $(cat .env.oauth2-local | xargs) && docker-compose up -d
+  # oauth2-proxy — Protection Keycloak pour /admin (test local contre prod Keycloak)
+  # En dev, pointe vers l'IDP de prod pour tester la vraie authentification.
+  # La redirect_uri http://localhost:8030/oauth2/callback est whitelistée
+  # dans Keycloak prod pour permettre les tests locaux.
   oauth2-proxy:
     image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
     container_name: maisonnettev2-oauth2-proxy
@@ -240,6 +244,7 @@ services:
       - --cookie-secret=${OAUTH2_COOKIE_SECRET:?OAUTH2_COOKIE_SECRET manquant}
       - --http-address=0.0.0.0:4180
       - --email-domain=*
+      - --insecure-oidc-allow-unverified-email=true
     environment:
       OAUTH2_PROXY_SKIP_AUTH_ROUTES: /health,/health/live
     healthcheck:
