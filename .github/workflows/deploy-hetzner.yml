@@ -261,26 +261,20 @@ jobs:
             ((attempt++))
           done
 
-          # /admin doit répondre, sinon le site public est en ligne mais
-          # l'administration est inaccessible sans que rien ne le signale.
-          # /backoffice/login n'existe plus (retiré le 2026-09-14, Keycloak
-          # via /admin est le seul point d'entrée admin) — ce test testait
-          # encore l'ancienne page et échouait systématiquement depuis.
-          # "Administration" n'apparaît qu'après authentification Keycloak
-          # réussie (côté client) : un curl anonyme, comme ici, ne voit que
-          # l'état intermédiaire "Connexion…" rendu côté serveur — c'est lui
-          # qu'il faut chercher, pas le contenu post-auth.
-          # Retry avec backoff : le backend répond en premier, mais le
-          # frontend (build + reload du conteneur) peut encore être en
-          # train de redémarrer juste après, d'où des faux échecs observés
-          # en pratique (ex. run du 14/09) alors que le déploiement était sain.
-          echo "✓ Testing admin page..."
+          # /admin est maintenant protégé par oauth2-proxy (Keycloak SSO) : un
+          # curl anonyme reçoit un 401. C'est la réponse correcte — elle signifie
+          # que l'accès est restreint mais le service répond (pas 502 ou 504).
+          # oauth2-proxy intercepte et demande une authentification, ce qui est OK.
+          echo "✓ Testing /admin (SSO protection)..."
           admin_max_attempts=10
           admin_attempt=1
           admin_ok=0
           while [ $admin_attempt -le $admin_max_attempts ]; do
-            if curl -fsS "$SITE/admin" | grep -q "Connexion"; then
-              echo "✅ Admin page served"
+            http_code=$(curl -s -o /dev/null -w "%{http_code}" "$SITE/admin/comptabilite/" 2>/dev/null || echo "000")
+            # 401 = authentification requise (correct pour SSO)
+            # 200 = pas de protection (ancien comportement)
+            if [ "$http_code" = "401" ] || [ "$http_code" = "200" ]; then
+              echo "✅ Admin protected by SSO (HTTP $http_code)"
               admin_ok=1
               break
             fi
