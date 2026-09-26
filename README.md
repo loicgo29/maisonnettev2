@@ -1,192 +1,376 @@
-# maisonnettev2 — Gîte Rental Booking Platform
+# maisonnettev2 — Plateforme de Réservation de Gîte
 
-Full-stack SPA for gîte rental management with OIDC authentication (Authentik), Stripe payments, and Google Calendar integration.
+**Loïc's flagship project** — Plateforme SaaS pour gestion de gîte (réservations, comptabilité, calendrier) avec authentification Keycloak, protection OAuth2, intégration Sage & Google Calendar.
 
-## Project Status
+---
 
-**Phase B (In Progress)**
-- [x] Prisma schema (Gite, Photo, Reservation models)
-- [x] Docker Compose (frontend, backend, PostgreSQL)
-- [x] Swagger/OpenAPI documentation
-- [x] OIDC authentication (frontend: oidc-client-ts, backend: Jose JWKS validation)
-- [x] Protected routes with JWT validation
-- [x] Basic pages (Home, GiteDetail)
-- [ ] Booking form & Stripe integration
-- [ ] Google Calendar sync
-- [ ] Healthchecks & error monitoring (Sentry)
-- [ ] CI/CD (GitHub Actions for dev/staging/prod)
+## 🎯 Statut du Projet
 
-## Tech Stack
+**Production** ✅
+- Déploiement live sur Hetzner
+- Authentification Keycloak + OAuth2-Proxy (routes `/admin` protégées)
+- Réservations, paiements Stripe
+- Comptabilité (ALO) et gestion SASU
+- Synchronisation Google Calendar
+- Surveillance Hetzner
 
-### Frontend
-- **React 18** — UI framework
-- **Vite** — build tooling
-- **TypeScript** — type safety
-- **Tailwind CSS** — styling
-- **React Router** — navigation
-- **@tanstack/react-query** — data fetching
-- **oidc-client-ts** — OIDC/OAuth2 authentication
-- **Axios** — HTTP client
-- **Zod** — schema validation
+---
 
-### Backend
-- **Node.js 20** — runtime
-- **Express** — web framework
-- **TypeScript** — type safety
-- **Prisma** — ORM + migrations
-- **PostgreSQL 16** — database
-- **Jose** — JWT validation (JWKS)
-- **Swagger** — API documentation
-- **Stripe** — payments
-- **@sentry/node** — error tracking
+## 🏗️ Architecture
 
-### Infrastructure
-- **Docker Compose** — local development
-- **Authentik** — centralized OIDC IdP
-
-## Quick Start
-
-```bash
-# 1. Ensure Authentik is running
-cd /Volumes/logousb/SSD/Projects/idp && docker-compose up -d
-
-# 2. Configure environment
-cd /Volumes/logousb/SSD/Projects/maisonnettev2
-cp .env.example .env  # Configure docker-compose vars
-cp backend/.env.example backend/.env  # Configure DATABASE_URL
-cp frontend/.env.example frontend/.env.development
-
-# 3. Install dependencies
-cd backend && npm install
-cd ../frontend && npm install
-cd ..
-
-# 4. Start services
-docker-compose up -d
-
-# 5. Apply database migrations
-cd backend && npm run prisma:migrate
-
-# 6. Access services
-open http://localhost:5173          # Frontend
-open http://localhost:3001/api/docs # Swagger API docs
+```
+Frontend (SvelteKit)          Backend (Express)           IDP
+  ↓                              ↓                         ↓
+:5173 (local/dev)            :3001 (API)            Keycloak :8080
+  ↓                              ↓                         ↑
+  └─ Caddy (:8030/prod) ◄────────┴─────────────────────────┘
+      ├─ Reverse proxy
+      ├─ Forward_auth oauth2-proxy:4180
+      └─ TLS termination (Let's Encrypt prod)
 ```
 
-## Project Structure
+**Services:**
+- **Frontend** (SvelteKit, TypeScript) — Backoffice réservations + public site
+- **Backend** (Express, TypeScript) — API reservations, photos, calendrier
+- **ALO Backend** (Python FastAPI) — Comptabilité familiale
+- **ALO Frontend** (React) — UI comptabilité
+- **Comptabilité Frontend** (SvelteKit) — Gestion SASU
+- **Keycloak** (OIDC/OAuth2) — Authentification centralisée
+- **oauth2-proxy** (middleware) — Protection routes `/admin`
+- **Caddy** (reverse proxy) — TLS, routing, auth forwarding
+- **PostgreSQL** — Database unique (schémas séparés)
+
+---
+
+## 🚀 Démarrage Rapide
+
+### Prérequis
+```bash
+# Charger les secrets depuis Bitwarden
+cd /Volumes/logousb/SSD/Projects
+./scriptslogo/setup/setup-env.sh
+```
+
+### Local Development
+
+**Terminal 1 — Frontend**
+```bash
+cd maisonnettev2/frontend
+npm install
+npm run dev
+# http://localhost:5173
+```
+
+**Terminal 2 — Backend**
+```bash
+cd maisonnettev2/backend
+npm install
+npm run dev
+# http://localhost:3001/health
+```
+
+**Terminal 3 — Docker Services** (Caddy, oauth2-proxy, Keycloak, PostgreSQL)
+```bash
+cd maisonnettev2
+docker-compose up -d
+# Accès via Caddy: http://localhost:8030
+```
+
+### Production (Hetzner)
+
+```bash
+ssh hetzner
+cd /opt/maisonnettev2
+docker-compose -f docker-compose.prod.yml up -d --build
+
+# Vérifier la santé
+./scripts/test-oauth2-routes.sh https://maisonnette-pecheur-bertheaume.fr --ci
+```
+
+---
+
+## 🔐 Authentification OAuth2 / Keycloak
+
+**Routes protégées (/admin)** :
+- `/admin` — Backoffice (réservations, messages)
+- `/admin/alo` — Comptabilité familiale (ALO)
+- `/admin/comptabilite` — Gestion SASU
+
+**Flux :**
+```
+User → GET /admin/alo (no token)
+  ↓
+Caddy forward_auth → oauth2-proxy
+  ↓ (401 Unauthorized)
+User → GET /oauth2/start?rd=/admin/alo
+  ↓
+oauth2-proxy redirige vers Keycloak
+  ↓
+User se connecte (Keycloak)
+  ↓
+Retour à /admin/alo avec token valide
+  ↓
+Accès autorisé ✅
+```
+
+**Documentation complète :** Voir `OAUTH2_DEV.md` et `AUTH_WORKFLOW.md`
+
+---
+
+## 📊 Structure du Projet
+
 ```
 maisonnettev2/
-├── frontend/                       React SPA
+├── backend/                    Express API
 │   ├── src/
-│   │   ├── auth/OIDCManager.ts     OIDC configuration
-│   │   ├── hooks/useAuth.ts        Auth state hook
-│   │   ├── lib/api.ts              Axios + auth headers
-│   │   └── pages/                  Home, GiteDetail, Callback
+│   │   ├── routes/            Endpoints
+│   │   ├── services/          Logique métier
+│   │   ├── middleware/        Auth, error handling
+│   │   └── index.ts
+│   ├── prisma/schema.prisma   Schéma DB
 │   └── Dockerfile
-├── backend/                        Express API
-│   ├── src/
-│   │   ├── middleware/oidc.ts      JWT validation
-│   │   ├── routes/                 API endpoints
-│   │   ├── swagger.ts              OpenAPI spec
-│   │   └── index.ts                App entry
-│   ├── prisma/schema.prisma        Database models
+├── frontend/                   SvelteKit backoffice
+│   ├── src/routes/            Pages (réservations, etc.)
+│   ├── src/lib/               Composants, API client
 │   └── Dockerfile
-├── docs/
-│   ├── OIDC.md                     Authentication guide (start here!)
-│   ├── oidc-complete-flow.md       End-to-end flow diagram
-│   └── local-setup.md              Setup details
-├── docker-compose.yml
-├── QUICKSTART.md
-└── README.md
+├── alo-backend/               Comptabilité (Python FastAPI)
+├── alo-frontend/              Comptabilité UI (React)
+├── comptabilite-frontend/      SASU UI (SvelteKit)
+├── caddy/
+│   ├── Caddyfile              Local (dev)
+│   └── Caddyfile.hetzner      Prod (Hetzner)
+├── docker-compose.yml         Local development
+├── docker-compose.prod.yml    Hetzner deployment
+├── scripts/
+│   ├── get-keycloak-token.sh  Obtenir token OAuth2
+│   ├── test-oauth2-routes.sh  Test automatisé routes
+│   └── rebuild-frontend.sh    Rebuild rapide SvelteKit
+├── CLAUDE.md                  Project instructions (local)
+├── ARCHITECTURE.md            Vue système détaillée
+├── OAUTH2_DEV.md              Dev avec OAuth2 + Keycloak
+├── AUTH_WORKFLOW.md           Flux d'authentification
+├── DEPLOYMENT.md              Guide déploiement prod
+├── INFRASTRUCTURE.md          Infra Hetzner/Caddy
+└── README.md                  ← Tu es ici
 ```
 
-## Authentication (OIDC)
+---
 
-**Read [docs/OIDC.md](./docs/OIDC.md) for complete documentation.**
+## 🛠️ Développement
 
-Flow: Login → Authentik → Authorization Code → Token → API calls with JWT
-
-- Frontend: React hook `useAuth()` with oidc-client-ts
-- Backend: Middleware validates JWT via Authentik JWKS
-- Auto-renewal: Tokens refresh 5 min before expiration
-- PKCE: Enabled by default for SPAs
-
-## Database Models
-
-- **Gite**: Rental property
-- **Photo**: Gallery (categories: EXTERIEUR, SALON, CUISINE, CHAMBRE, SDB, OUTDOOR)
-- **Reservation**: Bookings with status (PENDING, CONFIRMED, CANCELLED)
-
-## API Endpoints
-
-**Public:**
-- `GET /health` — health check
-- `GET /api/gites` — list all gites
-- `GET /api/gites/:slug` — gite details with photos
-
-**Protected (JWT required):**
-- `GET /api/reservations` — user's reservations
-- `POST /api/reservations` — create reservation
-- `GET /api/reservations/:id` — reservation details
-
-**Full API docs:** http://localhost:3001/api/docs (Swagger UI)
-
-## Development
-
-### Logs & Debugging
+### Commandes Essentielles
 
 ```bash
-# Backend logs
+# Frontend
+cd frontend
+npm run dev          # Dev server (hot reload)
+npm run build        # Build optimisé
+npm run check        # Type checking + linting
+npm run format       # Auto-format code
+
+# Backend
+cd backend
+npm run dev          # Dev server (auto-reload)
+npm run prisma:migrate dev   # Migrations
+npm run prisma:studio        # Visual DB editor
+
+# Docker
+docker-compose up -d         # Start all local services
+docker-compose logs -f       # Follow logs
+docker ps                    # Check running containers
+
+# Tests
+SKIP_WEBSERVER=1 npm run test:e2e  # Playwright E2E
+
+# OAuth2 Testing (local)
+./scripts/get-keycloak-token.sh logo-back <password>
+./scripts/test-oauth2-routes.sh http://localhost:8030
+```
+
+### Database
+
+**Local:**
+```bash
+# Port : 5432 (interne docker) / 5433 (localhost)
+psql -h localhost -p 5433 -U maisonnettev2 -d maisonnettev2
+
+# Voir les schémas
+\dn
+
+# ALO schema
+SELECT * FROM alo.transactions LIMIT 10;
+
+# Maisonnettev2 schema
+SELECT * FROM public.gites LIMIT 10;
+```
+
+**Production (Hetzner):**
+```bash
+ssh hetzner
+docker exec maisonnette-postgres psql -U maisonnettev2 -d maisonnettev2
+```
+
+### Debugging
+
+```bash
+# Logs backend
 docker-compose logs backend -f
 
-# Database
-docker-compose exec postgres-maisonnettev2 psql -U maisonnettev2 -d maisonnettev2
-
-# Frontend browser console
+# Logs frontend (browser console)
 open http://localhost:5173 → F12 → Console
 
-# Check OIDC status
-localStorage.getItem('oidc.user:...')
+# Logs Keycloak
+docker-compose logs keycloak -f
+
+# Logs oauth2-proxy
+docker-compose logs oauth2-proxy -f
+
+# Logs Caddy
+docker-compose logs caddy -f
+
+# Check token validity
+./scripts/get-keycloak-token.sh logo-back <password> | base64 -d | jq .
 ```
 
-### Common Commands
+---
 
+## 🌐 Routes Principales
+
+### Public (pas d'auth requise)
+- `GET /` — Homepage
+- `GET /api/gites` — Liste gîtes
+- `GET /api/calendar/public` — Calendrier disponibilité
+
+### Protégées (OAuth2/Keycloak)
+- `GET /admin` — Backoffice (réservations)
+- `GET /admin/alo` — Comptabilité familiale
+- `GET /admin/comptabilite` — Gestion SASU
+
+### Admin Backend
+- `POST /api/backoffice/auth/login` — Login (local dev)
+- `GET /api/backoffice/meals` — Meals API
+- etc.
+
+**Full API docs :** `http://localhost:3001/api/docs` (Swagger)
+
+---
+
+## 🔧 Stack Technique
+
+### Frontend
+- **SvelteKit** — Meta-framework TypeScript
+- **Vite** — Build tool
+- **TailwindCSS** — Styling
+- **Playwright** — E2E tests
+
+### Backend
+- **Express** — Web framework
+- **Prisma** — ORM
+- **TypeScript** — Type safety
+- **Swagger** — API docs
+
+### Infrastructure
+- **Keycloak 26** — OIDC IdP
+- **oauth2-proxy v7.6** — Auth middleware
+- **Caddy** — Reverse proxy + TLS
+- **PostgreSQL 16** — Database
+- **Docker Compose** — Orchestration
+- **Hetzner** — Prod hosting
+
+### Modules additionnels
+- **ALO** (Comptabilité) — Python FastAPI backend + React frontend
+- **Comptabilité** (SASU) — SvelteKit frontend
+- **Sage Integration** — Sync Sage API
+- **Google Calendar** — Sync calendrier
+
+---
+
+## 📚 Documentation Par Sujet
+
+| Besoin | Fichier |
+|--------|---------|
+| **Authentification OAuth2 / Keycloak** | `OAUTH2_DEV.md` + `AUTH_WORKFLOW.md` |
+| **Déploiement production** | `DEPLOYMENT.md` |
+| **Infrastructure Hetzner** | `INFRASTRUCTURE.md` |
+| **Architecture système** | `ARCHITECTURE.md` |
+| **Instructions projet (local)** | `CLAUDE.md` |
+| **ALO (comptabilité)** | `alo-backend/CLAUDE.md` |
+| **Tests automatisés OAuth2** | `OAUTH2_DEV.md` (section "Testing Automatisé") |
+
+---
+
+## 🚀 Déploiement
+
+**Branch workflow** (depuis 2026-09-21) :
+1. `git checkout -b feat/xxx`
+2. Commit + push sur feature branch
+3. `gh pr create` + wait for CI ✅
+4. Merge vers `main`
+5. CI auto-déploie sur Hetzner
+
+**Checklist pré-deploy :**
 ```bash
-# Database migrations
-cd backend && npm run prisma:migrate
-cd backend && npm run prisma:studio  # Visual DB editor
-
-# Type checking
-cd frontend && npm run type-check
-cd backend && npm run type-check
-
-# Security audit
-cd frontend && npm audit
-cd backend && npm audit
+npm run check          # Type check
+npm run lint          # ESLint + Prettier
+npm run test:e2e      # E2E tests (Playwright)
+./scripts/test-oauth2-routes.sh https://maisonnette-pecheur-bertheaume.fr --ci
 ```
 
-## Next Steps
+**Post-deploy :**
+```bash
+# Tester les routes protégées
+./scripts/test-oauth2-routes.sh https://maisonnette-pecheur-bertheaume.fr
 
-1. **Booking form** (Phase B.4) — DatePicker, confirm/cancel
-2. **Stripe integration** (Phase B.6) — PaymentIntent, webhooks
-3. **Google Calendar** (Phase B.5) — Service account sync
-4. **CI/CD** (Phase C) — GitHub Actions for staging/prod
-5. **Observability** (Phase D) — Sentry, structured logging, backups
+# Vérifier la santé
+curl https://maisonnette-pecheur-bertheaume.fr/health
+```
 
-## Documentation
+---
 
-- [QUICKSTART.md](./QUICKSTART.md) — 5-minute setup
-- [docs/OIDC.md](./docs/OIDC.md) — Authentication (start here for auth!)
-- [docs/oidc-complete-flow.md](./docs/oidc-complete-flow.md) — End-to-end flow diagram
-- [docs/local-setup.md](./docs/local-setup.md) — Detailed configuration
-- [Docs/plan.md](./Docs/plan.md) — Full implementation roadmap
+## ⚙️ Configuration
 
-## Support
+### Variables d'Environnement
 
-- Backend health: `curl http://localhost:3001/health`
-- Frontend: http://localhost:5173
-- API docs: http://localhost:3001/api/docs
-- Logs: `docker-compose logs <service>`
+**Charger depuis Bitwarden :**
+```bash
+./scriptslogo/setup/setup-env.sh         # Dev
+./scriptslogo/setup/setup-env.sh --prod  # Prod (Hetzner)
+```
 
-## License
+**Clés principales :**
+- `OAUTH2_CLIENT_ID` — Keycloak client
+- `OAUTH2_CLIENT_SECRET` — Keycloak secret
+- `OAUTH2_COOKIE_SECRET` — Cookie signing
+- `DB_PASSWORD` — PostgreSQL password
+- `JWT_SECRET` — Backend JWT signing
+- `SAGE_CLIENT_ID`, `SAGE_CLIENT_SECRET` — Sage API
+- `GOOGLE_API_KEY` — Google Calendar
+
+Voir `.env.example` pour la liste complète.
+
+---
+
+## 🐛 Troubleshooting
+
+| Problème | Solution |
+|----------|----------|
+| "Port already in use" | `lsof -ti:5173 \| xargs kill -9` |
+| OAuth2 401 unauthorized | Vérifier OAUTH2_CLIENT_SECRET, Keycloak healthcheck |
+| Database connection refused | Vérifier PostgreSQL healthcheck, DB_PASSWORD |
+| Frontend build timeout | Utiliser `./scripts/rebuild-frontend.sh` (3 min) au lieu de `docker-compose up --build` (30 min) |
+| 502 Bad Gateway | Vérifier service health : `docker-compose ps` |
+
+---
+
+## 📞 Support
+
+- **Keycloak Admin :** https://auth.maisonnette-pecheur-bertheaume.fr/admin
+- **Backend Swagger :** `http://localhost:3001/api/docs`
+- **Frontend :** `http://localhost:5173` (dev) ou `https://maisonnette-pecheur-bertheaume.fr` (prod)
+- **Database :** `psql -h localhost -p 5433 -U maisonnettev2 -d maisonnettev2`
+
+---
+
+## 📄 License
 
 MIT
