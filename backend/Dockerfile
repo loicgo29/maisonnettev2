@@ -53,3 +53,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["npm", "start"]
+# Force rebuild - Sam 26 sep 2026 11:45:43 CEST
