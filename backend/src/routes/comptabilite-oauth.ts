@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { SageService, SageInvoice } from '../services/sage';
-import { prisma } from '../db';
+import { prisma } from '../lib/prisma';
 
 const router = Router();
 
@@ -62,14 +62,14 @@ router.post('/callback', async (req: Request, res: Response) => {
     // Set token in service for future use
     sageService.setAccessToken(tokenResponse.access_token, tokenResponse.expires_in);
 
-    res.json({
+    return res.json({
       success: true,
       message: 'OAuth2 authorization successful',
       expiresIn: tokenResponse.expires_in,
     });
   } catch (error) {
     console.error('OAuth callback error:', error);
-    res.status(500).json({ error: 'OAuth2 authorization failed' });
+    return res.status(500).json({ error: 'OAuth2 authorization failed' });
   }
 });
 
