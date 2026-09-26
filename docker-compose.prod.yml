@@ -282,6 +282,8 @@ services:
       DATABASE_URL: postgresql://maisonnettev2:${DB_PASSWORD:?DB_PASSWORD manquant}@postgres:5432/maisonnettev2
       NODE_ENV: production
       PORT: 3002
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET manquant}
+      KEYCLOAK_REALM_URL: ${KEYCLOAK_REALM_URL:-https://auth.maisonnette-pecheur-bertheaume.fr/realms/maisonnettev2}
       SAGE_CLIENT_ID: ${SAGE_CLIENT_ID:-}
       SAGE_CLIENT_SECRET: ${SAGE_CLIENT_SECRET:-}
       SAGE_SUBSCRIPTION_KEY: ${SAGE_SUBSCRIPTION_KEY:-}
