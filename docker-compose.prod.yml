@@ -330,6 +330,7 @@ services:
       - --cookie-secret=${OAUTH2_COOKIE_SECRET:?OAUTH2_COOKIE_SECRET manquant}
       - --http-address=0.0.0.0:4180
       - --email-domain=*
+      - --insecure-oidc-allow-unverified-email=true
     environment:
       OAUTH2_PROXY_SKIP_AUTH_ROUTES: /health,/health/live
     depends_on:
