@@ -356,3 +356,29 @@ model SyncLog {
   @@schema("comptabilite")
   @@map("sync_logs")
 }
+
+model SageToken {
+  id            Int      @id @default(1)
+  accessToken   String
+  tokenType     String   @default("Bearer")
+  expiresAt     DateTime
+  scope         String
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@schema("comptabilite")
+  @@map("sage_tokens")
+}
+
+model SageInvoiceSync {
+  id                String   @id @default(cuid())
+  localInvoiceId    String?
+  sageInvoiceId     String   @unique
+  reference         String
+  status            String   @default("draft")  // "draft" | "submitted" | "paid" | "cancelled"
+  syncedAt          DateTime @default(now())
+
+  @@schema("comptabilite")
+  @@map("sage_invoices")
+}
