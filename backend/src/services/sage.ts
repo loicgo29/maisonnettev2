@@ -69,7 +69,7 @@ class SageService {
       client_id: this.config.clientId,
       response_type: 'code',
       redirect_uri: this.config.redirectUri,
-      scope: 'openid profile email',
+      scope: 'RDSA WDSA offline_access',
       state: state || Math.random().toString(36).substring(7),
     });
 
