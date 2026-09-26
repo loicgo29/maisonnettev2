@@ -32,7 +32,7 @@ router.post('/authorize', (req: Request, res: Response) => {
  */
 router.post('/callback', async (req: Request, res: Response) => {
   try {
-    const { code, state } = req.body;
+    const { code } = req.body;
 
     if (!code) {
       return res.status(400).json({ error: 'Authorization code missing' });
@@ -104,11 +104,11 @@ router.post('/invoices/sync', async (req: Request, res: Response) => {
       customerId,
       amount,
       status: 'draft',
-      lines: lines.map((line: any) => ({
-        description: line.description,
-        quantity: line.quantity,
-        unitPrice: line.unitPrice,
-        taxCode: line.taxCode || '',
+      lines: lines.map((line: Record<string, unknown>) => ({
+        description: line.description as string,
+        quantity: line.quantity as number,
+        unitPrice: line.unitPrice as number,
+        taxCode: (line.taxCode as string | undefined) || '',
       })),
     };
 
