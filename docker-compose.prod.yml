@@ -301,11 +301,14 @@ services:
     networks: [maisonnette]
 
   comptabilite-frontend:
-    image: ${COMPTABILITE_FRONTEND_IMAGE:-ghcr.io/loicgo29/maisonnettev2-comptabilite-frontend:latest}
+    image: ${FRONTEND_IMAGE:-ghcr.io/loicgo29/maisonnettev2-frontend:latest}
     container_name: maisonnette-comptabilite-frontend
     restart: unless-stopped
     depends_on:
       - comptabilite-backend
+    environment:
+      NODE_ENV: production
+      PORT: 5174
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://127.0.0.1:5174/']
       interval: 30s
