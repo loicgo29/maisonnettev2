@@ -275,7 +275,7 @@ services:
   # Intégré dans maisonnettev2 le 2026-09-24. Lit le schéma `comptabilite`
   # du Postgres partagé.
   comptabilite-backend:
-    image: ${COMPTABILITE_BACKEND_IMAGE:-ghcr.io/loicgo29/maisonnettev2-comptabilite-backend:latest}
+    image: ${BACKEND_IMAGE:-ghcr.io/loicgo29/maisonnettev2-backend:latest}
     container_name: maisonnette-comptabilite-backend
     restart: unless-stopped
     environment:
