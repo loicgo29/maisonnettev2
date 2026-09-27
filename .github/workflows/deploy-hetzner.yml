@@ -120,7 +120,6 @@ jobs:
           DEPLOY_KEY: ${{ secrets.HETZNER_DEPLOY_KEY }}
           DEPLOY_HOST: ${{ secrets.HETZNER_DEPLOY_HOST }}
           DEPLOY_USER: ${{ secrets.HETZNER_DEPLOY_USER }}
-        timeout-minutes: 5
         run: |
           mkdir -p ~/.ssh
           echo "$DEPLOY_KEY" > ~/.ssh/deploy_key
@@ -205,25 +204,7 @@ jobs:
           # compose (maisonnette-frontend, maisonnette-db). Les données ne sont
           # pas concernées : elles vivent dans le volume nommé
           # maisonnettev2_postgres_data, que le service postgres réutilise.
-
-          # Tracker le temps du déploiement et collecter les logs si > 3 min
-          START_TIME=$(date +%s)
-          docker compose --env-file .env -f docker-compose.prod.yml up -d --remove-orphans &
-          DEPLOY_PID=$!
-
-          # Checker toutes les 30s si le déploiement traîne
-          while kill -0 $DEPLOY_PID 2>/dev/null; do
-            ELAPSED=$(($(date +%s) - START_TIME))
-            if [ $ELAPSED -gt 180 ] && [ $((ELAPSED % 60)) -eq 0 ]; then
-              echo "⏰ Déploiement en cours depuis ${ELAPSED}s, analyse des logs..."
-              docker compose ps --no-trunc 2>&1 | head -20
-              docker compose logs --tail=10 2>&1 | tail -30
-            fi
-            sleep 10
-          done
-
-          wait $DEPLOY_PID
-          echo "✓ Services started"
+          docker compose --env-file .env -f docker-compose.prod.yml up -d --remove-orphans
 
           # Caddy monte son Caddyfile en lecture seule : `up -d` ne le recrée
           # pas quand seul ce fichier a changé, et le routage reste celui d'avant
