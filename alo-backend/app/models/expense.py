@@ -30,7 +30,7 @@ class Expense(Base):
         nullable=False,
     )
     source: Mapped[str] = mapped_column(
-        SQLEnum("manuel", "telegram", "csv_import", "bankin", "brico", name="expense_source"),
+        SQLEnum("manuel", "telegram", "csv_import", "bankin", "brico", "amazon", name="expense_source"),
         default="manuel",
         nullable=False,
     )
