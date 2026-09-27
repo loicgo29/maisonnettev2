@@ -72,12 +72,13 @@ app.use('/api/reservations', reservationsRouter);
 app.use('/api/calendar', calendarRouter);
 app.use('/api/contact', contactRouter);
 
+// Comptabilité module — derrière SSO (admin routes, but NO OIDC token required)
+// IMPORTANT: monté AVANT /api/admin pour éviter que le middleware OIDC s'applique
+app.use('/api/admin/comptabilite', comptabiliteRouter);
+
 // Backoffice — protégé au niveau du routeur (OIDC + rôle admin).
 app.use('/api/admin', adminRouter);
 app.use('/api/backoffice', backofficeRouter);
-
-// Comptabilité module — derrière SSO (admin routes)
-app.use('/api/admin/comptabilite', comptabiliteRouter);
 
 // 404 handler
 app.use((_req, res) => {
