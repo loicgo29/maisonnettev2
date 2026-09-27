@@ -10,24 +10,34 @@ export async function requireKeycloakAuth(
   next: NextFunction
 ) {
   try {
+    console.log('🔐 Keycloak auth middleware');
+    console.log('   Cookies:', Object.keys(req.cookies || {}));
+    console.log('   _oauth2_proxy exists:', !!req.cookies?._oauth2_proxy);
+    console.log('   Headers:', {
+      'authorization': req.headers.authorization?.substring(0, 20),
+      'x-auth-request-user': req.headers['x-auth-request-user'],
+      'x-auth-request-email': req.headers['x-auth-request-email'],
+    });
+
     // Check for oauth2-proxy session cookie
     const cookie = req.cookies._oauth2_proxy;
     if (!cookie) {
+      console.log('   ❌ No cookie found');
       return res.status(401).json({ error: 'No Keycloak session' });
     }
 
+    console.log('   ✅ Cookie found, length:', cookie.length);
+
     // For now, just check that cookie exists and is non-empty
-    // In production, you could validate the cookie signature
     if (cookie.length < 100) {
       return res.status(401).json({ error: 'Invalid session' });
     }
 
     // Extract user info from X-Auth-Request-* headers if available
-    // These are set by oauth2-proxy when validating the session
     const user = req.headers['x-auth-request-user'] || 'unknown';
     const email = req.headers['x-auth-request-email'] || '';
 
-    // Attach to request for use in controllers
+    console.log('   ✅ User:', user, 'Email:', email);
     req.user = { email: email as string, name: user as string };
 
     next();
