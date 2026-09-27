@@ -30,9 +30,9 @@
 			});
 			const data = await r.json();
 
-			if (data.authorization_url) {
+			if (data.authUrl) {
 				// Redirect to Sage OAuth
-				window.location.href = data.authorization_url;
+				window.location.href = data.authUrl;
 			} else {
 				message = '❌ Erreur: URL manquante';
 				loading = false;
