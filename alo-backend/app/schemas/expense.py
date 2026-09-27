@@ -12,7 +12,7 @@ class ExpenseBase(BaseModel):
         default="50/50",
         pattern="^(quotepart|50/50|dette|brico|virement|trop_plein|regule_periode|divers)$",
     )
-    source: str = Field(default="manuel", pattern="^(manuel|telegram|csv_import|bankin|brico)$")
+    source: str = Field(default="manuel", pattern="^(manuel|telegram|csv_import|bankin|brico|amazon)$")
     comment: Optional[str] = None
     account_id: Optional[int] = None
 
