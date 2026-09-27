@@ -248,7 +248,7 @@ services:
     environment:
       OAUTH2_PROXY_SKIP_AUTH_ROUTES: /health,/health/live
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://127.0.0.1:4180/ping']
+      test: ['CMD-SHELL', 'exec 3<>/dev/tcp/127.0.0.1/4180 && echo "OK"']
       interval: 30s
       timeout: 5s
       retries: 3

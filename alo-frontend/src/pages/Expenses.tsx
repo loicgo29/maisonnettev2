@@ -35,12 +35,13 @@ type SortOrder = 'asc' | 'desc';
 // s'affichaient avec un menu déroulant vide, et la liste déroulante de filtre
 // ne permettait pas de les retrouver.
 const categories = ['quotepart', '50/50', 'dette', 'brico', 'virement', 'trop_plein', 'regule_periode', 'divers'];
-const sources = ['manuel', 'telegram', 'csv_import', 'brico'];
+const sources = ['manuel', 'telegram', 'csv_import', 'brico', 'amazon'];
 const sourceLabels: Record<string, string> = {
   'manuel': 'Manuel',
   'telegram': 'Telegram',
   'csv_import': 'Fortuneo',
   'brico': 'Brico',
+  'amazon': 'Amazon',
 };
 const people = ['Loïc', 'Alice', 'Fortuneo'];
 

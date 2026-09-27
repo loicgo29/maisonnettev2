@@ -12,6 +12,7 @@ import Reequilibrage from './pages/Reequilibrage';
 import Import from './pages/Import';
 import Presence from './pages/Presence';
 import PresenceRestitution from './pages/PresenceRestitution';
+import Gourmelon from './pages/Gourmelon';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/presence-restitution" element={<PresenceRestitution />} />
             <Route path="/reequilibrage" element={<Reequilibrage />} />
             <Route path="/import" element={<Import />} />
+            <Route path="/gourmelon" element={<Gourmelon />} />
           </Routes>
         </div>
       </div>
@@ -53,6 +55,7 @@ function Header() {
         <nav style={{ marginTop: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           <NavButton onClick={() => navigate('/')}>🏠 Accueil</NavButton>
           <NavButton onClick={() => navigate('/expenses')}>💸 Dépenses</NavButton>
+          <NavButton onClick={() => navigate('/gourmelon')}>🍽️ Gourmelon</NavButton>
           <NavButton onClick={() => navigate('/periods')}>📅 Périodes</NavButton>
           <NavButton onClick={() => navigate('/meals')}>🍽️ Repas</NavButton>
           <NavButton onClick={() => navigate('/presence')}>👥 Présence</NavButton>

@@ -34,12 +34,9 @@
 		reverse_proxy oauth2-proxy:4180
 	}
 
-	# alo, servi sous /admin/alo — protégé par Keycloak
+	# alo, servi sous /admin/alo — DÉSACTIVÉ en dev pour tests
+	# (En prod, protégé par Keycloak via oauth2-proxy)
 	handle_path /admin/alo* {
-		forward_auth oauth2-proxy:4180 {
-			uri /oauth2/auth
-			copy_headers X-Auth-Request-User X-Auth-Request-Email
-		}
 		reverse_proxy alo-frontend:80
 	}
 
