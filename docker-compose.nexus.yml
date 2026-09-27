@@ -1,0 +1,18 @@
+# Override d'image pour pousser/tirer via le registre Nexus local (localhost:8082).
+# Usage : docker compose -f docker-compose.yml -f docker-compose.nexus.yml build
+#         docker compose -f docker-compose.yml -f docker-compose.nexus.yml push
+services:
+  backend:
+    image: localhost:8082/maisonnettev2/backend:latest
+  frontend:
+    image: localhost:8082/maisonnettev2/frontend:latest
+  alo-backend:
+    image: localhost:8082/maisonnettev2/alo-backend:latest
+  alo-telegram-bot:
+    image: localhost:8082/maisonnettev2/alo-telegram-bot:latest
+  meteo-marine:
+    image: localhost:8082/maisonnettev2/meteo-marine:latest
+  alo-frontend:
+    image: localhost:8082/maisonnettev2/alo-frontend:latest
+  caddy:
+    image: localhost:8082/maisonnettev2/caddy:latest

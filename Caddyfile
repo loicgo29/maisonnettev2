@@ -101,7 +101,7 @@ www.{$DOMAIN} {
 			uri /oauth2/auth
 			copy_headers X-Auth-Request-User X-Auth-Request-Email
 		}
-		reverse_proxy comptabilite-backend:3002
+		reverse_proxy backend:3001
 	}
 
 	handle /api/* {
