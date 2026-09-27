@@ -1,6 +1,18 @@
-<script>
-  let customers = [];
-  let invoices = [];
+<script lang="ts">
+  interface Customer {
+    id: string;
+    name: string;
+  }
+
+  interface Invoice {
+    success?: boolean;
+    message?: string;
+    sageInvoiceId?: string;
+    error?: string;
+  }
+
+  let customers: Customer[] = [];
+  let invoices: Invoice[] = [];
   let loading = false;
   let error = '';
   let customerId = '';
