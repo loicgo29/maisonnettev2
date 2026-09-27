@@ -10,10 +10,17 @@
 	onMount(async () => {
 		// Check Sage auth status
 		try {
+			console.log('🔍 Fetching /api/admin/comptabilite/status with credentials');
 			const r = await fetch('/api/admin/comptabilite/status', {
 				credentials: 'include'
 			});
+			console.log('📊 Response status:', r.status);
+			if (!r.ok) {
+				console.error('❌ Not OK:', r.status, r.statusText);
+				return;
+			}
 			const data = await r.json();
+			console.log('✅ Status data:', data);
 			sageAuthorized = data.sage_authenticated || false;
 			sageExpiresIn = data.expires_in || 0;
 		} catch (e) {
