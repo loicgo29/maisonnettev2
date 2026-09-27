@@ -74,6 +74,27 @@ router.get('/callback', async (req: Request, res: Response) => {
 });
 
 /**
+ * GET /api/admin/comptabilite/oauth/customers
+ * List available customers from Sage
+ */
+router.get('/customers', async (_req: Request, res: Response) => {
+  try {
+    // Load token from database first
+    const tokenRecord = await prisma.sageToken.findUnique({ where: { id: 1 } });
+    if (!tokenRecord || !tokenRecord.accessToken) {
+      return res.status(401).json({ error: 'No Sage authorization. Please authorize first.' });
+    }
+
+    sageService.setAccessToken(tokenRecord.accessToken, 3600);
+    const customers = await sageService.listCustomers(100);
+    return res.json({ customers });
+  } catch (error) {
+    console.error('List customers error:', error);
+    return res.status(500).json({ error: 'Failed to list customers' });
+  }
+});
+
+/**
  * POST /api/admin/comptabilite/invoices/sync
  * Sync an invoice to Sage
  */
