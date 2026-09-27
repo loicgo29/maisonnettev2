@@ -60,6 +60,13 @@ www.{$DOMAIN} {
 	encode gzip zstd
 
 	# ========================================================================
+	# OAUTH2-PROXY ENDPOINTS
+	# ========================================================================
+	handle /oauth2/* {
+		reverse_proxy oauth2-proxy:4180
+	}
+
+	# ========================================================================
 	# ZONE PROTÉGÉE PAR KEYCLOAK — tout ce qui est sous /admin
 	# Middleware oauth2-proxy valide les tokens Keycloak avant toute route /admin
 	# ========================================================================
