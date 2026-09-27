@@ -321,25 +321,29 @@ class SageService {
       const query = `
         query {
           customers {
-            id
-            code
-            socialName
+            edges {
+              node {
+                id
+                code
+                socialName
+              }
+            }
           }
         }
       `;
       const result = await this.executeGraphQL(query);
       console.log(`[Sage] ✓ Query succeeded! Result:`, JSON.stringify(result).substring(0, 200));
 
-      const customersArray = (result as Record<string, unknown>).customers;
-      if (!Array.isArray(customersArray)) {
-        console.log(`[Sage] Expected array, got:`, typeof customersArray);
-        return [];
-      }
+      const customersConnection = (result as Record<string, unknown>).customers as Record<string, unknown>;
+      const edges = (customersConnection.edges as Array<Record<string, unknown>>) || [];
 
-      return (customersArray as Array<Record<string, unknown>>).map((customer) => ({
-        id: (customer.id as string) || '',
-        name: ((customer.socialName || customer.code) as string) || '',
-      }));
+      return edges.map((edge) => {
+        const node = edge.node as Record<string, unknown>;
+        return {
+          id: (node.id as string) || '',
+          name: ((node.socialName || node.code) as string) || '',
+        };
+      });
     } catch (error) {
       console.error(`[Sage] Query failed:`, (error as Error).message);
       throw new Error(`Failed to list customers: ${(error as Error).message}`);
