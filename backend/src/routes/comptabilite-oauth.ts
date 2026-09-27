@@ -27,12 +27,12 @@ router.post('/authorize', (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/admin/comptabilite/oauth/callback
+ * GET /api/admin/comptabilite/oauth/callback
  * Handle OAuth2 callback (exchange code for token)
  */
-router.post('/callback', async (req: Request, res: Response) => {
+router.get('/callback', async (req: Request, res: Response) => {
   try {
-    const { code } = req.body;
+    const code = (req.query.code as string) || '';
 
     if (!code) {
       return res.status(400).json({ error: 'Authorization code missing' });
@@ -70,6 +70,27 @@ router.post('/callback', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('OAuth callback error:', error);
     return res.status(500).json({ error: 'OAuth2 authorization failed' });
+  }
+});
+
+/**
+ * GET /api/admin/comptabilite/oauth/customers
+ * List available customers from Sage
+ */
+router.get('/customers', async (_req: Request, res: Response) => {
+  try {
+    // Load token from database first
+    const tokenRecord = await prisma.sageToken.findUnique({ where: { id: 1 } });
+    if (!tokenRecord || !tokenRecord.accessToken) {
+      return res.status(401).json({ error: 'No Sage authorization. Please authorize first.' });
+    }
+
+    sageService.setAccessToken(tokenRecord.accessToken, 3600);
+    const customers = await sageService.listCustomers(100);
+    return res.json({ customers });
+  } catch (error) {
+    console.error('List customers error:', error);
+    return res.status(500).json({ error: 'Failed to list customers' });
   }
 });
 

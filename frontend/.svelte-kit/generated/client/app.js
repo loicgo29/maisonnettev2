@@ -30,7 +30,8 @@ export const nodes = [
 	() => import('./nodes/18'),
 	() => import('./nodes/19'),
 	() => import('./nodes/20'),
-	() => import('./nodes/21')
+	() => import('./nodes/21'),
+	() => import('./nodes/22')
 ];
 
 export const server_loads = [2,4];
@@ -40,18 +41,19 @@ export const dictionary = {
 		"/admin": [7,[2]],
 		"/admin/callback": [8,[2,3]],
 		"/admin/comptabilite": [9,[2]],
-		"/admin/messages": [10,[2]],
-		"/admin/reservations": [11,[2]],
-		"/admin/reservations/nouvelle": [13,[2]],
-		"/admin/reservations/[id]": [12,[2]],
-		"/backoffice": [14,[4]],
-		"/backoffice/login": [15,[4,5]],
-		"/backoffice/logout": [16,[4]],
-		"/calendar": [17],
-		"/comptabilite": [18],
-		"/contact": [19],
-		"/gite/[slug]": [20],
-		"/login": [21]
+		"/admin/comptabilite/test": [10,[2]],
+		"/admin/messages": [11,[2]],
+		"/admin/reservations": [12,[2]],
+		"/admin/reservations/nouvelle": [14,[2]],
+		"/admin/reservations/[id]": [13,[2]],
+		"/backoffice": [15,[4]],
+		"/backoffice/login": [16,[4,5]],
+		"/backoffice/logout": [17,[4]],
+		"/calendar": [18],
+		"/comptabilite": [19],
+		"/contact": [20],
+		"/gite/[slug]": [21],
+		"/login": [22]
 	};
 
 export const hooks = {

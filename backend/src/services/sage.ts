@@ -135,36 +135,81 @@ class SageService {
   }
 
   /**
-   * Create an invoice in Sage
+   * Execute GraphQL query/mutation
    */
-  async createInvoice(invoice: SageInvoice): Promise<SageInvoiceResponse> {
+  private async executeGraphQL(query: string, variables?: Record<string, unknown>): Promise<unknown> {
     try {
       const token = await this.getAccessToken();
 
-      const payload = {
-        reference: invoice.reference,
-        date: invoice.date,
-        dueDate: invoice.dueDate,
-        customerId: invoice.customerId,
-        lines: invoice.lines,
-        status: invoice.status || 'draft',
-      };
-
-      const response = await axios.post(`${SAGE_API_URL}/invoices`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'x-api-key': this.config.subscriptionKey,
-          'Content-Type': 'application/json',
+      const response = await axios.post(
+        SAGE_API_URL,
+        {
+          query,
+          variables: variables || {},
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'x-api-key': this.config.subscriptionKey,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
-      return response.data;
+      if (response.data.errors) {
+        throw new Error(`GraphQL error: ${response.data.errors[0]?.message}`);
+      }
+
+      return response.data.data;
     } catch (error) {
       if (error instanceof AxiosError) {
-        throw new Error(`Sage invoice creation error: ${error.response?.data?.error || error.message}`);
+        throw new Error(`Sage GraphQL error: ${error.response?.data?.errors?.[0]?.message || error.message}`);
       }
       throw error;
     }
+  }
+
+  /**
+   * Create an invoice in Sage using GraphQL
+   */
+  async createInvoice(invoice: SageInvoice): Promise<SageInvoiceResponse> {
+    const mutation = `
+      mutation createSalesInvoice($input: SalesInvoiceCreateGLDtoInput!) {
+        createSalesInvoice(input: $input) {
+          id
+        }
+      }
+    `;
+
+    const variables = {
+      input: {
+        customerId: invoice.customerId,
+        reference: invoice.reference,
+        documentDate: invoice.date,
+        dueDate: invoice.dueDate,
+        lines: invoice.lines.map(line => ({
+          description: line.description,
+          totalQuantity: line.quantity,
+          unitPrice: line.unitPrice,
+          taxCode: line.taxCode || 'FR_STANDARD',
+        })),
+      },
+    };
+
+    const result = await this.executeGraphQL(mutation, variables);
+    const data = (result as Record<string, unknown>).createSalesInvoice as Record<string, unknown>;
+
+    return {
+      id: (data.id as string) || '',
+      reference: (data.reference as string) || invoice.reference,
+      date: invoice.date,
+      dueDate: invoice.dueDate,
+      customerId: invoice.customerId,
+      amount: invoice.amount,
+      status: (data.status as string) || 'draft',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
   }
 
   /**
@@ -264,6 +309,40 @@ class SageService {
         throw new Error(`Sage customer fetch error: ${error.response?.data?.error || error.message}`);
       }
       throw error;
+    }
+  }
+
+  /**
+   * List customers from Sage
+   */
+  async listCustomers(limit: number = 10): Promise<Array<{ id: string; name: string }>> {
+    try {
+      console.log(`[Sage] Querying customers...`);
+      const query = `
+        query {
+          customers {
+            id
+            code
+            socialName
+          }
+        }
+      `;
+      const result = await this.executeGraphQL(query);
+      console.log(`[Sage] ✓ Query succeeded! Result:`, JSON.stringify(result).substring(0, 200));
+
+      const customersArray = (result as Record<string, unknown>).customers;
+      if (!Array.isArray(customersArray)) {
+        console.log(`[Sage] Expected array, got:`, typeof customersArray);
+        return [];
+      }
+
+      return (customersArray as Array<Record<string, unknown>>).map((customer) => ({
+        id: (customer.id as string) || '',
+        name: ((customer.socialName || customer.code) as string) || '',
+      }));
+    } catch (error) {
+      console.error(`[Sage] Query failed:`, (error as Error).message);
+      throw new Error(`Failed to list customers: ${(error as Error).message}`);
     }
   }
 

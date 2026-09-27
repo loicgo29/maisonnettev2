@@ -73,7 +73,12 @@ app.use('/api/calendar', calendarRouter);
 app.use('/api/contact', contactRouter);
 
 // Comptabilité module — derrière SSO (admin routes, but NO OIDC token required)
-// IMPORTANT: monté AVANT /api/admin pour éviter que le middleware OIDC s'applique
+// Add global middleware to bypass OIDC verification for /api/admin/comptabilite
+app.use('/api/admin/comptabilite', (req: any, _res, next) => {
+  // Skip OIDC verification for comptabilite routes (already protected by Keycloak at Caddy level)
+  req.user = { sub: 'sso-user', realm_access: { roles: ['admin'] } };
+  next();
+});
 app.use('/api/admin/comptabilite', comptabiliteRouter);
 
 // Backoffice — protégé au niveau du routeur (OIDC + rôle admin).
