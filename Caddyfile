@@ -81,7 +81,7 @@ www.{$DOMAIN} {
 	}
 
 	# Comptabilite, servi sous /admin/comptabilite — protégé par Keycloak
-	handle_path /admin/comptabilite* {
+	handle /admin/comptabilite* {
 		forward_auth oauth2-proxy:4180 {
 			uri /oauth2/auth
 			copy_headers X-Auth-Request-User X-Auth-Request-Email
