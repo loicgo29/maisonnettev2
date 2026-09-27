@@ -10,7 +10,9 @@
 	onMount(async () => {
 		// Check Sage auth status
 		try {
-			const r = await fetch('/api/admin/comptabilite/status');
+			const r = await fetch('/api/admin/comptabilite/status', {
+				credentials: 'include'
+			});
 			const data = await r.json();
 			sageAuthorized = data.sage_authenticated || false;
 			sageExpiresIn = data.expires_in || 0;
@@ -26,7 +28,8 @@
 		try {
 			const r = await fetch('/api/admin/comptabilite/oauth/authorize', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' }
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'include'
 			});
 			const data = await r.json();
 
