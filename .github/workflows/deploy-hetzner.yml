@@ -332,10 +332,19 @@ jobs:
           echo "Containers status:"
           docker compose ps --format 'table {{.Names}}\t{{.Status}}' | grep -E "comptabilite-backend|comptabilite-frontend|oauth2-proxy"
 
-          # Vérifier qu'aucun n'est en "unhealthy"
-          unhealthy=$(docker compose ps --format '{{.Names}}\t{{.Status}}' | grep -c "unhealthy" || true)
-          if [ $unhealthy -gt 0 ]; then
-            echo "❌ Found $unhealthy unhealthy containers"
+          # Vérifier qu'aucun n'est en "unhealthy" ET creuser les logs si c'est le cas
+          unhealthy_list=$(docker compose ps --format '{{.Names}}\t{{.Status}}' | grep "unhealthy" | cut -f1 || true)
+
+          if [ -n "$unhealthy_list" ]; then
+            echo ""
+            echo "❌ UNHEALTHY CONTAINERS DETECTED - COLLECTING LOGS:"
+            echo "$unhealthy_list" | while read container; do
+              if [ -n "$container" ]; then
+                echo ""
+                echo "=== LOGS: $container ==="
+                docker logs "$container" --tail 20 2>&1 || echo "Could not fetch logs"
+              fi
+            done
             exit 1
           fi
           echo "✅ All containers healthy"
