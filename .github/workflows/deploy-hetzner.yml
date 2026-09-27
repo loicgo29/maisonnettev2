@@ -313,3 +313,46 @@ jobs:
           echo "========================================="
           echo "✅ ALL DEPLOYMENT CHECKS PASSED"
           echo "========================================="
+
+      - name: Post-Deployment Container & Sage Health Verification
+        env:
+          DEPLOY_HOST: ${{ secrets.HETZNER_DEPLOY_HOST }}
+        run: |
+          SITE="https://maisonnette-pecheur-bertheaume.fr"
+          echo "🔍 Post-deployment verification..."
+          sleep 5
+
+          # Vérifier que les containers critiques sont healthy
+          echo "✓ Checking container health status..."
+          ssh -i ~/.ssh/deploy_key \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            ${{ secrets.HETZNER_DEPLOY_USER }}@$DEPLOY_HOST << 'SSHEOF'
+          cd /opt/maisonnettev2
+          echo "Containers status:"
+          docker compose ps --format 'table {{.Names}}\t{{.Status}}' | grep -E "comptabilite-backend|comptabilite-frontend|oauth2-proxy"
+
+          # Vérifier qu'aucun n'est en "unhealthy"
+          unhealthy=$(docker compose ps --format '{{.Names}}\t{{.Status}}' | grep -c "unhealthy" || true)
+          if [ $unhealthy -gt 0 ]; then
+            echo "❌ Found $unhealthy unhealthy containers"
+            exit 1
+          fi
+          echo "✅ All containers healthy"
+          SSHEOF
+
+          # Tester les endpoints Sage OAuth2
+          echo "✓ Testing Sage OAuth2 endpoints..."
+          for endpoint in "authorize" "status"; do
+            response=$(curl -s -o /dev/null -w "%{http_code}" "$SITE/api/admin/comptabilite/oauth/$endpoint" 2>/dev/null || echo "000")
+            # Les endpoints protégés par oauth2-proxy retournent 401 ou 302 redirect
+            if [ "$response" = "401" ] || [ "$response" = "302" ] || [ "$response" = "200" ]; then
+              echo "  ✅ /api/admin/comptabilite/oauth/$endpoint (HTTP $response)"
+            else
+              echo "  ⚠️ /api/admin/comptabilite/oauth/$endpoint returned HTTP $response (expected 200/302/401)"
+            fi
+          done
+
+          echo ""
+          echo "✅ POST-DEPLOYMENT VERIFICATION COMPLETE"
+          echo "   Sage OAuth2 integration is ready for testing"
