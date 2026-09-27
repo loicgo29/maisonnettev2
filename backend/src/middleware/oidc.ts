@@ -54,6 +54,12 @@ async function getJWKSet() {
 
 export async function verifyOIDCToken(req: AuthRequest, res: Response, next: NextFunction) {
   try {
+    // Bypass OIDC verification for comptabilite routes (already protected by Keycloak at Caddy level)
+    if (req.path.includes('/comptabilite')) {
+      console.log(`[OIDC] Bypassing verification for ${req.path} (comptabilite protected at Caddy)`);
+      return next();
+    }
+
     const authHeader = req.headers.authorization;
     console.log(`[OIDC] Verifying token for ${req.method} ${req.path}`);
 

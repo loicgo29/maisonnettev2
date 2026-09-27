@@ -75,6 +75,11 @@ services:
       GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
       PUBLIC_CALENDAR_ID: ${PUBLIC_CALENDAR_ID:-}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
+      # Sage OAuth2 Integration
+      SAGE_CLIENT_ID: ${SAGE_CLIENT_ID:-}
+      SAGE_CLIENT_SECRET: ${SAGE_CLIENT_SECRET:-}
+      SAGE_SUBSCRIPTION_KEY: ${SAGE_SUBSCRIPTION_KEY:-}
+      SAGE_REDIRECT_URI: https://maisonnette-pecheur-bertheaume.fr/api/admin/comptabilite/oauth/callback
     ports:
       - '127.0.0.1:3001:3001'
     healthcheck:

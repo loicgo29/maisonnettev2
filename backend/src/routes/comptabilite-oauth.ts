@@ -27,12 +27,12 @@ router.post('/authorize', (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/admin/comptabilite/oauth/callback
+ * GET /api/admin/comptabilite/oauth/callback
  * Handle OAuth2 callback (exchange code for token)
  */
-router.post('/callback', async (req: Request, res: Response) => {
+router.get('/callback', async (req: Request, res: Response) => {
   try {
-    const { code } = req.body;
+    const code = (req.query.code as string) || '';
 
     if (!code) {
       return res.status(400).json({ error: 'Authorization code missing' });
