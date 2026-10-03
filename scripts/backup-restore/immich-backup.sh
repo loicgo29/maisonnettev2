@@ -6,7 +6,7 @@ set -euo pipefail
 NTFY_URL="http://localhost:8090/immich-backup"
 BACKUP_DIR="/Volumes/logousb/SSD/Projects/maisonnettev2/backups"
 LOG_DIR="/Volumes/logousb/SSD/Projects/maisonnettev2/scripts/backup-restore/logs"
-EXPANSION_BACKUP_DIR="/Volumes/Expansion12/sauvegarde-live-logo-projects/IMMICH"
+EXPANSION_BACKUP_DIR="/Volumes/HDD6/01-Froide/sauvegarde-live-logo-projects/IMMICH"
 PG_CONTAINER="immich_postgres"
 PG_USER="immich"
 PG_DATABASE="immich"
